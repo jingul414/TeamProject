@@ -1,3 +1,7 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.project.sourcePaths": [
+        "src/main/java/com/donghaeng/withme/controlcommand",  // 소스 파일 경로를 적절히 수정
+        "src/test/java"
+    ]
 }

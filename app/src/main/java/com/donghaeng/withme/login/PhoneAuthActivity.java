@@ -1,4 +1,4 @@
-package com.google.firebase.quickstart.auth;
+package com.donghaeng.withme.login;
 
 import android.app.Activity;
 import android.os.Bundle;

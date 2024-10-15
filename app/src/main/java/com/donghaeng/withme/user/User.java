@@ -5,14 +5,14 @@ public abstract class User {
     protected String phone;
     protected String id;
     protected String password;
-    protected byte userType;
+    protected byte userType = UserType.UNDEFINED;
 
-    public User(String name, String phone, String id, String password, byte userType) {
-        this.name = name;
-        this.phone = phone;
-        this.id = id;
-        this.password = password;
-        this.userType = userType;
+    protected User(String name, String phone, String id, String password, byte userType) {
+        setName(name);
+        setPhone(phone);
+        setId(id);
+        setPassword(password);
+        setUserType(userType);
     }
 
     public String getName() {
@@ -30,19 +30,21 @@ public abstract class User {
     public byte getUserType() {
         return userType;
     }
-    public void setName(String name) {
+
+    // set은 반드시 클래스 내부에서만 수정하게 할 것
+    private void setName(String name) {
         this.name = name;
     }
-    public void setPhone(String phone) {
+    private void setPhone(String phone) {
         this.phone = phone;
     }
-    public void setId(String id) {
+    private void setId(String id) {
         this.id = id;
     }
-    public void setPassword(String password) {
+    private void setPassword(String password) {
         this.password = password;
     }
-    public void setUserType(byte userType) {
+    private void setUserType(byte userType) {
         this.userType = userType;
     }
 }

@@ -1,4 +1,4 @@
-package com.donghaeng.withme.controlcommand;
+package com.donghaeng.withme.controlcommand.volumecontrol;
 
 import com.donghaeng.withme.featurelist.ControlCommandList;
 

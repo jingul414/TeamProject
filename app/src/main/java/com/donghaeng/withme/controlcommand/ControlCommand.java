@@ -1,16 +1,18 @@
 package com.donghaeng.withme.controlcommand;
 
 public abstract class ControlCommand {
-    public byte controlCommandType;
+    private byte controlCommandType;
     
-    public ControlCommand(byte command) {
-        setControlCommandType(command);
+    protected ControlCommand(byte controlCommandType) {
+        setControlCommandType(controlCommandType);
     }
+
+    protected abstract void cancelControl();
 
     public final byte getControlCommandType() {
         return controlCommandType;
     }
-    public final void setControlCommandType(byte controlCommandType) {
+    private void setControlCommandType(byte controlCommandType) {
         this.controlCommandType = controlCommandType;
     }
 }
