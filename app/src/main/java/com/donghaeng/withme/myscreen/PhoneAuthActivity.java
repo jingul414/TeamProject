@@ -1,4 +1,4 @@
-package com.donghaeng.withme.login;
+package com.donghaeng.withme.myscreen;
 
 import android.app.Activity;
 import android.os.Bundle;

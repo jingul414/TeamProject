@@ -1,5 +1,7 @@
 package com.donghaeng.withme.login;
 
+import com.donghaeng.withme.myscreen.PhoneAuthActivity;
+
 // 본인인증
 public class IdentityVerification {
     /*

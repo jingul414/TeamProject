@@ -1,0 +1,19 @@
+
+# 필요한 액티비티에 넣기
+
+import android.content.Context;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
+import com.donghaeng.withme.background.BackGroundWorkManager;
+
+클래스 변수
+private Context mContext;
+
+onCreate()메소드 내 실행
+// control
+mContext = getApplicationContext();
+
+// WorkManager(BackGround)
+OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(BackGroundWorkManager.class).build();
+WorkManager.getInstance(this).enqueue(workRequest);
