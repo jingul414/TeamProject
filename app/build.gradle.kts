@@ -2,7 +2,8 @@ plugins {
     id("com.android.application")
 
     // Add the Google services Gradle plugin
-    id("com.google.gms.google-services")
+
+    // id("com.google.gms.google-services") => google-services.json 파일 있어야 오류 안나서 주석처리 함.
 }
 
 android {
