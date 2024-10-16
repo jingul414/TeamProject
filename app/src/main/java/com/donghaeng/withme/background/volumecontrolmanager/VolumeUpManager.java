@@ -1,15 +1,16 @@
 package com.donghaeng.withme.background.volumecontrolmanager;
 
+import android.content.Context;
 import android.util.Log;
-
 import com.donghaeng.withme.controlcommand.ControlCommand;
-import com.donghaeng.withme.controlcommand.volumecontrol.VolumeUp;
-
 import java.util.Objects;
+import android.media.AudioManager;
 
 public class VolumeUpManager extends VolumeControlManager {
+    //private AudioManager audioManager;
     public VolumeUpManager(ControlCommand controlCommand){
         super(controlCommand);
+        //audioManager = (AudioManager) getSystemSerive(Context.AUDIO_SERVICE);
     }
 
     @Override
@@ -20,8 +21,7 @@ public class VolumeUpManager extends VolumeControlManager {
                 throw new Exception("예기치 못한 오류");
             }
             // TODO: 실제 볼륨조절을 한다.
-
-
+            //audioManager.adjustVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0);
         }catch (Exception e){
             Log.println(Log.ERROR,"Unexpected Error", Objects.requireNonNull(e.getMessage()));
         }

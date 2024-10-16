@@ -39,6 +39,7 @@ public class PhoneAuthActivity extends Activity {
         // [START initialize_auth]
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        mAuth.useAppLanguage();
         // [END initialize_auth]
 
         // Initialize phone auth callbacks
@@ -47,12 +48,10 @@ public class PhoneAuthActivity extends Activity {
 
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
-                // This callback will be invoked in two situations:
-                // 1 - Instant verification. In some cases the phone number can be instantly
-                //     verified without needing to send or enter a verification code.
-                // 2 - Auto-retrieval. On some devices Google Play services can automatically
-                //     detect the incoming verification SMS and perform verification without
-                //     user action.
+                // 이 콜백은 두 가지 상황에서 호출됩니다:
+                // 1 - 즉시 인증. 경우에 따라 전화번호는 인증 코드를 보내거나 입력하지 않고도 즉시 인증될 수 있습니다.
+                // 2 - 자동 검색. 일부 기기에서 Google Play 서비스는 수신되는 인증 SMS를 자동으로 감지하여 사용자 작업 없이 인증을 수행할 수 있습니다.
+
                 Log.d(TAG, "onVerificationCompleted:" + credential);
 
                 signInWithPhoneAuthCredential(credential);

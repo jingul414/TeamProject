@@ -1,5 +1,6 @@
 package com.donghaeng.withme;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -14,7 +15,7 @@ import com.donghaeng.withme.background.BackGroundWorkManager;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,10 +28,10 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        mAuth = FirebaseAuth.getInstance();
-        mAuth.useAppLanguage();
+        // control
+        mContext = getApplicationContext();
 
-        // WorkManager를 통한 작업 실행
+        // WorkManager(BackGround)
         OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(BackGroundWorkManager.class).build();
         WorkManager.getInstance(this).enqueue(workRequest);
     }

@@ -10,16 +10,16 @@ public class CommandListener {
 
     public void onListen(ControlCommand controlCommand){
         switch (controlCommand.getControlCommandType()){
-            case ControlCommandList.VOLUME_DOWN:
+            case ControlCommandList.CALL_VOLUME_DOWN:
                 // 음량 낮추기
                 break;
-            case ControlCommandList.VOLUME_UP:
+            case ControlCommandList.CALL_VOLUME_UP:
                 // 음량 높이기
                 break;
-            case ControlCommandList.MUTE:
+            case ControlCommandList.CALL_SILENT:
                 // 음소거
                 break;
-            case ControlCommandList.UNMUTE:
+            case ControlCommandList.CALL_NORMAL:
                 // 음소거 해제
                 break;
             case ControlCommandList.BRIGHTNESS_DOWN:
