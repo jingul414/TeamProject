@@ -10,10 +10,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.view.MenuItem;
 
 import com.donghaeng.withme.R;
 
@@ -44,6 +47,27 @@ public class LoginActivity extends AppCompatActivity {
 
             login_btn.setOnClickListener(new LoginBtnListener());
             sign_text.setOnClickListener(new SignUpTextListener());
+
+            //  네비게이션 설정
+            BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+            bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    Intent selectedIntent = null;
+                    System.out.println(item.getItemId());
+
+                    if (item.getItemId() == R.id.nav_controller) {
+                        selectedIntent = new Intent(LoginActivity.this, ControllerMainActivity.class);
+                    } else if (item.getItemId() == R.id.nav_target) {
+                        selectedIntent = new Intent(LoginActivity.this, TargetMainActivity.class);
+                    }
+                    if(selectedIntent != null) startActivity(selectedIntent);
+
+                    return true;
+                }
+            });
+
 
             return insets;
         });

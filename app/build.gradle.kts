@@ -45,6 +45,9 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
+    // 네비게이션바 관련
+    implementation ("com.google.android.material:material:1.9.0")
+
     // 백그라운드 관련 implementation
     implementation("androidx.work:work-runtime:2.7.1")
     // 아래는 firebase implementation
