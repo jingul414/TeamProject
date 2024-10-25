@@ -2,8 +2,7 @@ plugins {
     id("com.android.application")
 
     // Add the Google services Gradle plugin
-
-    // id("com.google.gms.google-services") => google-services.json 파일 있어야 오류 안나서 주석처리 함.
+     id("com.google.gms.google-services")
 }
 
 android {
@@ -48,20 +47,15 @@ dependencies {
     // 네비게이션바 관련
     implementation ("com.google.android.material:material:1.9.0")
 
-    // 백그라운드 관련 implementation
+    // 백그라운드
     implementation("androidx.work:work-runtime:2.7.1")
-    // 아래는 firebase implementation
+
+    // firebase
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
 
     // TODO: Add the dependencies for Firebase products you want to use
-    // When using the BoM, don't specify versions in Firebase dependencies
-    implementation("com.google.firebase:firebase-analytics")
-
-    // Add the dependencies for any other desired Firebase products
-    // https://firebase.google.com/docs/android/setup#available-libraries
-
-    // Add the dependency for the Firebase Authentication library
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-analytics")    // analytics
+    implementation("com.google.firebase:firebase-auth")         // authentication
+    implementation("com.google.firebase:firebase-firestore")    // database
 }

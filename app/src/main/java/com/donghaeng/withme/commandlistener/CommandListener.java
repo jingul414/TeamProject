@@ -1,6 +1,7 @@
 package com.donghaeng.withme.commandlistener;
 
 import com.donghaeng.withme.controlcommand.ControlCommand;
+import com.donghaeng.withme.controlcommand.volumecontrol.VolumeDown;
 import com.donghaeng.withme.featurelist.ControlCommandList;
 
 public class CommandListener {
@@ -9,27 +10,30 @@ public class CommandListener {
     public CommandListener(){}
 
     public void onListen(ControlCommand controlCommand){
-        switch (controlCommand.getControlCommandType()){
-            case ControlCommandList.CALL_VOLUME_DOWN:
-                // 음량 낮추기
-                break;
-            case ControlCommandList.CALL_VOLUME_UP:
-                // 음량 높이기
-                break;
-            case ControlCommandList.CALL_SILENT:
-                // 음소거
-                break;
-            case ControlCommandList.CALL_NORMAL:
-                // 음소거 해제
-                break;
-            case ControlCommandList.BRIGHTNESS_DOWN:
-                // 밝기 낮추기
-                break;
-            case ControlCommandList.BRIGHTNESS_UP:
-                // 밝기 높이기
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + controlCommand);
+//        switch (controlCommand.getControlCommandType()){
+//            case ControlCommandList.CALL_VOLUME_DOWN:
+//                // 음량 낮추기
+//                break;
+//            case ControlCommandList.CALL_VOLUME_UP:
+//                // 음량 높이기
+//                break;
+//            case ControlCommandList.CALL_SILENT:
+//                // 음소거
+//                break;
+//            case ControlCommandList.CALL_NORMAL:
+//                // 음소거 해제
+//                break;
+//            case ControlCommandList.BRIGHTNESS_DOWN:
+//                // 밝기 낮추기
+//                break;
+//            case ControlCommandList.BRIGHTNESS_UP:
+//                // 밝기 높이기
+//                break;
+//            default:
+//                throw new IllegalStateException("Unexpected value: " + controlCommand);
+//        }
+        if(controlCommand instanceof VolumeDown){
+            // 볼륨 다운 실행
         }
     }
 }
