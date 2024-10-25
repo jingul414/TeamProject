@@ -21,6 +21,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.view.MenuItem;
 
 import com.donghaeng.withme.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 // 로그인 액티비티
@@ -35,6 +37,18 @@ public class LoginActivity extends AppCompatActivity {
 
     // database 연결
     private FirebaseFirestore db;
+    // 인증 연결
+    private FirebaseAuth mAuth;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // 자동 로그인 시 사용
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            //reload();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +56,18 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
+        // 모든 firebase 기능 초기화
         db = FirebaseFirestore.getInstance();
         Login login = new Login(db);
+        mAuth = FirebaseAuth.getInstance();
+        mAuth.useAppLanguage();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             login_btn = (Button) findViewById(R.id.login_btn);
             sign_text = (TextView) findViewById(R.id.sign_up_text);
-            id_edit = (EditText) findViewById(R.id.id_editText);
+            id_edit = (EditText) findViewById(R.id.phone_editText);
             pw_edit = (EditText) findViewById(R.id.PW_editText);
             re_id_check = (CheckBox) findViewById(R.id.re_id_checkBox);
             auto_login_check = (CheckBox) findViewById(R.id.auto_login_checkBox);
