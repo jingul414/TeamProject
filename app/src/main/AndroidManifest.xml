@@ -12,7 +12,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WithMe"
         tools:targetApi="31">
+        <activity
+            android:name=".myscreen.SettingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".myscreen.TargetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".myscreen.ControllerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".myscreen.StartActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".myscreen.TargetMainActivity"
             android:exported="false" />
