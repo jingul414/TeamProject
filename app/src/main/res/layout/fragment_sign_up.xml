@@ -2,10 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".myscreen.SignUpActivity">
+    tools:context=".myscreen.SignUpFragment">
 
     <!--  회원가입 xml  -->
     <LinearLayout
@@ -15,24 +14,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3">
+        app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-            android:id="@+id/phone_editText"
+            android:id="@+id/id_editText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="전화번호"
-            android:inputType="phone" />
-
-        <TextView
-            android:id="@+id/phone_verification_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="본인인증"
-            android:textSize="20sp" />
+            android:hint="아이디"
+            android:inputType="text" />
 
         <EditText
             android:id="@+id/pw_editText"
@@ -50,6 +40,14 @@
             android:hint="비밀번호 확인"
             android:inputType="textPassword" />
 
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="본인인증"
+            android:textSize="20sp" />
+
         <Button
             android:id="@+id/sign_up_btn"
             android:layout_width="match_parent"
@@ -58,15 +56,4 @@
             android:textSize="20sp" />
     </LinearLayout>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
-        app:menu="@menu/bottom_nav_menu"
-        app:itemIconSize="36dp"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
