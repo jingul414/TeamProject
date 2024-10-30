@@ -32,33 +32,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".myscreen.TargetMainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".myscreen.ControllerMainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".myscreen.TargetConnectActivity"
-            android:exported="false" />
-        <activity
-            android:name=".myscreen.ControllerConnectActivity"
-            android:exported="false" />
-        <activity
-            android:name=".myscreen.SignUpActivity"
-            android:exported="false" />
-        <activity
-            android:name=".myscreen.SelectControlActivity"
-            android:exported="false" />
-        <activity
-            android:name=".myscreen.LoginActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

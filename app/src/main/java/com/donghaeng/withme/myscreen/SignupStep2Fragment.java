@@ -8,19 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.donghaeng.withme.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link StartFragment#newInstance} factory method to
+ * Use the {@link SignupStep2Fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StartFragment extends Fragment {
-
-    Button signup_button;
-    Button login_button;
+public class SignupStep2Fragment extends Fragment {
+    String sign_number = "";
     StartActivity startActivity;
+    Button next_button;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,7 +31,7 @@ public class StartFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public StartFragment() {
+    public SignupStep2Fragment() {
         // Required empty public constructor
     }
 
@@ -41,11 +41,11 @@ public class StartFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment StartFragment.
+     * @return A new instance of fragment SignupStep2Fragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static StartFragment newInstance(String param1, String param2) {
-        StartFragment fragment = new StartFragment();
+    public static SignupStep2Fragment newInstance(String param1, String param2) {
+        SignupStep2Fragment fragment = new SignupStep2Fragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -65,20 +65,15 @@ public class StartFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_start, container, false);
-        signup_button = view.findViewById(R.id.signup_buuton);
-        login_button = view.findViewById(R.id.login_button);
-
+        View view = inflater.inflate(R.layout.fragment_signup_step2, container, false);
+        next_button = view.findViewById(R.id.btn_next);
         startActivity = (StartActivity) requireActivity();
-
-        signup_button.setOnClickListener(v -> {
-            startActivity.changeFragment("signUp");
+        next_button.setOnClickListener(v -> {
+            EditText editText = view.findViewById(R.id.number);
+            sign_number = editText.getText().toString();
+            startActivity.setSignNumber(sign_number);
+            startActivity.changeFragment("step3");
         });
-        login_button.setOnClickListener(v -> {
-            startActivity.changeFragment("login");
-        });
-
         return view;
     }
 }

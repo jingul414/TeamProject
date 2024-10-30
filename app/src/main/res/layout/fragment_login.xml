@@ -1,83 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".myscreen.LoginFragment">
+    android:background="#FFFFF2">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/start_text_intro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="right"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/login_text_main"
+        style="@style/login_text_style_main"
+        android:gravity="top"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="221dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"/>
+
+    <View
+        android:id="@+id/login_view_login_box"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/login_view_login_box"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/start_text_intro"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="56dp"
+        android:layout_marginEnd="55dp"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <View
+        android:id="@+id/login_view_line"
+        android:layout_width="299dp"
+        android:layout_height="2dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/login_view_line"
+        android:layout_marginTop="74dp"
+        app:layout_constraintTop_toTopOf="@+id/login_view_login_box"
+        app:layout_constraintBottom_toBottomOf="@+id/login_view_login_box"
+        android:layout_marginBottom="74dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="56dp"
+        android:layout_marginEnd="56dp"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <EditText
+        android:id="@+id/login_text_phone_number"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:hint="@string/login_text_phone_number"
+        style="@style/login_text_phone_number"
+        android:gravity="start|center_vertical"
+        android:autofillHints="password"
+        android:inputType="text"
+        android:background="@android:color/transparent"
+        tools:ignore="TextFields"
+        app:layout_constraintTop_toTopOf="@+id/login_view_login_box"
+        android:layout_marginTop="15dp"
+        app:layout_constraintStart_toStartOf="@+id/login_view_login_box"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/login_view_line"/>
+
+    <EditText
+        android:id="@+id/login_text_password"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:hint="@string/login_text_password"
+        style="@style/login_text_password"
+        android:gravity="start|center_vertical"
+        android:autofillHints="password"
+        android:inputType="textPassword"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/login_view_line"
+        app:layout_constraintStart_toStartOf="@+id/login_view_login_box"
+        android:layout_marginStart="15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/login_view_login_box"
+        android:layout_marginBottom="15dp"/>
+
+    <RadioButton
+        style="@style/login_radio_login_history"
+        android:text="@string/login_radio_login_history"
+        android:layout_width="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:id="@+id/login_radio_login_history"
+        app:layout_constraintTop_toBottomOf="@+id/login_view_login_box"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="104dp"
+        android:layout_marginEnd="104dp"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
+        android:id="@+id/login_button"
+        style="@style/login_go"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="125dp"
+        android:layout_marginEnd="125dp"
+        android:backgroundTint="#FE7363"
+        android:paddingHorizontal="50dp"
+        android:text="@string/login_go"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3">
+        app:layout_constraintTop_toBottomOf="@+id/login_radio_login_history" />
 
-        <EditText
-            android:id="@+id/id_editText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-            android:ems="10"
-            android:hint="아이디"
-            android:inputType="text" />
-        <!-- android:digits 은 입력 가능 범위 제한 -->
-        <EditText
-            android:id="@+id/PW_editText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^*"
-            android:ems="10"
-            android:hint="비밀번호"
-            android:inputType="textPassword" />
+    <TextView
+        style="@style/login_text_set_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_text_set_password"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:id="@+id/login_text_set_password"
+        android:layout_marginTop="25dp"
+        app:layout_constraintTop_toBottomOf="@+id/login_button"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="120dp"
+        android:layout_marginEnd="120dp"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+    <TextView
+        style="@style/login_text_find_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_text_find_password"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:id="@+id/login_text_find_password"
+        app:layout_constraintTop_toBottomOf="@+id/login_text_set_password"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="135dp"
+        android:layout_marginEnd="135dp"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-            <CheckBox
-                android:id="@+id/re_id_checkBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="5"
-                android:text="아이디 기억"
-                android:textSize="10sp" />
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <CheckBox
-                android:id="@+id/auto_login_checkBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="5"
-                android:text="자동로그인"
-                android:textSize="10sp" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/login_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="로그인"
-            android:textSize="20dp" />
-
-        <!--    @string/sign_up_text 는 밑줄 쳐진 회원가입 문자열을 가르킴    -->
-        <TextView
-            android:id="@+id/sign_up_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/sign_up_text"
-            android:textSize="12dp" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/testText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="testTextView"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/start_text_intro"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
