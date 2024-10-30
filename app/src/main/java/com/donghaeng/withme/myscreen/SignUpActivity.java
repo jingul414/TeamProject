@@ -33,7 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.concurrent.TimeUnit;
 
-// 회원가입 액티비티
+// 회원가입 Activity
 public class SignUpActivity extends AppCompatActivity {
 
     private static final String TAG = "SignUpActivity";
@@ -46,7 +46,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     // database 연결
     private FirebaseFirestore db;
-    // 인증 연결
+    // 인증
     private FirebaseAuth mAuth;
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
@@ -66,40 +66,48 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
-                // 이 콜백은 두 가지 상황에서 호출됩니다:
-                // 1 - 즉시 인증. 경우에 따라 전화번호는 인증 코드를 보내거나 입력하지 않고도 즉시 인증될 수 있습니다.
-                // 2 - 자동 검색. 일부 기기에서 Google Play 서비스는 수신되는 인증 SMS를 자동으로 감지하여 사용자 작업 없이 인증을 수행할 수 있습니다.
+                /* 이 콜백이 호출되는 경우 */
+                /* 1. 경우에 따라 인증 코드를 보내거나 입력할 필요 없이 전화번호를 즉시 인증하는 경우 */
+                /* 2. Google Play 서비스가 수신되는 인증 SMS를 자동으로 감지하고 사용자의 조치 없이도 인증을 수행하는 경우 */
                 Log.d(TAG, "onVerificationCompleted:" + credential);
                 signInWithPhoneAuthCredential(credential);
             }
 
             @Override
             public void onVerificationFailed(@NonNull FirebaseException e) {
-                // This callback is invoked in an invalid request for verification is made,
-                // for instance if the the phone number format is not valid.
+                /* 전화번호 형식이 유효하지 않은 경우 등 유효하지 않은 인증 요청일 경우 호출 */
                 Log.w(TAG, "onVerificationFailed", e);
 
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    // Invalid request
+                    // 유효하지 않은 요청
+                    Log.e(TAG, "onVerificationFailed: " + e.getMessage());
                 } else if (e instanceof FirebaseTooManyRequestsException) {
-                    // The SMS quota for the project has been exceeded
+                    // 프로젝트의 SMS 할달량 초과
+                    Log.e(TAG, "onVerificationFailed: " + e.getMessage());
                 } else if (e instanceof FirebaseAuthMissingActivityForRecaptchaException) {
-                    // reCAPTCHA verification attempted with null Activity
+                    // null Activity에서 reCAPTCHA 검증 시도
+                    Log.e(TAG, "onVerificationFailed: " + e.getMessage());
                 }
-                // Show a message and update the UI
+                // 메시지 표시 및 UI 업데이트
             }
 
             @Override
             public void onCodeSent(@NonNull String verificationId,
                                    @NonNull PhoneAuthProvider.ForceResendingToken token) {
-                // The SMS verification code has been sent to the provided phone number, we
-                // now need to ask the user to enter the code and then construct a credential
-                // by combining the code with a verification ID.
+                /*
+                제공된 전화번호로 SMS 인증 코드가 전송되었으므로 이제 사용자에게 코드를
+                입력하도록 요청한 다음 코드를 인증 ID와 결합하여 자격 증명을 구성
+                */
                 Log.d(TAG, "onCodeSent:" + verificationId);
 
-                // Save verification ID and resending token so we can use them later
+                // 나중에 사용할 수 있도록 인증 ID를 저장하고 토큰을 다시 보내기
                 mVerificationId = verificationId;
                 mResendToken = token;
+            }
+
+            @Override
+            public void onCodeAutoRetrievalTimeOut(@NonNull String s) {
+                super.onCodeAutoRetrievalTimeOut(s);
             }
         };
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -116,6 +124,7 @@ public class SignUpActivity extends AppCompatActivity {
             return insets;
         });
     }
+
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -149,16 +158,21 @@ public class SignUpActivity extends AppCompatActivity {
             } else if (!phone.matches("^\\d{3}-?\\d{3,4}-?\\d{4}$")) {
                 Toast.makeText(SignUpActivity.this, "전화번호의 형식이 아닙니다.", Toast.LENGTH_LONG).show();
             }
+            phone = phone.replace("-", "");
+            phone = "+82" + phone.substring(1);
+            Log.d(TAG, "onClick: " + phone);
+
             // 전화번호 인증
             PhoneAuthOptions options =
                     PhoneAuthOptions.newBuilder(mAuth)
-                            .setPhoneNumber(phone)       // Phone number to verify
-                            .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                            .setPhoneNumber(phone)       // 인증할 핸드폰 번호
+                            .setTimeout(60L, TimeUnit.SECONDS) // 시간 초과 기준 및 단위
                             .setActivity(SignUpActivity.this)                 // (optional) Activity for callback binding
                             // If no activity is passed, reCAPTCHA verification can not be used.
                             .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
                             .build();
             PhoneAuthProvider.verifyPhoneNumber(options);
+            Log.d(TAG, "onClick: " + phone);
         }
     }
 
