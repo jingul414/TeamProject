@@ -1,0 +1,13 @@
+<!-- drawable/line_1.xml -->
+<vector
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="301dp"
+        android:height="4dp"
+        android:viewportWidth="301"
+        android:viewportHeight="4">
+
+    <path
+            android:pathData="M1,1 H300"
+            android:strokeWidth="4"
+            android:strokeColor="#FBCC68"/>
+</vector>

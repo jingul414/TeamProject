@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_signup_step1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFF2">
+
+    <TextView
+        android:id="@+id/signup_text_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/signup_text_name"
+        style="@style/signup_text"
+        android:gravity="top"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="221dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginEnd="19dp"/>
+
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:inputType="text"
+        android:id="@+id/number"
+        app:layout_constraintTop_toBottomOf="@+id/signup_text_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginEnd="100dp"
+        android:background="@drawable/edit_text_border"
+        android:paddingHorizontal="20dp"
+        style="@style/common_input"
+        android:hint="@string/signup_input_name"
+        android:autofillHints="이름"/>
+
+    <Button
+        style="@style/common_btn"
+        android:text="@string/next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:backgroundTint="#FE7363"
+        android:id="@+id/btn_next"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="125dp"
+        android:layout_marginEnd="125dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/number"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
