@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.donghaeng.withme.R;
 
@@ -18,8 +19,8 @@ import com.donghaeng.withme.R;
  */
 public class StartFragment extends Fragment {
 
-    Button signup_button;
-    Button login_button;
+    LinearLayout signup_button;
+    LinearLayout login_button;
     StartActivity startActivity;
 
     // TODO: Rename parameter arguments, choose names that match
