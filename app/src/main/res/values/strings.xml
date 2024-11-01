@@ -5,7 +5,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="next">다음</string>
     <string name="apply">확인</string>
-    
+
     <!-- Start -->
     <string name="start_text_main">동행을 사용중이신가요??</string>"
     <string name="start_button1_text">네, 써본 적 있어요!</string>
@@ -33,4 +33,7 @@
     <string name="input_password_valid">비밀번호 확인 (재입력)</string>
     <string name="warning_password_valid">비밀번호가 서로 달라요!</string>
     <string name="withme_start">동행 시작하기</string>
+    <!-- Select -->
+    <string name="select_text">당신은 어떤 사람인가요?</string>"
+    <string name="control_scan_text">동행인의 QR을 스캔하세요.</string>
 </resources>

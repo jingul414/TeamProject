@@ -45,6 +45,12 @@ public class StartActivity extends AppCompatActivity {
             Intent intent = null;
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.setCustomAnimations( // 프래그먼트 전환 애니메이션 설정
+                    R.anim.slide_in_right,  // 새로운 프래그먼트 들어올 때
+                    R.anim.slide_out_left,  // 현재 프래그먼트 나갈 때
+                    R.anim.slide_in_left,   // 뒤로가기할 때 새 프래그먼트 들어올 때
+                    R.anim.slide_out_right  // 뒤로가기할 때 현재 프래그먼트 나갈 때
+            );
 
             switch (fragmentName) {
                 case "controller":
@@ -72,6 +78,21 @@ public class StartActivity extends AppCompatActivity {
                     transaction.replace(R.id.fragment_container, new SignupStep3Fragment());
                     transaction.addToBackStack(null); // 뒤로가기 지원
                     transaction.commit();
+                    break;
+                case "select":
+                    transaction.replace(R.id.fragment_container, new SelectFragment());
+                    transaction.addToBackStack(null); // 뒤로가기 지원
+                    transaction.commit();
+                    break;
+                case "controller_QR":
+                    intent = new Intent(this, ControllerActivity.class);
+                    intent.putExtra("fragmentName", "controller_QR");
+                    startActivity(intent);
+                    break;
+                case "target_QR":
+                    intent = new Intent(this, TargetActivity.class);
+                    intent.putExtra("fragmentName", "target_QR");
+                    startActivity(intent);
                     break;
                 default:
                     break;

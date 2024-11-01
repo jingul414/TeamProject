@@ -4,11 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFF2"
     tools:context=".myscreen.SelectFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -17,29 +18,76 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints">
 
-        <Button
+        <TextView
+            android:id="@+id/select_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/start_text_style_main"
+            android:gravity="center"
+            android:layout_marginBottom="15dp"
+            android:text="@string/select_text" />
+
+        <LinearLayout
             android:id="@+id/controller_btn"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_marginBottom="15dp"
-            android:layout_weight="1"
-            android:background="@drawable/button_background"
-            app:backgroundTint="#FF9800"
-            android:text="제어자"
-            android:textSize="48sp"
-            tools:ignore="MissingConstraints" />
 
-        <Button
+            android:gravity="center"
+            android:padding="15dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/rounded_button">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="보호자"
+                android:textSize="48sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="동행인을 돕고자 합니다."
+                android:textSize="24sp"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="4dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/target_btn"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="15dp"
-            android:layout_weight="1"
-            android:background="@drawable/button_background"
-            app:backgroundTint="#2196F3"
-            android:text="피제어자"
-            android:textSize="48sp"
-            tools:ignore="MissingConstraints" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="15dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/rounded_button">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="동행인"
+                android:textSize="48sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="스마트폰 사용이 어렵습니다."
+                android:textSize="24sp"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="4dp"/>
+
+        </LinearLayout>
+
+
     </LinearLayout>
 
 
