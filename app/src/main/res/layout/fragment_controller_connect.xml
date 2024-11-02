@@ -4,81 +4,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFF2"
     tools:context=".myscreen.ControllerConnectFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <LinearLayout
-
-        android:layout_width="411dp"
-        android:layout_height="472dp"
-        android:gravity="center"
-        android:orientation="vertical"
+    <TextView
+        android:id="@+id/textView4"
+        style="@style/control_scan_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/control_scan_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3">
+        app:layout_constraintVertical_bias="0.19999999" />
 
-        <TextView
-            android:id="@+id/info_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="인증번호를 입력하세요."
-            android:textSize="36sp" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="20dp" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/num1_edit"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border"
-                android:gravity="center"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textSize="60sp" />
-
-            <EditText
-                android:id="@+id/num2_edit"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border"
-                android:gravity="center"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textSize="60sp" />
-
-            <EditText
-                android:id="@+id/num3_edit"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border"
-                android:gravity="center"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textSize="60sp" />
-
-            <EditText
-                android:id="@+id/num4_edit"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border"
-                android:gravity="center"
-                android:inputType="number"
-                android:maxLength="1"
-                android:textSize="60sp" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
+    <FrameLayout
+        android:id="@+id/child_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/rounded_frame_background"
+        android:padding="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4">
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
