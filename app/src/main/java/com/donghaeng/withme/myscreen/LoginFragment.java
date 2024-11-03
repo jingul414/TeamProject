@@ -69,7 +69,7 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-        testTextView = view.findViewById(R.id.testText);
+//        testTextView = view.findViewById(R.id.testText);
         login_btn = view.findViewById(R.id.login_button);
         startActivity = (StartActivity) requireActivity();
         String tmp = startActivity.getSignName() + "\n" + startActivity.getSignNumber() + "\n" + startActivity.getSignPw() + "\n" + startActivity.getSignPwValid();
