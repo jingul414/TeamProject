@@ -86,4 +86,6 @@ dependencies {
 
     // QR Code
     implementation ("com.google.zxing:core:3.4.1")
+
+    implementation("androidx.browser:browser:1.8.0")
 }
