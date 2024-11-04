@@ -1,4 +1,4 @@
-package com.donghaeng.withme.myscreen;
+package com.donghaeng.withme.screen.start.connect;
 
 import android.os.Bundle;
 
@@ -7,26 +7,32 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.screen.start.StartActivity;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ControllerMainFragment#newInstance} factory method to
+ * Use the {@link SelectFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ControllerMainFragment extends Fragment {
+public class SelectFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    LinearLayout controller_btn;
+    LinearLayout target_btn;
+    StartActivity startActivity;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    public ControllerMainFragment() {
+    public SelectFragment() {
         // Required empty public constructor
     }
 
@@ -36,11 +42,11 @@ public class ControllerMainFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ControllerMainFragment.
+     * @return A new instance of fragment SelectFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ControllerMainFragment newInstance(String param1, String param2) {
-        ControllerMainFragment fragment = new ControllerMainFragment();
+    public static SelectFragment newInstance(String param1, String param2) {
+        SelectFragment fragment = new SelectFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -60,7 +66,25 @@ public class ControllerMainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_controller_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_select, container, false);
+        controller_btn = view.findViewById(R.id.controller_btn);
+        target_btn = view.findViewById(R.id.target_btn);
+
+        startActivity = (StartActivity) getActivity();
+
+        controller_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity.changeFragment("controller_QR");
+            }
+        });
+
+        target_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity.changeFragment("target_QR");
+            }
+        });
+        return view;
     }
 }

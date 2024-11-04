@@ -1,10 +1,8 @@
 package com.donghaeng.withme.background.volumecontrolmanager;
 
-import android.content.Context;
 import android.util.Log;
 import com.donghaeng.withme.controlcommand.ControlCommand;
 import java.util.Objects;
-import android.media.AudioManager;
 
 public class VolumeUpManager extends VolumeControlManager {
     //private AudioManager audioManager;

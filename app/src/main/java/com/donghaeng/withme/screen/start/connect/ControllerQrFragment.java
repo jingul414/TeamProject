@@ -1,4 +1,4 @@
-package com.donghaeng.withme.myscreen;
+package com.donghaeng.withme.screen.start.connect;
 
 import android.Manifest;
 import android.app.AlertDialog;
