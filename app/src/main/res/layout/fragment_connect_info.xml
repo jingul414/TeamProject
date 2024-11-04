@@ -7,7 +7,7 @@
     android:background="@drawable/fragment_background"
     android:clipChildren="true"
     android:clipToOutline="true"
-    tools:context=".myscreen.ConnectInfoFragment">
+    tools:context=".screen.start.connect.ConnectInfoFragment">
 
 
     <LinearLayout

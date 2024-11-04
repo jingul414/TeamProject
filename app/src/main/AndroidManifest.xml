@@ -18,43 +18,16 @@
             android:name=".companion_allow_list"
             android:exported="false" />
         <activity
-            android:name=".myscreen.SettingActivity"
+            android:name=".screen.setting.SettingActivity"
             android:exported="false" />
         <activity
-            android:name=".myscreen.TargetActivity"
+            android:name=".screen.main.TargetActivity"
             android:exported="false" />
         <activity
-            android:name=".myscreen.ControllerActivity"
+            android:name=".screen.main.ControllerActivity"
             android:exported="false" />
         <activity
-            android:name=".myscreen.StartActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".myscreen.TargetMainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".myscreen.ControllerMainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".myscreen.TargetConnectActivity"
-            android:exported="false" />
-        <activity
-            android:name=".myscreen.ControllerConnectActivity"
-            android:exported="false" />
-        <activity
-            android:name=".myscreen.SignUpActivity"
-            android:exported="false" />
-        <activity
-            android:name=".myscreen.SelectControlActivity"
-            android:exported="false" />
-        <activity
-            android:name=".myscreen.LoginActivity"
+            android:name=".screen.start.StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

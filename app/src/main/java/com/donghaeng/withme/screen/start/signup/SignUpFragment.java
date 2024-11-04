@@ -1,4 +1,4 @@
-package com.donghaeng.withme.myscreen;
+package com.donghaeng.withme.screen.start.signup;
 
 import android.os.Bundle;
 
@@ -7,22 +7,15 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.donghaeng.withme.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link LoginFragment#newInstance} factory method to
+ * Use the {@link SignUpFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-
-public class LoginFragment extends Fragment {
-
-    Button login_btn;
-    StartActivity startActivity;
-    TextView testTextView;
+public class SignUpFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -33,7 +26,7 @@ public class LoginFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public LoginFragment() {
+    public SignUpFragment() {
         // Required empty public constructor
     }
 
@@ -43,11 +36,11 @@ public class LoginFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment LoginFragment.
+     * @return A new instance of fragment SignUpFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LoginFragment newInstance(String param1, String param2) {
-        LoginFragment fragment = new LoginFragment();
+    public static SignUpFragment newInstance(String param1, String param2) {
+        SignUpFragment fragment = new SignUpFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -67,19 +60,7 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
-
-//        testTextView = view.findViewById(R.id.testText);
-        login_btn = view.findViewById(R.id.login_button);
-        startActivity = (StartActivity) requireActivity();
-        String tmp = startActivity.getSignName() + "\n" + startActivity.getSignNumber() + "\n" + startActivity.getSignPw() + "\n" + startActivity.getSignPwValid();
-        testTextView.setText(tmp);
-        login_btn.setOnClickListener(v -> {
-            // 로그인 검증 로직 추가
-            startActivity.changeFragment("controller");
-        });
-
-        return view;
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_sign_up, container, false);
     }
-
 }

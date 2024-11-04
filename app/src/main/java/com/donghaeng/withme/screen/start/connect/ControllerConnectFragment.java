@@ -1,4 +1,4 @@
-package com.donghaeng.withme.myscreen;
+package com.donghaeng.withme.screen.start.connect;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

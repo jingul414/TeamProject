@@ -1,4 +1,4 @@
-package com.donghaeng.withme.myscreen;
+package com.donghaeng.withme.screen.start;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.screen.start.connect.SelectFragment;
+import com.donghaeng.withme.screen.start.login.LoginFragment;
+import com.donghaeng.withme.screen.main.ControllerActivity;
+import com.donghaeng.withme.screen.main.TargetActivity;
+import com.donghaeng.withme.screen.start.signup.SignupStep1Fragment;
+import com.donghaeng.withme.screen.start.signup.SignupStep2Fragment;
+import com.donghaeng.withme.screen.start.signup.SignupStep3Fragment;
 
 public class StartActivity extends AppCompatActivity {
     private String sign_name = "";
@@ -39,7 +46,7 @@ public class StartActivity extends AppCompatActivity {
         });
     }
 
-    void changeFragment(String fragmentName){
+    public void changeFragment(String fragmentName){
         // 액티비티가 유효한 상태인지 확인
         if (!isFinishing() && !isDestroyed()) {
             Intent intent = null;
@@ -100,28 +107,28 @@ public class StartActivity extends AppCompatActivity {
         }
 
     }
-    void setSignName(String name){
+    public void setSignName(String name){
         sign_name = name;
     }
-    void setSignNumber(String number){
+    public void setSignNumber(String number){
         sign_number = number;
     }
-    void setSignPw(String pw){
+    public void setSignPw(String pw){
         sign_pw = pw;
     }
-    void setSignPwValid(String pw_valid){
+    public void setSignPwValid(String pw_valid){
         sign_pw_valid = pw_valid;
     }
-    String getSignName(){
+    public String getSignName(){
         return sign_name;
     }
-    String getSignNumber(){
+    public String getSignNumber(){
         return sign_number;
     }
-    String getSignPw(){
+    public String getSignPw(){
         return sign_pw;
     }
-    String getSignPwValid(){
+    public String getSignPwValid(){
         return sign_pw_valid;
     }
 }
