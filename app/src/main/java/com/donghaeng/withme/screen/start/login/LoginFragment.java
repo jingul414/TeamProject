@@ -1,4 +1,4 @@
-package com.donghaeng.withme.myscreen;
+package com.donghaeng.withme.screen.start.login;
 
 import android.os.Bundle;
 
@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.screen.start.StartActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,11 +70,9 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-//        testTextView = view.findViewById(R.id.testText);
         login_btn = view.findViewById(R.id.login_button);
         startActivity = (StartActivity) requireActivity();
         String tmp = startActivity.getSignName() + "\n" + startActivity.getSignNumber() + "\n" + startActivity.getSignPw() + "\n" + startActivity.getSignPwValid();
-        testTextView.setText(tmp);
         login_btn.setOnClickListener(v -> {
             // 로그인 검증 로직 추가
             startActivity.changeFragment("controller");

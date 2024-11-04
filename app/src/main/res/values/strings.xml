@@ -59,5 +59,8 @@
 
     <!-- Select -->
     <string name="select_text">당신은 어떤 사람인가요?</string>"
+
+    <!-- Connect-->
     <string name="control_scan_text">동행인의 QR을 스캔하세요.</string>
+    <string name="target_qr_text">보호자에게 QR을 보여주세요.</string>
 </resources>

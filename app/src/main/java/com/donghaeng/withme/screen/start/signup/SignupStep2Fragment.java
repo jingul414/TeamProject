@@ -160,10 +160,10 @@ public class SignupStep2Fragment extends Fragment {
         authenticationNumberEditText = view.findViewById(R.id.edit_authentication_number);
         nextButton = view.findViewById(R.id.btn_next);
         notReceiveAuthenticationNumberTextView = view.findViewById(R.id.not_receive_certification);
-        authenticationNumberNotificationTextView.setVisibility(View.INVISIBLE);
-        authenticationNumberEditText.setVisibility(View.INVISIBLE);
-        nextButton.setVisibility(View.INVISIBLE);
-        notReceiveAuthenticationNumberTextView.setVisibility(View.INVISIBLE);
+//        authenticationNumberNotificationTextView.setVisibility(View.INVISIBLE);
+//        authenticationNumberEditText.setVisibility(View.INVISIBLE);
+//        nextButton.setVisibility(View.INVISIBLE);
+//        notReceiveAuthenticationNumberTextView.setVisibility(View.INVISIBLE);
         startActivity = (StartActivity) requireActivity();
         sendAuthenticationNumberButton.setOnClickListener(new SendAuthenticationNumberBtnListener());
         nextButton.setOnClickListener(new NextBtnListener());
@@ -247,14 +247,15 @@ public class SignupStep2Fragment extends Fragment {
     class NextBtnListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            authenticationNumber = String.valueOf(authenticationNumberEditText.getText());
-            if (authenticationNumber.isEmpty()) {
-                Toast.makeText(startActivity, "인증번호를 입력하세요.", Toast.LENGTH_SHORT).show();
-            } else if (authenticationNumber.length() != 6) {
-                Toast.makeText(startActivity, "올바르지 않은 인증번호 양식입니다.", Toast.LENGTH_LONG).show();
-            } else{
-                verifyPhoneNumberWithCode(mVerificationId, authenticationNumber);
-            }
+            startActivity.changeFragment("step3");
+//            authenticationNumber = String.valueOf(authenticationNumberEditText.getText());
+//            if (authenticationNumber.isEmpty()) {
+//                Toast.makeText(startActivity, "인증번호를 입력하세요.", Toast.LENGTH_SHORT).show();
+//            } else if (authenticationNumber.length() != 6) {
+//                Toast.makeText(startActivity, "올바르지 않은 인증번호 양식입니다.", Toast.LENGTH_LONG).show();
+//            } else{
+//                verifyPhoneNumberWithCode(mVerificationId, authenticationNumber);
+//            }
         }
     }
 

@@ -82,4 +82,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     implementation("com.android.support:appcompat-v7:28.0.0")   // Vector Asset
+
+    // QR Code
+    implementation ("com.google.zxing:core:3.4.1")
 }
