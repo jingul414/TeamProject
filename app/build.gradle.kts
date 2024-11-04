@@ -52,10 +52,11 @@ dependencies {
     // 백그라운드
     implementation("androidx.work:work-runtime:2.7.1")
 
+    implementation("androidx.browser:browser:1.8.0")
+
     // firebase
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
-
 
     // TODO: Add the dependencies for Firebase products you want to use
     implementation("com.google.firebase:firebase-analytics")    // analytics

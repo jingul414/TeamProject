@@ -16,11 +16,8 @@ import android.widget.Toast;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.screen.start.StartActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException;
@@ -31,11 +28,6 @@ import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SignupStep2Fragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SignupStep2Fragment extends Fragment {
 
     private static final String TAG = "PhoneAuthFragment";
@@ -50,11 +42,6 @@ public class SignupStep2Fragment extends Fragment {
     Button nextButton;
     TextView notReceiveAuthenticationNumberTextView;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PHONE_NUMBER = "Phone Number";
-    private static final String ARG_AUTHENTICATION_NUMBER = "Authentication Number";
-
     // TODO: Rename and change types of parameters
     private String phoneNumber;
     private String authenticationNumber;
@@ -68,31 +55,9 @@ public class SignupStep2Fragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SignupStep2Fragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SignupStep2Fragment newInstance(String param1, String param2) {
-        SignupStep2Fragment fragment = new SignupStep2Fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PHONE_NUMBER, param1);
-        args.putString(ARG_AUTHENTICATION_NUMBER, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            phoneNumber = getArguments().getString(ARG_PHONE_NUMBER);
-            authenticationNumber = getArguments().getString(ARG_AUTHENTICATION_NUMBER);
-        }
         mAuth = FirebaseAuth.getInstance();
         mAuth.useAppLanguage();
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -160,10 +125,10 @@ public class SignupStep2Fragment extends Fragment {
         authenticationNumberEditText = view.findViewById(R.id.edit_authentication_number);
         nextButton = view.findViewById(R.id.btn_next);
         notReceiveAuthenticationNumberTextView = view.findViewById(R.id.not_receive_certification);
-        authenticationNumberNotificationTextView.setVisibility(View.INVISIBLE);
-        authenticationNumberEditText.setVisibility(View.INVISIBLE);
-        nextButton.setVisibility(View.INVISIBLE);
-        notReceiveAuthenticationNumberTextView.setVisibility(View.INVISIBLE);
+//        authenticationNumberNotificationTextView.setVisibility(View.INVISIBLE);
+//        authenticationNumberEditText.setVisibility(View.INVISIBLE);
+//        nextButton.setVisibility(View.INVISIBLE);
+//        notReceiveAuthenticationNumberTextView.setVisibility(View.INVISIBLE);
         startActivity = (StartActivity) requireActivity();
         sendAuthenticationNumberButton.setOnClickListener(new SendAuthenticationNumberBtnListener());
         nextButton.setOnClickListener(new NextBtnListener());
