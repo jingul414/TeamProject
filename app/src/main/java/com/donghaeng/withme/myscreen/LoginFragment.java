@@ -22,7 +22,6 @@ public class LoginFragment extends Fragment {
 
     Button login_btn;
     StartActivity startActivity;
-    TextView testTextView;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -69,11 +68,9 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-//        testTextView = view.findViewById(R.id.testText);
         login_btn = view.findViewById(R.id.login_button);
         startActivity = (StartActivity) requireActivity();
         String tmp = startActivity.getSignName() + "\n" + startActivity.getSignNumber() + "\n" + startActivity.getSignPw() + "\n" + startActivity.getSignPwValid();
-        testTextView.setText(tmp);
         login_btn.setOnClickListener(v -> {
             // 로그인 검증 로직 추가
             startActivity.changeFragment("controller");
