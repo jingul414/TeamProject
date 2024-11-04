@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFF2">
+
+    <!-- res/layout/dialog_confirm_exit.xml -->
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="150dp"
+        android:background="@drawable/dialog_background"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- 다이얼로그 메시지 텍스트 -->
+        <TextView
+            android:id="@+id/dialog_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="@string/leave_alert"
+            style="@style/leave_alert_text"
+            android:textColor="#000000"
+            android:textSize="19sp" />
+
+        <!-- 버튼을 감싸는 레이아웃 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <!-- '네' 버튼 -->
+            <Button
+                android:id="@+id/yes_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="5dp"
+
+                android:layout_weight="1"
+                android:backgroundTint="#FF8A80"
+                android:text="@string/yes_btn"
+                android:textColor="#FFFFFF" />
+
+            <!-- '아니요' 버튼 -->
+            <Button
+                android:id="@+id/no_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="15dp"
+
+                android:layout_weight="1"
+                android:backgroundTint="#FF8A80"
+                android:text="@string/no_btn"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

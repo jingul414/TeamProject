@@ -55,9 +55,15 @@
         <item name="android:textColor">#000000</item>
         <item name="android:lineSpacingExtra">4sp</item> <!-- 추가적인 줄 간격 -->
         <item name="android:lineSpacingMultiplier">1.2</item> <!-- 줄 간격 배율 -->
+    </style>
+    <style name="common_btn_v2">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="colorButtonNormal">#FBCC68</item>
+        <item name="android:lineSpacingExtra">12sp</item> <!-- 줄 간격 추가 -->
+        <item name="android:lineSpacingMultiplier">1.0</item>
         <item name="android:fontFamily">@font/noto_sans_black</item>
     </style>
-
 
     <!-- Login -->
     <style name="login_text_style_main">
@@ -125,4 +131,47 @@
         <item name="android:lineSpacingMultiplier">1.2</item> <!-- 줄 간격 배율 -->
         <item name="android:fontFamily">@font/noto_sans_black</item>
     </style>
+    <!-- Select -->
+    <style name="select_text">
+        <item name="android:textSize">32sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:lineSpacingExtra">4sp</item> <!-- 추가적인 줄 간격 -->
+        <item name="android:lineSpacingMultiplier">1.2</item> <!-- 줄 간격 배율 -->
+    </style>
+
+    <!-- Setting-->
+    <style name="setting_head_text">
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">@font/noto_sans_black</item>
+    </style>
+    <style name="control_scan_text">
+        <item name="android:textSize">32sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:lineSpacingExtra">4sp</item> <!-- 추가적인 줄 간격 -->
+        <item name="android:lineSpacingMultiplier">1.2</item> <!-- 줄 간격 배율 -->
+    </style>
+
+    <style name="setting_body_text">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">@font/noto_sans_black</item>
+    </style>
+
+    <style name="user_name">
+        <item name="android:textSize">50sp</item>
+        <item name="android:fontFamily">@font/noto_sans_black</item>
+    </style>
+
+    <!-- Leave -->
+    <style name="leave_alert_text">
+        <item name="android:textSize">30sp</item>
+        <item name="android:fontFamily">@font/noto_sans_black</item>
+    </style>
+
+    <!-- Controller Main1 -->
+
+
 </resources>
