@@ -1,4 +1,4 @@
-package com.donghaeng.withme.myscreen;
+package com.donghaeng.withme.screen.start.signup;
 
 import android.os.Bundle;
 
@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.screen.start.StartActivity;
 
 /**
  * A simple {@link Fragment} subclass.

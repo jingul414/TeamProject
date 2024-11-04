@@ -18,18 +18,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WithMe"
         tools:targetApi="31">
-
         <activity
-            android:name=".myscreen.SettingActivity"
+            android:name=".screen.setting.SettingActivity"
             android:exported="false" />
         <activity
-            android:name=".myscreen.TargetActivity"
+            android:name=".screen.main.TargetActivity"
             android:exported="false" />
         <activity
-            android:name=".myscreen.ControllerActivity"
+            android:name=".screen.main.ControllerActivity"
             android:exported="false" />
         <activity
-            android:name=".myscreen.StartActivity"
+            android:name=".screen.start.StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

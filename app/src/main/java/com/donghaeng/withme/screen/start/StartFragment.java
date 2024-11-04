@@ -1,4 +1,4 @@
-package com.donghaeng.withme.myscreen;
+package com.donghaeng.withme.screen.start;
 
 import android.os.Bundle;
 
@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.donghaeng.withme.R;
@@ -68,17 +67,13 @@ public class StartFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_start, container, false);
-        signup_button = view.findViewById(R.id.signup_buuton);
+        signup_button = view.findViewById(R.id.signup_button);
         login_button = view.findViewById(R.id.login_button);
 
         startActivity = (StartActivity) requireActivity();
 
-        signup_button.setOnClickListener(v -> {
-            startActivity.changeFragment("signUp");
-        });
-        login_button.setOnClickListener(v -> {
-            startActivity.changeFragment("login");
-        });
+        signup_button.setOnClickListener(v -> startActivity.changeFragment("signUp"));
+        login_button.setOnClickListener(v -> startActivity.changeFragment("login"));
 
         return view;
     }

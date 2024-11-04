@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
 
     // Add the Google services Gradle plugin
-     id("com.google.gms.google-services")
+    id("com.google.gms.google-services")
 
 }
 
@@ -18,6 +18,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true        // Vector 라이브러리 사용
     }
 
     buildTypes {
@@ -51,10 +52,11 @@ dependencies {
     // 백그라운드
     implementation("androidx.work:work-runtime:2.7.1")
 
+    implementation("androidx.browser:browser:1.8.0")
+
     // firebase
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
-
 
     // TODO: Add the dependencies for Firebase products you want to use
     implementation("com.google.firebase:firebase-analytics")    // analytics
@@ -79,4 +81,9 @@ dependencies {
     // Kotlin coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+
+    implementation("com.android.support:appcompat-v7:28.0.0")   // Vector Asset
+
+    // QR Code
+    implementation ("com.google.zxing:core:3.4.1")
 }

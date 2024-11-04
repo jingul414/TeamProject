@@ -1,4 +1,4 @@
-package com.donghaeng.withme.myscreen;
+package com.donghaeng.withme.screen.main;
 
 import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
@@ -8,6 +8,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.screen.start.connect.ControllerConnectFragment;
 
 public class ControllerActivity extends AppCompatActivity {
 
