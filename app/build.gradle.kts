@@ -52,7 +52,11 @@ dependencies {
     // 백그라운드
     implementation("androidx.work:work-runtime:2.7.1")
 
+    // browser
     implementation("androidx.browser:browser:1.8.0")
+
+    // Bcrypt 암호화
+    implementation("org.mindrot:jbcrypt:0.4")
 
     // firebase
     // Import the Firebase BoM

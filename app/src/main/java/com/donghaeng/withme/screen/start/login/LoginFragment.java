@@ -72,7 +72,6 @@ public class LoginFragment extends Fragment {
 
         login_btn = view.findViewById(R.id.login_button);
         startActivity = (StartActivity) requireActivity();
-        String tmp = startActivity.getSignName() + "\n" + startActivity.getSignNumber() + "\n" + startActivity.getSignPw() + "\n" + startActivity.getSignPwValid();
         login_btn.setOnClickListener(v -> {
             // 로그인 검증 로직 추가
             startActivity.changeFragment("controller");

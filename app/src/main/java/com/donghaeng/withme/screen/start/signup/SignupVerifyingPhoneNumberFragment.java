@@ -21,37 +21,34 @@ import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.concurrent.TimeUnit;
 
-public class SignupStep2Fragment extends Fragment {
+public class SignupVerifyingPhoneNumberFragment extends Fragment {
 
-    private static final String TAG = "PhoneAuthFragment";
+    private static final String TAG = "SignupVerifyingPhoneNumberFragment";
 
-    StartActivity startActivity;
+    private StartActivity startActivity;
 
-    TextView phoneNumbernotificationTextView;
-    EditText phoneNumberEditText;
-    Button sendAuthenticationNumberButton;
-    TextView authenticationNumberNotificationTextView;
-    EditText authenticationNumberEditText;
-    Button nextButton;
-    TextView notReceiveAuthenticationNumberTextView;
+    TextView phoneNumberNotificationText;
+    EditText phoneNumberEdit;
+    Button sendingVerificationCodeBtn;
+    TextView verificationCodeNotificationText;
+    EditText verificationCodeEdit;
+    Button nextBtn;
+    TextView notReceiveVerificationCodeText;
 
-    // TODO: Rename and change types of parameters
     private String phoneNumber;
-    private String authenticationNumber;
 
     private FirebaseAuth mAuth;
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
-    public SignupStep2Fragment() {
+    public SignupVerifyingPhoneNumberFragment() {
         // Required empty public constructor
     }
 
@@ -116,29 +113,35 @@ public class SignupStep2Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_signup_step2, container, false);
+        View view = inflater.inflate(R.layout.fragment_signup_verifying_phone_number, container, false);
         // UI 요소 초기화
-        phoneNumbernotificationTextView = view.findViewById(R.id.signup_text_name);
-        phoneNumberEditText = view.findViewById(R.id.edit_phone_number);
-        sendAuthenticationNumberButton = view.findViewById(R.id.btn_send_authentication_number);
-        authenticationNumberNotificationTextView = view.findViewById(R.id.signup_certification);
-        authenticationNumberEditText = view.findViewById(R.id.edit_authentication_number);
-        nextButton = view.findViewById(R.id.btn_next);
-        notReceiveAuthenticationNumberTextView = view.findViewById(R.id.not_receive_certification);
-//        authenticationNumberNotificationTextView.setVisibility(View.INVISIBLE);
-//        authenticationNumberEditText.setVisibility(View.INVISIBLE);
-//        nextButton.setVisibility(View.INVISIBLE);
-//        notReceiveAuthenticationNumberTextView.setVisibility(View.INVISIBLE);
+        phoneNumberNotificationText = view.findViewById(R.id.signup_text_phone_number_notification);
+        phoneNumberEdit = view.findViewById(R.id.signup_edit_phone_number);
+        sendingVerificationCodeBtn = view.findViewById(R.id.signup_btn_send_verification_code);
+        verificationCodeNotificationText = view.findViewById(R.id.signup_verification_code);
+        verificationCodeEdit = view.findViewById(R.id.signup_edit_verification_code);
+        nextBtn = view.findViewById(R.id.btn_next);
+        notReceiveVerificationCodeText = view.findViewById(R.id.signup_not_receive_verification_code);
+        verificationCodeNotificationText.setVisibility(View.INVISIBLE);
+        verificationCodeEdit.setVisibility(View.INVISIBLE);
+        nextBtn.setVisibility(View.INVISIBLE);
+        notReceiveVerificationCodeText.setVisibility(View.INVISIBLE);
         startActivity = (StartActivity) requireActivity();
-        sendAuthenticationNumberButton.setOnClickListener(new SendAuthenticationNumberBtnListener());
-        nextButton.setOnClickListener(new NextBtnListener());
-        notReceiveAuthenticationNumberTextView.setOnClickListener(new NotReceiveAuthenticationNumberListener());
+        sendingVerificationCodeBtn.setOnClickListener(new SendingVerificationCodeBtnListener());
+        nextBtn.setOnClickListener(new NextBtnListener());
+        notReceiveVerificationCodeText.setOnClickListener(new NotReceiveVerificationCodeTextListener());
         return view;
     }
 
     private void verifyPhoneNumberWithCode(String verificationId, String code) {
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
-        signInWithPhoneAuthCredential(credential);
+        // TODO: 튕기는 거 해결, but 에러 안 뜨는 경우 존재 => 수정 요망
+        try {
+            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
+            signInWithPhoneAuthCredential(credential);
+        } catch (Exception e) {
+            Log.e(TAG, "Verification failed: " + e.getMessage());
+            Toast.makeText(startActivity, "인증에 실패했습니다. 올바른 인증번호를 입력하세요.", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
@@ -148,9 +151,9 @@ public class SignupStep2Fragment extends Fragment {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
 
-                        FirebaseUser user = task.getResult().getUser();
+                        // FirebaseUser user = task.getResult().getUser();
                         // Update UI
-                        startActivity.changeFragment("step3");
+                        startActivity.changeFragment("SignupPassWordFragment");
                     } else {
                         // Sign in failed, display a message and update the UI
                         Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -175,19 +178,17 @@ public class SignupStep2Fragment extends Fragment {
         PhoneAuthProvider.verifyPhoneNumber(options);
     }
 
-    class SendAuthenticationNumberBtnListener implements View.OnClickListener {
+    class SendingVerificationCodeBtnListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            phoneNumber = String.valueOf(phoneNumberEditText.getText());
+            phoneNumber = String.valueOf(phoneNumberEdit.getText());
 
             if (phoneNumber.isEmpty()) {
                 Toast.makeText(startActivity, "전화번호를 입력하세요.", Toast.LENGTH_SHORT).show();
             } else if (!phoneNumber.matches("^\\d{3}-?\\d{3,4}-?\\d{4}$")) {
                 Toast.makeText(startActivity, "전화번호의 형식이 아닙니다.", Toast.LENGTH_LONG).show();
             }else{
-                String phone = phoneNumber;
-                phone = phone.replace("-", "");
-                phone = "+82" + phone.substring(1);
+                String phone = changeToAvailablePhoneNumber();
 
                 // 전화번호 인증
                 PhoneAuthOptions options =
@@ -201,10 +202,10 @@ public class SignupStep2Fragment extends Fragment {
                 PhoneAuthProvider.verifyPhoneNumber(options);
                 Log.w(TAG, "전화번호: " + phone);
 
-                authenticationNumberNotificationTextView.setVisibility(View.VISIBLE);
-                authenticationNumberEditText.setVisibility(View.VISIBLE);
-                nextButton.setVisibility(View.VISIBLE);
-                notReceiveAuthenticationNumberTextView.setVisibility(View.VISIBLE);
+                verificationCodeNotificationText.setVisibility(View.VISIBLE);
+                verificationCodeEdit.setVisibility(View.VISIBLE);
+                nextBtn.setVisibility(View.VISIBLE);
+                notReceiveVerificationCodeText.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -212,25 +213,29 @@ public class SignupStep2Fragment extends Fragment {
     class NextBtnListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            startActivity.changeFragment("step3");
-//            authenticationNumber = String.valueOf(authenticationNumberEditText.getText());
-//            if (authenticationNumber.isEmpty()) {
-//                Toast.makeText(startActivity, "인증번호를 입력하세요.", Toast.LENGTH_SHORT).show();
-//            } else if (authenticationNumber.length() != 6) {
-//                Toast.makeText(startActivity, "올바르지 않은 인증번호 양식입니다.", Toast.LENGTH_LONG).show();
-//            } else{
-//                verifyPhoneNumberWithCode(mVerificationId, authenticationNumber);
-//            }
+            String verificationCode = String.valueOf(verificationCodeEdit.getText());
+            if (verificationCode.isEmpty()) {
+                Toast.makeText(startActivity, "인증번호를 입력하세요.", Toast.LENGTH_SHORT).show();
+            } else if (verificationCode.length() != 6) {
+                Toast.makeText(startActivity, "올바르지 않은 인증번호 양식입니다.", Toast.LENGTH_LONG).show();
+            } else{
+                verifyPhoneNumberWithCode(mVerificationId, verificationCode);
+            }
         }
     }
 
-    class NotReceiveAuthenticationNumberListener implements View.OnClickListener {
+    class NotReceiveVerificationCodeTextListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            String phone = phoneNumber;
-            phone = phone.replace("-", "");
-            phone = "+82" + phone.substring(1);
+            String phone = changeToAvailablePhoneNumber();
             resendVerificationCode(phone, mResendToken);
         }
+    }
+
+    private String changeToAvailablePhoneNumber(){
+        String phoneNumber = this.phoneNumber;
+        phoneNumber = phoneNumber.replace("-", "");
+        phoneNumber = "+82" + phoneNumber.substring(1);
+        return phoneNumber;
     }
 }
