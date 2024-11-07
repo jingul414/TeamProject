@@ -1,7 +1,10 @@
 package com.donghaeng.withme.screen.start;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -11,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.screen.guide.GuideActivity;
 import com.donghaeng.withme.screen.start.connect.SelectFragment;
 import com.donghaeng.withme.screen.start.login.LoginFragment;
 import com.donghaeng.withme.screen.main.ControllerActivity;
@@ -24,11 +28,24 @@ public class StartActivity extends AppCompatActivity {
     private String phoneNumber;
     private String hashedPassWord;
 
+    // 화면 이동용 임시 버튼
+    Button guide_btn, control_btn, target_btn;
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_start);
+
+        // 화면 이동용 임시 버튼 초기화
+        guide_btn = findViewById(R.id.guide_button);
+        control_btn = findViewById(R.id.control_button);
+        target_btn = findViewById(R.id.target_button);
+        // 화면 이동용 임시 버튼 클릭 리스너 설정
+        guide_btn.setOnClickListener(v -> startActivity(new Intent(this, GuideActivity.class)));
+        control_btn.setOnClickListener(v -> startActivity(new Intent(this, ControllerActivity.class)));
+        target_btn.setOnClickListener(v -> startActivity(new Intent(this, TargetActivity.class)));
 
         // Fragment 초기화 로직을 분리
         if (savedInstanceState == null) {

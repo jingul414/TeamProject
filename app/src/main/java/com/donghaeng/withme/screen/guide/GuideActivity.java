@@ -1,6 +1,7 @@
-package com.donghaeng.withme.screen.main;
+package com.donghaeng.withme.screen.guide;
 
 import android.os.Bundle;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -8,28 +9,19 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.screen.start.connect.ControllerConnectFragment;
 
-public class ControllerActivity extends AppCompatActivity {
+public class GuideActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_controller);
+        setContentView(R.layout.activity_guide);
 
-        // Fragment 초기화 로직을 분리
-        if (savedInstanceState == null && getIntent().getStringExtra("fragmentName") != null) {
-            if(getIntent().getStringExtra("fragmentName").equals("controller_QR")){
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragment_container, new ControllerConnectFragment())
-                        .commit();
-            }
-        } else{
+        if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment_container, new ControlFragment())
+                    .add(R.id.fragment_container, new GuideFragment())
                     .commit();
         }
 

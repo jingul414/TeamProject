@@ -63,4 +63,20 @@
     <!-- Connect-->
     <string name="control_scan_text">동행인의 QR을 스캔하세요.</string>
     <string name="target_qr_text">보호자에게 QR을 보여주세요.</string>
+
+    <!-- Control -->
+    <string name="control_call">통화 버튼</string>
+    <string name="control_notification">알림 버튼</string>
+    <string name="control_sound">소리 버튼</string>
+    <string name="control_sound_up">소리 업 버튼</string>
+    <string name="control_sound_mute">음소거 버튼</string>
+    <string name="control_sound_down">소리 다운 버튼</string>
+    <string name="control_light_up">밝기 업 버튼</string>
+    <string name="control_light_mode">밝기 버튼</string>
+    <string name="control_light_down">밝기 다운 버튼</string>
+    <string name="control_set_notification">알람 설정</string>
+    <string name="control_set_time">시간 선택</string>
+    <string name="control_default_time">AM 10:10</string>
+    <string name="control_set_btn">설정</string>
+
 </resources>

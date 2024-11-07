@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FFF3E0">
+<!-- ToDo 여기서 동행인 클릭 시 나오는 제어 판넬 디자인 수정하면 됨. -->
+<!-- 소리 모드 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/callButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_call"
+            android:contentDescription="@string/control_call"
+            android:padding="12dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"/>
+
+        <ImageButton
+            android:id="@+id/notificationButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_notification"
+            android:contentDescription="@string/control_notification"
+            android:padding="12dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"/>
+
+        <ImageButton
+            android:id="@+id/soundButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_sound"
+            android:contentDescription="@string/control_sound"
+            android:padding="12dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"/>
+    </LinearLayout>
+
+<!-- 음량 크기 조절 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/soundUpButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_arrow_upward"
+            android:contentDescription="@string/control_sound_up"
+            android:padding="12dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"/>
+
+        <ImageButton
+            android:id="@+id/muteButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_volume_mute"
+            android:contentDescription="@string/control_sound_mute"
+            android:padding="12dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"/>
+
+        <ImageButton
+            android:id="@+id/soundDownButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_arrow_downward"
+            android:contentDescription="@string/control_sound_down"
+            android:padding="12dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"/>
+    </LinearLayout>
+
+    <!-- 화면 밝기 조절 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/lightUpButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_arrow_upward"
+            android:contentDescription="@string/control_light_up"
+            android:padding="12dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"/>
+
+        <ImageButton
+            android:id="@+id/lightButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_light_mode"
+            android:contentDescription="@string/control_light_mode"
+            android:padding="12dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"/>
+
+        <ImageButton
+            android:id="@+id/lightDownButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_arrow_downward"
+            android:contentDescription="@string/control_light_down"
+            android:padding="12dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"/>
+    </LinearLayout>
+
+    <!-- 조절 컨트롤들 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/control_set_notification" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/timePickerLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/timePickerEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:gravity="end"
+                android:hint="@string/control_set_time"
+                android:text="@string/control_default_time" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/setAlarmButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/control_set_btn" />
+    </LinearLayout>
+
+</LinearLayout>
