@@ -79,4 +79,7 @@
     <string name="control_default_time">AM 10:10</string>
     <string name="control_set_btn">설정</string>
 
+    <!-- Guide -->
+    <string name="guide_title">설명서</string>
+
 </resources>

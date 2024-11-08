@@ -79,6 +79,7 @@ public class StartActivity extends AppCompatActivity {
                 case "controller":
                     intent = new Intent(this, ControllerActivity.class);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     // 선택적: 현재 액티비티 종료
                     // finish();
                     break;
@@ -111,11 +112,13 @@ public class StartActivity extends AppCompatActivity {
                     intent = new Intent(this, ControllerActivity.class);
                     intent.putExtra("fragmentName", "controller_QR");
                     startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     break;
                 case "target_QR":
                     intent = new Intent(this, TargetActivity.class);
                     intent.putExtra("fragmentName", "target_QR");
                     startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     break;
                 default:
                     break;
@@ -140,5 +143,12 @@ public class StartActivity extends AppCompatActivity {
     }
     public String getUserHashedPassWord(){
         return this.hashedPassWord;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        // 뒤로가기 애니메이션 설정
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }
