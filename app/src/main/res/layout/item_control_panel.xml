@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#FFF3E0">
+    android:background="#FFF6CF">
 <!-- ToDo 여기서 동행인 클릭 시 나오는 제어 판넬 디자인 수정하면 됨. -->
 <!-- 소리 모드 -->
     <LinearLayout
