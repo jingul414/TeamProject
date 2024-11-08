@@ -1,7 +1,10 @@
 package com.donghaeng.withme.screen.start;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -11,25 +14,38 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.screen.guide.GuideActivity;
 import com.donghaeng.withme.screen.start.connect.SelectFragment;
 import com.donghaeng.withme.screen.start.login.LoginFragment;
 import com.donghaeng.withme.screen.main.ControllerActivity;
 import com.donghaeng.withme.screen.main.TargetActivity;
-import com.donghaeng.withme.screen.start.signup.SignupStep1Fragment;
-import com.donghaeng.withme.screen.start.signup.SignupStep2Fragment;
-import com.donghaeng.withme.screen.start.signup.SignupStep3Fragment;
+import com.donghaeng.withme.screen.start.signup.SignupNameFragment;
+import com.donghaeng.withme.screen.start.signup.SignupVerifyingPhoneNumberFragment;
+import com.donghaeng.withme.screen.start.signup.SignupPassWordFragment;
 
 public class StartActivity extends AppCompatActivity {
-    private String sign_name = "";
-    private String sign_number = "";
-    private String sign_pw = "";
-    private String sign_pw_valid = "";
+    private String name;
+    private String phoneNumber;
+    private String hashedPassWord;
 
+    // 화면 이동용 임시 버튼
+    Button guide_btn, control_btn, target_btn;
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_start);
+
+        // 화면 이동용 임시 버튼 초기화
+        guide_btn = findViewById(R.id.guide_button);
+        control_btn = findViewById(R.id.control_button);
+        target_btn = findViewById(R.id.target_button);
+        // 화면 이동용 임시 버튼 클릭 리스너 설정
+        guide_btn.setOnClickListener(v -> startActivity(new Intent(this, GuideActivity.class)));
+        control_btn.setOnClickListener(v -> startActivity(new Intent(this, ControllerActivity.class)));
+        target_btn.setOnClickListener(v -> startActivity(new Intent(this, TargetActivity.class)));
 
         // Fragment 초기화 로직을 분리
         if (savedInstanceState == null) {
@@ -66,27 +82,27 @@ public class StartActivity extends AppCompatActivity {
                     // 선택적: 현재 액티비티 종료
                     // finish();
                     break;
-                case "login":
+                case "LoginFragment":
                     transaction.replace(R.id.fragment_container, new LoginFragment());
                     transaction.addToBackStack(null); // 뒤로가기 지원
                     transaction.commit();
                     break;
-                case "signUp":  // StartFragment.java에서 "signUp"으로 호출했으므로 케이스도 "signUp"으로 수정
-                    transaction.replace(R.id.fragment_container, new SignupStep1Fragment());
+                case "SignupNameFragment":  // StartFragment.java에서 "signUp"으로 호출했으므로 케이스도 "signUp"으로 수정
+                    transaction.replace(R.id.fragment_container, new SignupNameFragment());
                     transaction.addToBackStack(null); // 뒤로가기 지원
                     transaction.commit();
                     break;
-                case "step2":
-                    transaction.replace(R.id.fragment_container, new SignupStep2Fragment());
+                case "SignupVerifyingPhoneNumberFragment":
+                    transaction.replace(R.id.fragment_container, new SignupVerifyingPhoneNumberFragment());
                     transaction.addToBackStack(null); // 뒤로가기 지원
                     transaction.commit();
                     break;
-                case "step3":
-                    transaction.replace(R.id.fragment_container, new SignupStep3Fragment());
+                case "SignupPassWordFragment":
+                    transaction.replace(R.id.fragment_container, new SignupPassWordFragment());
                     transaction.addToBackStack(null); // 뒤로가기 지원
                     transaction.commit();
                     break;
-                case "select":
+                case "SelectFragment":
                     transaction.replace(R.id.fragment_container, new SelectFragment());
                     transaction.addToBackStack(null); // 뒤로가기 지원
                     transaction.commit();
@@ -107,28 +123,22 @@ public class StartActivity extends AppCompatActivity {
         }
 
     }
-    public void setSignName(String name){
-        sign_name = name;
+    public void setUserName(String name){
+        this.name = name;
     }
-    public void setSignNumber(String number){
-        sign_number = number;
+    public void setUserPhoneNumber(String phoneNumber){
+        this.phoneNumber = phoneNumber;
     }
-    public void setSignPw(String pw){
-        sign_pw = pw;
+    public void setUserHashedPassWord(String hashedPassWord){
+        this.hashedPassWord = hashedPassWord;
     }
-    public void setSignPwValid(String pw_valid){
-        sign_pw_valid = pw_valid;
+    public String getUserName(){
+        return this.name;
     }
-    public String getSignName(){
-        return sign_name;
+    public String getUserPhoneNumber(){
+        return this.phoneNumber;
     }
-    public String getSignNumber(){
-        return sign_number;
-    }
-    public String getSignPw(){
-        return sign_pw;
-    }
-    public String getSignPwValid(){
-        return sign_pw_valid;
+    public String getUserHashedPassWord(){
+        return this.hashedPassWord;
     }
 }
