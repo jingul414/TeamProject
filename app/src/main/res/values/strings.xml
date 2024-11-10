@@ -85,5 +85,7 @@
     <string name="sound_mode_setting">소리 모드 설정</string>
     <string name="voliume_setting">소리 크기 조절</string>
     <string name="screen_brightness_setting">화면 밝기 조절</string>
+    <string name="service_name">동행</string>
+    <string name="service_name_eng">With Me</string>
 
 </resources>
