@@ -82,5 +82,8 @@
     <string name="nav_home">처음으로</string>
     <string name="nav_setting">설정</string>
     <string name="user_name2">홍길순</string>
+    <string name="sound_mode_setting">소리 모드 설정</string>
+    <string name="voliume_setting">소리 크기 조절</string>
+    <string name="screen_brightness_setting">화면 밝기 조절</string>
 
 </resources>
