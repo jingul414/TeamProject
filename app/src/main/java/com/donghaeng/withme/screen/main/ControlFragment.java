@@ -1,5 +1,6 @@
 package com.donghaeng.withme.screen.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.screen.guide.DataRepository;
+import com.donghaeng.withme.screen.guide.GuideActivity;
+import com.donghaeng.withme.screen.setting.SettingActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,25 +50,24 @@ public class ControlFragment extends Fragment {
         adapter = new ControlExpandableAdapter(items);
         recyclerView.setAdapter(adapter);
 
-        /*
-        // 화살표 아이콘과 제어 패널을 연결
-        ImageView arrowIcon1 = view.findViewById(R.id.arrowIcon1);
-        final View controlPanel = view.findViewById(R.id.controlPanel);
-
-        // arrowIcon1 클릭 시 제어 패널 보이기/숨기기
-        arrowIcon1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isControlPanelVisible) {
-                    controlPanel.setVisibility(View.GONE);
-                    arrowIcon1.setImageResource(R.drawable.ic_arrow_down); // 아이콘을 아래 화살표로 변경
-                } else {
-                    controlPanel.setVisibility(View.VISIBLE);
-                    arrowIcon1.setImageResource(R.drawable.ic_arrow_up); // 아이콘을 위 화살표로 변경
-                }
-                isControlPanelVisible = !isControlPanelVisible; // 상태 반전
+        // 네비게이션 바 설정
+        BottomNavigationView bottomNav = view.findViewById(R.id.bottom_navigation);
+        bottomNav.setOnItemSelectedListener(item -> {
+            Intent intent;
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_guide) {
+                intent = new Intent(getActivity(), GuideActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            } else if (itemId == R.id.nav_home) {
+                // home 관련 처리
+            } else if (itemId == R.id.nav_setting) {
+                intent = new Intent(getActivity(), SettingActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
-        });*/
+            return true;
+        });
 
         return view;
     }
