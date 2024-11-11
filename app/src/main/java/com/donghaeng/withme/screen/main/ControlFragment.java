@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.donghaeng.withme.R;
 import androidx.fragment.app.Fragment;
@@ -23,7 +22,6 @@ import java.util.List;
 public class ControlFragment extends Fragment {
     private RecyclerView recyclerView;
     private ControlExpandableAdapter adapter;
-    private boolean isControlPanelVisible = false;
 
     public ControlFragment() {
         // Required empty public constructor

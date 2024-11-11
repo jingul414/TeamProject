@@ -7,7 +7,7 @@
         <item name="android:textColor">#000000</item>
         <item name="android:lineSpacingExtra">4sp</item> <!-- 추가적인 줄 간격 -->
         <item name="android:lineSpacingMultiplier">1.2</item> <!-- 줄 간격 배율 -->
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <!-- common -->
@@ -16,7 +16,7 @@
         <item name="android:textColor">#000000</item>
         <item name="android:lineSpacingExtra">4sp</item> <!-- 추가적인 줄 간격 -->
         <item name="android:lineSpacingMultiplier">1.2</item> <!-- 줄 간격 배율 -->
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <style name="common_warning">
@@ -24,7 +24,7 @@
         <item name="android:textColor">#FE7363</item>
         <item name="android:lineSpacingExtra">4sp</item> <!-- 추가적인 줄 간격 -->
         <item name="android:lineSpacingMultiplier">1.2</item> <!-- 줄 간격 배율 -->
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <style name="common_input">
@@ -33,7 +33,7 @@
         <item name="android:lineSpacingExtra">4sp</item> <!-- 추가적인 줄 간격 -->
         <item name="android:lineSpacingMultiplier">1.2</item> <!-- 줄 간격 배율 -->
         <item name="android:background">@android:color/transparent</item>
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <style name="common_btn">
@@ -41,7 +41,7 @@
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:lineSpacingExtra">4sp</item> <!-- 추가적인 줄 간격 -->
         <item name="android:lineSpacingMultiplier">1.2</item> <!-- 줄 간격 배율 -->
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <!-- Start -->
@@ -50,14 +50,14 @@
         <item name="android:textColor">#000000</item>
         <item name="android:lineSpacingExtra">4sp</item> <!-- 추가적인 줄 간격 -->
         <item name="android:lineSpacingMultiplier">1.2</item> <!-- 줄 간격 배율 -->
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
     <style name="start_text_style_intro2">
         <item name="android:textSize">60sp</item>
         <item name="android:textColor">#000000</item>
         <item name="android:lineSpacingExtra">4sp</item> <!-- 추가적인 줄 간격 -->
         <item name="android:lineSpacingMultiplier">1.2</item> <!-- 줄 간격 배율 -->
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
     <style name="start_text_style_main">
         <item name="android:textSize">32sp</item>
@@ -71,7 +71,7 @@
         <item name="colorButtonNormal">#FBCC68</item>
         <item name="android:lineSpacingExtra">12sp</item> <!-- 줄 간격 추가 -->
         <item name="android:lineSpacingMultiplier">1.0</item>
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <!-- Login -->
@@ -80,7 +80,7 @@
         <item name="android:textColor">#000000</item>
         <item name="android:lineSpacingExtra">4sp</item> <!-- 추가적인 줄 간격 -->
         <item name="android:lineSpacingMultiplier">1.2</item> <!-- 줄 간격 배율 -->
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <style name="login_text_phone_number">
@@ -88,7 +88,7 @@
         <item name="android:textColor">#CCCCCC</item>
         <item name="android:lineSpacingExtra">12sp</item> <!-- 줄 간격 추가 -->
         <item name="android:lineSpacingMultiplier">1.0</item>
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <style name="login_text_password">
@@ -96,7 +96,7 @@
         <item name="android:textColor">#CCCCCC</item>
         <item name="android:lineSpacingExtra">12sp</item> <!-- 줄 간격 추가 -->
         <item name="android:lineSpacingMultiplier">1.0</item>
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <style name="login_radio_login_history">
@@ -104,7 +104,7 @@
         <item name="android:textSize">15sp</item>
         <item name="android:lineSpacingExtra">12sp</item> <!-- 줄 간격 추가 -->
         <item name="android:lineSpacingMultiplier">1.0</item>
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
         <item name="buttonTint">#FE7363</item>
     </style>
 
@@ -113,7 +113,7 @@
         <item name="colorButtonNormal">#FE7363</item>
         <item name="android:lineSpacingExtra">12sp</item> <!-- 줄 간격 추가 -->
         <item name="android:lineSpacingMultiplier">1.0</item>
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <style name="login_text_set_password">
@@ -121,7 +121,7 @@
         <item name="android:textSize">15sp</item>
         <item name="android:lineSpacingExtra">12sp</item> <!-- 줄 간격 추가 -->
         <item name="android:lineSpacingMultiplier">1.0</item>
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <style name="login_text_find_password">
@@ -129,7 +129,7 @@
         <item name="android:textSize">15sp</item>
         <item name="android:lineSpacingExtra">12sp</item> <!-- 줄 간격 추가 -->
         <item name="android:lineSpacingMultiplier">1.0</item>
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <!-- Signup -->
@@ -138,7 +138,7 @@
         <item name="android:textColor">#000000</item>
         <item name="android:lineSpacingExtra">4sp</item> <!-- 추가적인 줄 간격 -->
         <item name="android:lineSpacingMultiplier">1.2</item> <!-- 줄 간격 배율 -->
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
     <!-- Select -->
     <style name="select_text">
@@ -153,7 +153,7 @@
     <style name="setting_head_text">
         <item name="android:textSize">40sp</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
     <style name="control_scan_text">
         <item name="android:textSize">32sp</item>
@@ -166,18 +166,18 @@
     <style name="setting_body_text">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <style name="user_name">
         <item name="android:textSize">50sp</item>
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <!-- Leave -->
     <style name="leave_alert_text">
         <item name="android:textSize">30sp</item>
-        <item name="android:fontFamily">@font/noto_sans_black</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <!-- BottomNavigationView  -->

@@ -50,6 +50,10 @@ public class TargetMainFragment extends Fragment {
         List<TargetListItem> items = new ArrayList<>();
         items.add(new TargetListItem("log1", "통화 소리 증가", "홍길동", "12월 31일 23시 59분 58초"));
         items.add(new TargetListItem("log2", "화면 밝기 증가", "홍길동", "12월 31일 23시 59분 59초"));
+        items.add(new TargetListItem("log1", "통화 소리 증가", "홍길동", "12월 31일 23시 59분 58초"));
+        items.add(new TargetListItem("log2", "화면 밝기 증가", "홍길동", "12월 31일 23시 59분 59초"));
+        items.add(new TargetListItem("log1", "통화 소리 증가", "홍길동", "12월 31일 23시 59분 58초"));
+        items.add(new TargetListItem("log2", "화면 밝기 증가", "홍길동", "12월 31일 23시 59분 59초"));
 
         adapter = new TargetExpandableAdapter(items);
         recyclerView.setAdapter(adapter);
