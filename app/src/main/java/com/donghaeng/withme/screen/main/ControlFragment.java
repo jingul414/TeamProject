@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.donghaeng.withme.R;
 import androidx.fragment.app.Fragment;
@@ -18,6 +19,7 @@ import java.util.List;
 public class ControlFragment extends Fragment {
     private RecyclerView recyclerView;
     private ControlExpandableAdapter adapter;
+    private boolean isControlPanelVisible = false;
 
     public ControlFragment() {
         // Required empty public constructor
@@ -43,6 +45,26 @@ public class ControlFragment extends Fragment {
 
         adapter = new ControlExpandableAdapter(items);
         recyclerView.setAdapter(adapter);
+
+        /*
+        // 화살표 아이콘과 제어 패널을 연결
+        ImageView arrowIcon1 = view.findViewById(R.id.arrowIcon1);
+        final View controlPanel = view.findViewById(R.id.controlPanel);
+
+        // arrowIcon1 클릭 시 제어 패널 보이기/숨기기
+        arrowIcon1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isControlPanelVisible) {
+                    controlPanel.setVisibility(View.GONE);
+                    arrowIcon1.setImageResource(R.drawable.ic_arrow_down); // 아이콘을 아래 화살표로 변경
+                } else {
+                    controlPanel.setVisibility(View.VISIBLE);
+                    arrowIcon1.setImageResource(R.drawable.ic_arrow_up); // 아이콘을 위 화살표로 변경
+                }
+                isControlPanelVisible = !isControlPanelVisible; // 상태 반전
+            }
+        });*/
 
         return view;
     }
