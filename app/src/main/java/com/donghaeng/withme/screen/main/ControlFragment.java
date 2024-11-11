@@ -32,7 +32,7 @@ public class ControlFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ImageView view = (ImageView) inflater.inflate(R.layout.fragment_control, container, false);
+        View view = inflater.inflate(R.layout.fragment_control, container, false);
 
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -46,6 +46,7 @@ public class ControlFragment extends Fragment {
         adapter = new ControlExpandableAdapter(items);
         recyclerView.setAdapter(adapter);
 
+        /*
         // 화살표 아이콘과 제어 패널을 연결
         ImageView arrowIcon1 = view.findViewById(R.id.arrowIcon1);
         final View controlPanel = view.findViewById(R.id.controlPanel);
@@ -63,7 +64,7 @@ public class ControlFragment extends Fragment {
                 }
                 isControlPanelVisible = !isControlPanelVisible; // 상태 반전
             }
-        });
+        });*/
 
         return view;
     }

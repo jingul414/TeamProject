@@ -35,100 +35,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 동행인 목록 -->
-    <LinearLayout
-        android:id="@+id/user_list_container1"
-        android:layout_width="350dp"
-        android:layout_height="96dp"
-        android:orientation="horizontal"
-        android:layout_marginHorizontal="16dp"
-        android:padding="10dp"
-        android:background="@drawable/item_background"
-        app:layout_constraintTop_toBottomOf="@id/nav_line"
-        app:layout_constraintStart_toStartOf="parent"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="30dp"
-        tools:ignore="MissingConstraints">
-
-        <ImageView
-            android:id="@+id/profileImage1"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/image_rounded_shape"
-            android:clipToOutline="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/user_image" />
-
-        <TextView
-            android:id="@+id/nameText1"
-            style="@style/setting_head_text"
-            android:text="@string/user_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="20dp"
-            app:layout_constraintStart_toEndOf="@id/profileImage"
-            android:layout_weight="1"
-            android:textSize="35sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/arrowIcon1"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_arrow_down"
-            app:tint="#FF8A80" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/user_list_container2"
-        android:layout_width="350dp"
-        android:layout_height="96dp"
-        android:orientation="horizontal"
-        android:layout_marginHorizontal="16dp"
-        android:padding="10dp"
-        android:background="@drawable/item_background"
-        app:layout_constraintTop_toBottomOf="@id/user_list_container1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="7dp"
-        tools:ignore="MissingConstraints">
+        app:layout_constraintTop_toBottomOf="@+id/nav_line" />
 
-        <ImageView
-            android:id="@+id/profileImage2"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/image_rounded_shape"
-            android:clipToOutline="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/user_image" />
-
-        <TextView
-            android:id="@+id/nameText2"
-            style="@style/setting_head_text"
-            android:text="@string/user_name2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="20dp"
-            app:layout_constraintStart_toEndOf="@id/profileImage"
-            android:layout_weight="1"
-            android:textSize="35sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/arrowIcon2"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_arrow_down"
-            app:tint="#FF8A80" />
-
-    </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -146,14 +62,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:itemHorizontalTranslationEnabled="false"
         app:menu="@menu/bottom_nav_menu" />
-
-    <!-- 제어 패널 -->
-    <include
-        android:id="@+id/controlPanel"
-        layout="@layout/item_control_panel"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/user_list_container1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
