@@ -26,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top"
+            android:fontFamily="@font/tmoney_round_wind_regular"
             android:text="안녕하세요!" />
 
         <LinearLayout
@@ -38,6 +39,7 @@
                 style="@style/start_text_style_intro2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/tmoney_round_wind_extra_bold"
                 android:text="동행"
                 android:textColor="#FE7363"
                 android:textStyle="bold" />
@@ -47,6 +49,7 @@
                 style="@style/start_text_style_intro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/tmoney_round_wind_regular"
                 android:text="입니다." />
         </LinearLayout>
     </LinearLayout>
@@ -61,6 +64,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="40dp"
         android:gravity="top"
+        android:fontFamily="@font/tmoney_round_wind_regular"
         android:text="@string/start_text_main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -91,6 +95,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/tmoney_round_wind_extra_bold"
             android:text="네,"
             android:textSize="48sp"
             android:textStyle="bold"
@@ -99,6 +104,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/tmoney_round_wind_regular"
             android:text="써본 적 있어요!"
             android:textSize="24sp"
             android:textColor="#FFFFFF"
@@ -130,6 +136,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/tmoney_round_wind_extra_bold"
             android:text="아니요,"
             android:textSize="48sp"
             android:textStyle="bold"
@@ -138,6 +145,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/tmoney_round_wind_regular"
             android:text="처음 써봐요!"
             android:textSize="24sp"
             android:textColor="#FFFFFF"

@@ -1,66 +1,83 @@
 package com.donghaeng.withme.screen.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.screen.guide.GuideActivity;
+import com.donghaeng.withme.screen.setting.SettingActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link TargetMainFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import org.checkerframework.checker.units.qual.N;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class TargetMainFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private RecyclerView recyclerView;
+    private TargetExpandableAdapter adapter;
 
     public TargetMainFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TargetMainFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static TargetMainFragment newInstance(String param1, String param2) {
-        TargetMainFragment fragment = new TargetMainFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_target_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_target_main, container, false);
+
+        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        // 컨트롤 리스트 초기화
+        // Todo 현재는 테스트용 추가, 서버에서 받아오는 기능 추가 필요
+        List<TargetListItem> items = new ArrayList<>();
+        items.add(new TargetListItem("log1", "통화 소리 증가", "홍길동", "12월 31일 23시 59분 58초"));
+        items.add(new TargetListItem("log2", "화면 밝기 증가", "홍길동", "12월 31일 23시 59분 59초"));
+        items.add(new TargetListItem("log1", "통화 소리 증가", "홍길동", "12월 31일 23시 59분 58초"));
+        items.add(new TargetListItem("log2", "화면 밝기 증가", "홍길동", "12월 31일 23시 59분 59초"));
+        items.add(new TargetListItem("log1", "통화 소리 증가", "홍길동", "12월 31일 23시 59분 58초"));
+        items.add(new TargetListItem("log2", "화면 밝기 증가", "홍길동", "12월 31일 23시 59분 59초"));
+
+        adapter = new TargetExpandableAdapter(items);
+        recyclerView.setAdapter(adapter);
+
+        // 네비게이션 바 설정
+        BottomNavigationView bottomNav = view.findViewById(R.id.bottom_navigation);
+        bottomNav.setOnItemSelectedListener(item -> {
+            Intent intent;
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_guide) {
+                intent = new Intent(getActivity(), GuideActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            } else if (itemId == R.id.nav_home) {
+                // home 관련 처리
+            } else if (itemId == R.id.nav_setting) {
+                intent = new Intent(getActivity(), SettingActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+            return true;
+        });
+
+            return view;
+
     }
 }

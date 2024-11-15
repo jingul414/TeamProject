@@ -27,12 +27,13 @@ public class TargetActivity extends AppCompatActivity {
                         .beginTransaction()
                         .add(R.id.fragment_container, new TargetConnectFragment())
                         .commit();
-            }else{
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragment_container, new TargetMainFragment())
-                        .commit();
             }
+        }
+        else{
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment_container, new TargetMainFragment())
+                    .commit();
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -40,5 +41,12 @@ public class TargetActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        // 뒤로가기 애니메이션 설정
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

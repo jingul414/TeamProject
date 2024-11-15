@@ -1,8 +1,10 @@
 package com.donghaeng.withme.screen.guide;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -20,19 +22,23 @@ import java.util.UUID;
 public class ExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_LOADING = 2;
     private List<ListItem> items;
+    private GuideFragment guideFragment;
     private Set<String> loadingItems; // 현재 로딩 중인 아이템들의 ID를 추적
 
-    public ExpandableAdapter(List<ListItem> items) {
+    public ExpandableAdapter(List<ListItem> items, GuideFragment fragment) {
         this.items = items;
+        guideFragment = fragment;
         this.loadingItems = new HashSet<>();
     }
 
     public class HeaderViewHolder extends RecyclerView.ViewHolder {
         TextView titleText;
+        ImageView arrowIcon;
 
         public HeaderViewHolder(@NonNull View itemView) {
             super(itemView);
             titleText = itemView.findViewById(R.id.titleText);
+            arrowIcon = itemView.findViewById(R.id.arrowIcon);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -42,8 +48,10 @@ public class ExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     if (!isAnyItemLoading() || item.isExpanded()) {
                         if (item.isExpanded()) {
                             collapseItem(position);
+                            arrowIcon.setImageResource(R.drawable.ic_arrow_down_white);
                         } else {
                             expandItem(position);
+                            arrowIcon.setImageResource(R.drawable.ic_arrow_up_white);
                         }
                     }
                 }
@@ -213,6 +221,14 @@ public class ExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             contentText = itemView.findViewById(R.id.contentText);
+
+            itemView.setOnClickListener(v -> {
+                // 가이드 목록 아이템 클릭 시 설명으로 이동하는 부분
+                // Todo 여기서 누른 목록에 대한 설명을 서버에서 불러와서 그 정보도 같이 넘겨줘야 함...
+                // 현재는 누른 아이템의 텍스트를 보내줌..
+                Log.d("ExpandableAdapter", "Item clicked: " + contentText.getText().toString());
+                guideFragment.changeFragment(new GuideInfoFragment(contentText.getText().toString()));
+            });
         }
     }
 

@@ -78,5 +78,17 @@
     <string name="control_set_time">시간 선택</string>
     <string name="control_default_time">AM 10:10</string>
     <string name="control_set_btn">설정</string>
+    <string name="nav_guide">설명서</string>
+    <string name="nav_home">처음으로</string>
+    <string name="nav_setting">설정</string>
+    <string name="user_name2">홍길순</string>
+    <string name="sound_mode_setting">소리 모드 설정</string>
+    <string name="voliume_setting">소리 크기 조절</string>
+    <string name="screen_brightness_setting">화면 밝기 조절</string>
+    <string name="service_name">동행</string>
+    <string name="service_name_eng">With Me</string>
+
+    <!-- Guide -->
+    <string name="guide_title">설명서</string>
 
 </resources>

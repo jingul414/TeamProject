@@ -5,15 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
-    app:cardElevation="2dp">
+    android:backgroundTint="#FFFFF2"
+    app:cardElevation="0dp">
 
     <TextView
         android:id="@+id/titleText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/rounded_button"
+        android:textColor="@color/white"
         android:padding="16dp"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:background="?android:attr/selectableItemBackground"/>
+        android:gravity="center"
+        android:textSize="34sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/arrowIcon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="10dp"
+        android:layout_gravity="center_vertical|end"
+        android:src="@drawable/ic_arrow_down_white" />
 
 </androidx.cardview.widget.CardView>
