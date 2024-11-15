@@ -92,4 +92,8 @@ dependencies {
     implementation ("com.google.zxing:core:3.4.1")
 
     implementation("androidx.browser:browser:1.8.0")
+
+    // Card View
+    implementation ("androidx.cardview:cardview:1.0.0")
+    implementation ("com.google.android.material:material:1.9.0") //MaterialCardView
 }

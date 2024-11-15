@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- App Font -->
+    <style name="app_common_text">
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
+    </style>
+    <!-- autoSizeMaxTextSize 꼭 설정하기 (최대 텍스트 크기) -->
+    <!-- TextSize 도 설정 -->
+    <style name="app_one_line_text">
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:maxLines">1</item>              <!-- 최대 1줄로 제한 -->
+        <item name="android:ellipsize">end</item>          <!-- 넘어가는 텍스트는 ...으로 표시 -->
+        <item name="autoSizeTextType">uniform</item>             <!-- 자동 크기 조절 활성화 -->
+        <item name="autoSizeMinTextSize">12sp</item>            <!-- 최소 텍스트 크기 -->
+        <item name="autoSizeStepGranularity">2sp</item>         <!-- 크기 조절 단계 -->
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
+    </style>
+
+    <style name="app_main_24sp_text">
+        <item name="android:textSize">24sp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:maxLines">1</item>              <!-- 최대 1줄로 제한 -->
+        <item name="android:ellipsize">end</item>          <!-- 넘어가는 텍스트는 ...으로 표시 -->
+        <item name="autoSizeTextType">uniform</item>             <!-- 자동 크기 조절 활성화 -->
+        <item name="autoSizeMinTextSize">12sp</item>            <!-- 최소 텍스트 크기 -->
+        <item name="autoSizeMaxTextSize">24sp</item>            <!-- 최대 텍스트 크기 -->
+        <item name="autoSizeStepGranularity">2sp</item>         <!-- 크기 조절 단계 -->
+        <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
+    </style>
+
+
     <!-- Service Main Text -->
     <style name="service_main_text">
         <item name="android:textSize">85sp</item>
@@ -86,16 +128,17 @@
     <style name="login_text_phone_number">
         <item name="android:textSize">32sp</item>
         <item name="android:textColor">#CCCCCC</item>
-        <item name="android:lineSpacingExtra">12sp</item> <!-- 줄 간격 추가 -->
-        <item name="android:lineSpacingMultiplier">1.0</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
+        <item name="android:includeFontPadding">false</item>
         <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
     <style name="login_text_password">
         <item name="android:textSize">32sp</item>
         <item name="android:textColor">#CCCCCC</item>
-        <item name="android:lineSpacingExtra">12sp</item> <!-- 줄 간격 추가 -->
-        <item name="android:lineSpacingMultiplier">1.0</item>
         <item name="android:fontFamily">@font/tmoney_round_wind_regular</item>
     </style>
 
