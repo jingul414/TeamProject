@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.login.SignUp;
 import com.donghaeng.withme.screen.start.StartActivity;
 
 public class SignupNameFragment extends Fragment {
@@ -43,19 +44,16 @@ public class SignupNameFragment extends Fragment {
         startActivity = (StartActivity) requireActivity();
         nextBtn.setOnClickListener(new NextBtnListener());
 
+        // 회원가입 인스턴스 생성
+        SignUp signUp = new SignUp(startActivity);
+        startActivity.setSignUpInstance(signUp);
         return view;
     }
 
     class NextBtnListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            String name = nameEdit.getText().toString();
-            if (name.isEmpty()) {
-                Toast.makeText(startActivity, "이름을 입력하세요.", Toast.LENGTH_SHORT).show();
-            } else {
-                startActivity.setUserName(name);
-                startActivity.changeFragment("SignupVerifyingPhoneNumberFragment");
-            }
+            startActivity.getSignUpInstance().storeName(nameEdit);
         }
     }
 }

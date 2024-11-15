@@ -14,6 +14,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.login.Login;
+import com.donghaeng.withme.login.SignUp;
 import com.donghaeng.withme.screen.guide.GuideActivity;
 import com.donghaeng.withme.screen.start.connect.SelectFragment;
 import com.donghaeng.withme.screen.start.login.LoginFragment;
@@ -22,11 +24,13 @@ import com.donghaeng.withme.screen.main.TargetActivity;
 import com.donghaeng.withme.screen.start.signup.SignupNameFragment;
 import com.donghaeng.withme.screen.start.signup.SignupVerifyingPhoneNumberFragment;
 import com.donghaeng.withme.screen.start.signup.SignupPassWordFragment;
+import com.donghaeng.withme.user.User;
 
 public class StartActivity extends AppCompatActivity {
-    private String name;
-    private String phoneNumber;
-    private String hashedPassWord;
+    // 회원가입, 로그인 객체
+    private SignUp signUp;
+    private Login login;
+    private User user;
 
     // 화면 이동용 임시 버튼
     Button guide_btn, control_btn, target_btn;
@@ -126,23 +130,24 @@ public class StartActivity extends AppCompatActivity {
         }
 
     }
-    public void setUserName(String name){
-        this.name = name;
+
+    public void setSignUpInstance(SignUp signUp){
+        this.signUp = signUp;
     }
-    public void setUserPhoneNumber(String phoneNumber){
-        this.phoneNumber = phoneNumber;
+    public void setLoginInstance(Login login){
+        this.login = login;
     }
-    public void setUserHashedPassWord(String hashedPassWord){
-        this.hashedPassWord = hashedPassWord;
+    public SignUp getSignUpInstance(){
+        return this.signUp;
     }
-    public String getUserName(){
-        return this.name;
+    public Login getLoginInstance(){
+        return this.login;
     }
-    public String getUserPhoneNumber(){
-        return this.phoneNumber;
+    public void setUser(User user){
+        this.user = user;
     }
-    public String getUserHashedPassWord(){
-        return this.hashedPassWord;
+    public User getUser() {
+        return this.user;
     }
 
     @Override
