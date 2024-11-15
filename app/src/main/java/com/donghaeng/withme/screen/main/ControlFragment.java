@@ -1,5 +1,6 @@
 package com.donghaeng.withme.screen.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.screen.guide.DataRepository;
+import com.donghaeng.withme.screen.guide.GuideActivity;
+import com.donghaeng.withme.screen.setting.SettingActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +47,25 @@ public class ControlFragment extends Fragment {
 
         adapter = new ControlExpandableAdapter(items);
         recyclerView.setAdapter(adapter);
+
+        // 네비게이션 바 설정
+        BottomNavigationView bottomNav = view.findViewById(R.id.bottom_navigation);
+        bottomNav.setOnItemSelectedListener(item -> {
+            Intent intent;
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_guide) {
+                intent = new Intent(getActivity(), GuideActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            } else if (itemId == R.id.nav_home) {
+                // home 관련 처리
+            } else if (itemId == R.id.nav_setting) {
+                intent = new Intent(getActivity(), SettingActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+            return true;
+        });
 
         return view;
     }

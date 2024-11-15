@@ -23,4 +23,11 @@ public class SettingActivity extends AppCompatActivity {
             return insets;
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        // 뒤로가기 애니메이션 설정
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
 }

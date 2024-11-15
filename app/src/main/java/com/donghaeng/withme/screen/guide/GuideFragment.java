@@ -19,7 +19,8 @@ import java.util.List;
 public class GuideFragment extends Fragment {
     private RecyclerView recyclerView;
     private ExpandableAdapter adapter;
-    GuideActivity activity;
+    private GuideActivity activity;
+    private View back;
 
     public GuideFragment() {
         // Required empty public constructor
@@ -43,6 +44,10 @@ public class GuideFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         activity = (GuideActivity) requireActivity();
+        back = view.findViewById(R.id.back);
+        back.setOnClickListener(v -> {
+            requireActivity().getOnBackPressedDispatcher().onBackPressed();
+        });
 
 
         // 처음 리스트 헤더들 설정
@@ -51,7 +56,7 @@ public class GuideFragment extends Fragment {
         items.add(new ListItem("smartphone", ListItem.TYPE_HEADER, "스마트폰 설명서"));
         items.add(new ListItem("guardian", ListItem.TYPE_HEADER, "보호자의 설명"));
 
-        adapter = new ExpandableAdapter(items);
+        adapter = new ExpandableAdapter(items, this);
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -63,5 +68,9 @@ public class GuideFragment extends Fragment {
         super.onDestroy();
         // 앱이 종료될 때 캐시 정리
         DataRepository.getInstance().clearCache();
+    }
+
+    public void changeFragment(Fragment fragment) {
+        activity.changeFragment(fragment);
     }
 }

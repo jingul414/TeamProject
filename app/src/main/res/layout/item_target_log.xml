@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginVertical="5dp"
+    android:background="@drawable/rounded_button"
+    android:backgroundTint="#FBF8D1"
+    android:padding="16dp">
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/control_log_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="제어 기록"
+            android:textSize="28sp" />
+
+
+        <TextView
+            android:id="@+id/name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:text="홍길동"
+            android:textSize="18sp" />}
+
+
+        <TextView
+            android:id="@+id/time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12월 31일 23시 59분 28초"
+            android:textSize="18sp" />}
+
+
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/arrowIcon"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginEnd="10dp"
+        android:layout_gravity="center_vertical|end"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/baseline_replay_24" />
+
+</LinearLayout>

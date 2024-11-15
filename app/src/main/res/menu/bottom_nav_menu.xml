@@ -1,24 +1,15 @@
-<!-- res/menu/bottom_nav_menu.xml -->
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-        android:id="@+id/nav_home"
-        android:icon="@drawable/ic_home"
-        android:title="홈으로"/>
-
     <item
         android:id="@+id/nav_guide"
         android:icon="@drawable/ic_guide"
-        android:title="가이드"/>
-
+        android:title="설명서"/>
     <item
-        android:id="@+id/nav_controller"
-        android:icon="@drawable/ic_controller"
-        android:title="제어자"/>
-
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="처음으로"/>
     <item
-        android:id="@+id/nav_target"
-        android:icon="@drawable/ic_target"
-        android:title="피제어자"/>
-
+        android:id="@+id/nav_setting"
+        android:icon="@drawable/ic_setting"
+        android:title="설정"/>
 </menu>
