@@ -10,30 +10,27 @@
 
     <TextView
         android:id="@+id/head_text"
-        style="@style/setting_head_text"
-        android:layout_width="wrap_content"
+        style="@style/app_one_line_text"
+        android:textSize="40sp"
+        android:autoSizeMaxTextSize="40sp"
+        android:gravity="center"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-
-        android:layout_marginStart="100dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="100dp"
         android:text="@string/setting_head_text"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/nav_line"
-        android:layout_width="409dp"
+        android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="85dp"
-        android:layout_marginEnd="100dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/login_view_line"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/head_text" />
 
     <View
         android:id="@+id/back"
@@ -46,117 +43,162 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/user_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-
-        android:layout_marginStart="85dp"
-        android:layout_marginTop="124dp"
-        android:layout_marginEnd="250dp"
-        android:src="@drawable/user_image"
-        android:background="@drawable/image_rounded_shape"
-        android:clipToOutline="true"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/nav_line">
 
-    <TextView
-        android:id="@+id/user_name"
-        style="@style/setting_head_text"
-        android:layout_width="130dp"
-        android:layout_height="60dp"
+        <ImageView
+            android:id="@+id/user_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@drawable/image_rounded_shape"
+            android:clipToOutline="true"
+            android:src="@drawable/user_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="15dp"
-        android:text="@string/user_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/user_image"
-        app:layout_constraintTop_toBottomOf="@id/nav_line" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/user_image"
+            android:layout_marginStart="10dp"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/user_phone_number"
-        style="@style/setting_body_text"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
+            <TextView
+                android:id="@+id/user_name"
+                style="@style/app_one_line_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoSizeMaxTextSize="40sp"
+                android:layout_marginBottom="5dp"
+                android:gravity="center"
+                android:text="@string/user_name"
+                android:textSize="40sp" />
 
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="15dp"
-        android:text="@string/user_phone_number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/user_image"
-        app:layout_constraintTop_toBottomOf="@id/user_name" />
+            <TextView
+                android:id="@+id/user_phone_number"
+                style="@style/app_one_line_text"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:autoSizeMaxTextSize="20sp"
+                android:gravity="center"
+                android:text="@string/user_phone_number"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
-        style="@style/common_btn_v2"
+        android:id="@+id/change_number"
         android:text="@string/change_number"
         android:layout_width="320dp"
-        android:layout_height="70dp"
-        android:paddingHorizontal="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:backgroundTint="#FBCC68"
-        android:id="@+id/change_number"
-        app:layout_constraintTop_toBottomOf="@+id/user_image"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_button"
+        app:backgroundTint="#FBCC68"
+        style="@style/app_one_line_text"
+        android:textSize="30sp"
+        android:autoSizeMaxTextSize="30sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/user"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="125dp"
-        android:layout_marginEnd="125dp"
         android:layout_marginTop="25dp"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
-        style="@style/common_btn_v2"
+        android:id="@+id/change_pw"
         android:text="@string/change_pw"
         android:layout_width="320dp"
-        android:layout_height="70dp"
-        android:paddingHorizontal="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:backgroundTint="#FBCC68"
-        android:id="@+id/change_pw"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_button"
+        app:backgroundTint="#FBCC68"
+        style="@style/app_one_line_text"
+        android:textSize="30sp"
+        android:autoSizeMaxTextSize="30sp"
+        android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@+id/change_number"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="125dp"
-        android:layout_marginEnd="125dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
-        style="@style/common_btn_v2"
-        android:text="@string/permit_list"
-        android:layout_width="320dp"
-        android:layout_height="70dp"
-        android:paddingHorizontal="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:backgroundTint="#FBCC68"
         android:id="@+id/permit_list"
-        app:layout_constraintTop_toBottomOf="@+id/change_pw"
+        style="@style/app_one_line_text"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:autoSizeMaxTextSize="30sp"
+        android:background="@drawable/rounded_button"
+        android:text="@string/permit_list"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        app:backgroundTint="#FBCC68"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="125dp"
-        android:layout_marginEnd="125dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/change_pw" />
+
+<!-- 임시 버튼들 -> 제어 허용 목록 버튼 클릭 시 제어자 피제어자 선택-->
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/leave"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/permit_list">
+
+        <Button
+            android:id="@+id/control"
+            style="@style/app_one_line_text"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:autoSizeMaxTextSize="30sp"
+            android:background="@drawable/rounded_button"
+            android:text="보호자"
+            android:textSize="30sp"
+            app:backgroundTint="#FE7363" />
+
+        <Button
+            android:id="@+id/target"
+            style="@style/app_one_line_text"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autoSizeMaxTextSize="30sp"
+            android:background="@drawable/rounded_button"
+            android:text="동행인"
+            android:textSize="30sp"
+            app:backgroundTint="#FE7363" />
+    </LinearLayout>
 
     <!-- TODO: 탈퇴 버튼이 너무 큰 것 같음. 회원 유출 우려됨 -->
     <Button
-        style="@style/common_btn_v2"
-        android:text="@string/leave"
-        android:layout_width="320dp"
-        android:layout_height="70dp"
-        android:paddingHorizontal="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:backgroundTint="#FE7363"
-        android:textSize="29sp"
         android:id="@+id/leave"
-        app:layout_constraintTop_toBottomOf="@+id/permit_list"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="125dp"
-        android:layout_marginEnd="125dp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        style="@style/app_one_line_text"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:autoSizeMaxTextSize="30sp"
+        android:background="@drawable/rounded_button"
+        app:backgroundTint="#FE7363"
+        android:text="@string/leave"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

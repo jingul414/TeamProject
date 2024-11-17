@@ -138,10 +138,13 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:background="#FBF8D1"
-        app:itemPaddingBottom="3dp"
-        app:itemPaddingTop="3dp"
+        app:itemPaddingTop="0dp"
+        app:itemPaddingBottom="0dp"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:itemHorizontalTranslationEnabled="false"
         app:menu="@menu/bottom_nav_menu" />
 
 

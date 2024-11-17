@@ -10,13 +10,13 @@
 
     <TextView
         android:id="@+id/head_text"
-        style="@style/setting_head_text"
+        style="@style/app_one_line_text"
+        android:textStyle="bold"
+        android:textSize="40sp"
+        android:autoSizeMaxTextSize="40sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:layout_marginStart="100dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="100dp"
         android:text="@string/guide_title"
 
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,15 +25,13 @@
 
     <View
         android:id="@+id/nav_line"
-        android:layout_width="409dp"
+        android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="85dp"
-        android:layout_marginEnd="100dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/login_view_line"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/head_text" />
 
     <View
         android:id="@+id/back"
