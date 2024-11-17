@@ -12,15 +12,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.screen.main.ControlFragment;
-import com.donghaeng.withme.screen.main.ControllerActivity;
-import com.donghaeng.withme.screen.main.TargetActivity;
-import com.donghaeng.withme.screen.start.connect.ControllerConnectFragment;
-import com.donghaeng.withme.screen.start.connect.SelectFragment;
-import com.donghaeng.withme.screen.start.login.LoginFragment;
-import com.donghaeng.withme.screen.start.signup.SignupNameFragment;
-import com.donghaeng.withme.screen.start.signup.SignupPassWordFragment;
-import com.donghaeng.withme.screen.start.signup.SignupVerifyingPhoneNumberFragment;
 
 public class SettingActivity extends AppCompatActivity {
 
