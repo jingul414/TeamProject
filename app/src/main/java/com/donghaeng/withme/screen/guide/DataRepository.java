@@ -1,8 +1,14 @@
 package com.donghaeng.withme.screen.guide;
 
 import android.os.AsyncTask;
+
+import com.donghaeng.withme.roomdatabase.guide.GuideBook;
+import com.donghaeng.withme.roomdatabase.guide.GuideBookRepository;
+import com.donghaeng.withme.roomdatabase.guide.GuideBookType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +45,9 @@ public class DataRepository {
         private final Map<String, List<String>> cache;
         private String error = null;
 
+        private GuideActivity guideActivity;
+        private GuideBookRepository guideBookRepository;
+
         LoadDataTask(String headerId, DataCallback callback, Map<String, List<String>> cache) {
             this.headerId = headerId;
             this.callback = callback;
@@ -51,38 +60,65 @@ public class DataRepository {
             try {
                 // 실제 데이터 로딩 로직 - 현재는 임시적으로 아이템 지정함
                 // ToDo 여기서 제어자가 설정한 가이드 부분 서버에서 불러오는 코드 만들면 됨.
+                guideActivity = new GuideActivity();
+                guideBookRepository = new GuideBookRepository(guideActivity);
+                List<String> titles = Collections.emptyList();
+
                 switch (headerId) {
                     case "guide":
-                        subItems.addAll(Arrays.asList(
-                                "가이드 1장: 기본 소개",
-                                "가이드 2장: 상세 설명",
-                                "가이드 3장: 실전 활용",
-                                "가이드 4장: 문제 해결",
-                                "가이드 5장: 고급 기능"
-                        ));
+                        for (GuideBook guideBook : guideBookRepository.getAppGuides()) {
+                            titles.add(guideBook.getTitle());
+                        }
+                        subItems.addAll(titles);
                         break;
                     case "smartphone":
-                        subItems.addAll(Arrays.asList(
-                                "스마트폰 설정하기",
-                                "앱 설치 방법",
-                                "보안 설정 방법",
-                                "백업 및 복원",
-                                "문제 해결 가이드"
-                        ));
+                        for (GuideBook guideBook : guideBookRepository.getSmartphoneGuides()) {
+                            titles.add(guideBook.getTitle());
+                        }
+                        subItems.addAll(titles);
                         break;
                     case "guardian":
-                        subItems.addAll(Arrays.asList(
-                                "보호자 권한 설정",
-                                "모니터링 방법",
-                                "긴급 상황 대처법",
-                                "제한 설정 방법",
-                                "활동 기록 확인"
-                        ));
+                        for (GuideBook guideBook : guideBookRepository.getControllerInstructions()) {
+                            titles.add(guideBook.getTitle());
+                        }
+                        subItems.addAll(titles);
                         break;
                     default:
                         error = "Unknown header ID: " + headerId;
                         return null;
                 }
+//                switch (headerId) {
+//                    case "guide":
+//                        subItems.addAll(Arrays.asList(
+//                                "가이드 1장: 기본 소개",
+//                                "가이드 2장: 상세 설명",
+//                                "가이드 3장: 실전 활용",
+//                                "가이드 4장: 문제 해결",
+//                                "가이드 5장: 고급 기능"
+//                        ));
+//                        break;
+//                    case "smartphone":
+//                        subItems.addAll(Arrays.asList(
+//                                "스마트폰 설정하기",
+//                                "앱 설치 방법",
+//                                "보안 설정 방법",
+//                                "백업 및 복원",
+//                                "문제 해결 가이드"
+//                        ));
+//                        break;
+//                    case "guardian":
+//                        subItems.addAll(Arrays.asList(
+//                                "보호자 권한 설정",
+//                                "모니터링 방법",
+//                                "긴급 상황 대처법",
+//                                "제한 설정 방법",
+//                                "활동 기록 확인"
+//                        ));
+//                        break;
+//                    default:
+//                        error = "Unknown header ID: " + headerId;
+//                        return null;
+//                }
 
                 // 네트워크 지연 시뮬레이션
                 Thread.sleep(1000);
