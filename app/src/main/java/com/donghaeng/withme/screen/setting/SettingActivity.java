@@ -1,6 +1,5 @@
 package com.donghaeng.withme.screen.setting;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
