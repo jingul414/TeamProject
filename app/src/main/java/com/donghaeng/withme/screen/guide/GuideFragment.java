@@ -46,7 +46,7 @@ public class GuideFragment extends Fragment {
         activity = (GuideActivity) requireActivity();
         back = view.findViewById(R.id.back);
         back.setOnClickListener(v -> {
-            requireActivity().getOnBackPressedDispatcher().onBackPressed();
+            activity.onBackPressed();
         });
 
 

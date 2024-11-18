@@ -1,7 +1,7 @@
 package com.donghaeng.withme.user;
 
 public class Undefined extends User{
-    public Undefined(String name, String phone, String id, String password) {
-        super(name, phone, id, password, UserType.UNDEFINED);
+    public Undefined(String name, String phone, String id, String hashedPassword) {
+        super(name, phone, id, hashedPassword, UserType.UNDEFINED);
     }
 }

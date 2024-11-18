@@ -18,6 +18,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="12dp"
+        style="@style/app_one_line_text"
+        android:autoSizeMaxTextSize="24sp"
         android:textSize="24sp" />
 
     <View
