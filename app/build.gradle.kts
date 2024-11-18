@@ -34,6 +34,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -105,4 +108,10 @@ dependencies {
     //gms
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.google.android.gms:play-services-base:18.2.0")
+
+    // 네비게이션 바
+    val nav_version = "2.7.6"
+    implementation ("androidx.navigation:navigation-fragment:$nav_version")
+    implementation ("androidx.navigation:navigation-ui:$nav_version")
+
 }

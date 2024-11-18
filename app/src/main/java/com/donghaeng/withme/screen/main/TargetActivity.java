@@ -7,9 +7,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import android.view.ViewGroup;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.screen.start.connect.ControllerConnectFragment;
+
 import com.donghaeng.withme.screen.start.connect.TargetConnectFragment;
 
 public class TargetActivity extends AppCompatActivity {
@@ -38,7 +39,8 @@ public class TargetActivity extends AppCompatActivity {
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            params.topMargin = systemBars.top;
             return insets;
         });
     }
