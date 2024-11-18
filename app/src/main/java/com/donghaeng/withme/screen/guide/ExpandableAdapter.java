@@ -92,7 +92,7 @@ public class ExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             notifyItemInserted(loadingPosition);
 
             // 데이터 로드
-            DataRepository.getInstance().loadSubItems(item.getId(), new DataCallback() {
+            DataRepository.getInstance().loadSubItems(item.getId(), guideFragment.getGuideActivity(), new DataCallback() {
                 @Override
                 public void onDataLoaded(List<String> subItems) {
                     // UI 업데이트는 메인 스레드에서 실행

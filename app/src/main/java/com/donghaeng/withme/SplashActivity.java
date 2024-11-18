@@ -10,6 +10,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.donghaeng.withme.roomdatabase.guide.GuideBook;
+import com.donghaeng.withme.roomdatabase.guide.GuideBookDatabase;
 import com.donghaeng.withme.roomdatabase.guide.GuideBookRepository;
 import com.donghaeng.withme.screen.start.StartActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -17,7 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
-    private FirebaseFirestore externalDatabase;
+    private GuideBookDatabase guideBookDatabase;
     private GuideBookRepository guideBookRepository;
 
     @Override
@@ -44,6 +45,7 @@ public class SplashActivity extends AppCompatActivity {
         }); */
 
     private void checkFirstRun() {
+        guideBookDatabase = GuideBookDatabase.getInstance(this);
         if (AppLaunchChecker.isFirstRun(this)) {
             Toast.makeText(this, "앱 최초 실행", Toast.LENGTH_SHORT).show();
             // 필요한 초기 설정 작업 수행
@@ -51,7 +53,7 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
     private void downloadGuideBooks() {
-        externalDatabase = FirebaseFirestore.getInstance();
+        FirebaseFirestore externalDatabase = FirebaseFirestore.getInstance();
         guideBookRepository = new GuideBookRepository(this);
 
         externalDatabase.collection("app_guide_book")
