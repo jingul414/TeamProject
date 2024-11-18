@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -72,5 +73,9 @@ public class GuideFragment extends Fragment {
 
     public void changeFragment(Fragment fragment) {
         activity.changeFragment(fragment);
+    }
+
+    public GuideActivity getGuideActivity() {
+        return activity;
     }
 }
