@@ -10,30 +10,27 @@
 
     <TextView
         android:id="@+id/head_text"
-        style="@style/common_text"
-        android:layout_width="wrap_content"
+        style="@style/app_one_line_text"
+        android:textSize="24sp"
+        android:autoSizeMaxTextSize="24sp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="250dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="33dp"
         android:text="@string/companion_list"
-
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/nav_line"
-        android:layout_width="409dp"
+        android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="85dp"
-        android:layout_marginEnd="100dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="30dp"
         android:background="@drawable/login_view_line"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/head_text" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
