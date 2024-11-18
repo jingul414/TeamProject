@@ -91,4 +91,17 @@
     <!-- Guide -->
     <string name="guide_title">설명서</string>
 
+    <!-- Target -->
+    <string name="cotrol_text">제어 기록</string>
+    <string name="log_name">홍길동</string>
+    <string name="control_time">12월 31일 23시 59분 28초</string>
+    <string name="Profile">프로필</string>
+    <string name="controller_text">보호자</string>
+    <string name="controller_name">홍길동</string>
+    <string name="controller_number">010-0000-0000</string>
+    <string name="reject_text">제어 거절</string>
+    <string name="accept_text">제어 허용</string>
+    <string name="control_log_text">제어 기록</string>
+
+
 </resources>

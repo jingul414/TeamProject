@@ -30,7 +30,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="20dp"
             android:background="@drawable/rounded_frame_background"
-            android:contentDescription="프로필"
+            android:contentDescription="@string/Profile"
             android:src="@drawable/default_profile" />
 
         <LinearLayout
@@ -42,22 +42,29 @@
                 android:id="@+id/control_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                style="@style/app_one_line_text"
+                android:autoSizeMaxTextSize="24sp"
                 android:textSize="24sp"
-                android:text="보호자" />
+                android:text="@string/controller_text" />
 
             <TextView
                 android:id="@+id/name_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingVertical="0dp"
+                style="@style/app_one_line_text"
+                android:autoSizeMaxTextSize="28sp"
                 android:textSize="28sp"
-                android:text="홍길동" />
+                android:text="@string/controller_name" />
 
             <TextView
                 android:id="@+id/number_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                style="@style/app_one_line_text"
+                android:autoSizeMaxTextSize="18sp"
                 android:textSize="18sp"
-                android:text="010-0000-0000" />
+                android:text="@string/controller_number" />
         </LinearLayout>
     </LinearLayout>
 
@@ -76,25 +83,29 @@
 
         <Button
             android:id="@+id/reject_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="10dp"
-            android:paddingVertical="10dp"
+            android:paddingVertical="15dp"
             android:background="@drawable/rounded_button"
             app:backgroundTint="#FF0000"
+            style="@style/app_one_line_text"
+            android:autoSizeMaxTextSize="28sp"
             android:textSize="28sp"
-            android:text="제어 거절" />
+            android:text="@string/reject_text" />
         <Button
             android:id="@+id/accept_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingVertical="10dp"
+            android:paddingVertical="15dp"
             android:background="@drawable/rounded_button"
             app:backgroundTint="#00B050"
+            style="@style/app_one_line_text"
+            android:autoSizeMaxTextSize="28sp"
             android:textSize="28sp"
-            android:text="제어 허용" />
+            android:text="@string/accept_text" />
 
 
     </LinearLayout>
@@ -105,7 +116,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginStart="30dp"
-        android:text="제어 기록"
+        android:text="@string/control_log_text"
+        style="@style/app_one_line_text"
+        android:autoSizeMaxTextSize="28sp"
         android:textSize="28sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_layout" />

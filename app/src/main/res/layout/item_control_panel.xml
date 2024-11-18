@@ -17,11 +17,13 @@
         android:paddingTop="5dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:text="@string/sound_mode_setting"
-            android:textSize="17sp" />
+            style="@style/app_one_line_text"
+            android:autoSizeMaxTextSize="18sp"
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,11 +35,11 @@
                 android:id="@+id/callButton"
                 android:layout_width="0dp"
                 android:layout_height="65dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button"
-                android:layout_marginEnd="5dp"
                 android:contentDescription="@string/control_call"
-                android:src="@drawable/ic_call"/>
+                android:src="@drawable/ic_call" />
 
             <ImageButton
                 android:id="@+id/notificationButton"
@@ -90,7 +92,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:text="@string/voliume_setting"
-            android:textSize="17sp" />
+            style="@style/app_one_line_text"
+            android:autoSizeMaxTextSize="18sp"
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -160,7 +164,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:text="@string/screen_brightness_setting"
-            android:textSize="17sp" />
+            style="@style/app_one_line_text"
+            android:autoSizeMaxTextSize="18sp"
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -228,7 +234,9 @@
             android:layout_gravity="start"
             android:padding="8dp"
             android:text="@string/control_set_notification"
-            android:textSize="17sp" />
+            style="@style/app_one_line_text"
+            android:autoSizeMaxTextSize="18sp"
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -250,18 +258,22 @@
                     android:layout_marginEnd="10dp"
                     android:focusable="false"
                     android:gravity="end"
-                    android:hint="@string/control_set_time"
+                    style="@style/app_one_line_text"
+                    android:textSize="18sp"
+                    android:autoSizeMaxTextSize="18sp"
                     android:text="@string/control_default_time" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/setAlarmButton"
-                style="@style/common_btn"
                 android:background="@drawable/rounded_button"
                 app:backgroundTint="#FF8A80"
                 android:textColor="@color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/app_one_line_text"
+                android:textSize="18sp"
+                android:autoSizeMaxTextSize="18sp"
                 android:text="@string/control_set_btn" />
         </LinearLayout>
     </LinearLayout>
