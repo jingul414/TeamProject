@@ -254,4 +254,16 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <!-- 체크박스 스타일 -->
+        <!-- 기존 앱 테마 -->
+        <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+            <!-- 앱 전역 설정 -->
+        </style>
+
+        <!-- 체크박스 커스텀 테마 -->
+        <style name="CustomCheckBoxTheme" parent="Theme.MaterialComponents.Light">
+            <item name="colorControlActivated">#FF8A80</item> <!-- 체크 상태 색상 -->
+            <item name="colorControlNormal">#737373</item> <!-- 기본 외곽선 색상 -->
+        </style>
+
 </resources>

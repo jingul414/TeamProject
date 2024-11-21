@@ -38,7 +38,8 @@ public class SignupPassWordFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_signup_password, container, false);
 
-        pwNotificationText = view.findViewById(R.id.signup_text_password_notification);
+        // TODO: 여기도
+        pwNotificationText = view.findViewById(R.id.signup_text_password_notification1);
         pwEdit = view.findViewById(R.id.signup_edit_password);
         pwCheckEdit = view.findViewById(R.id.signup_edit_password_check);
         warningText = view.findViewById(R.id.signup_text_warning);

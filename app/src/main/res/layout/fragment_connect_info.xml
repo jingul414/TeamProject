@@ -9,111 +9,165 @@
     android:clipToOutline="true"
     tools:context=".screen.start.connect.ConnectInfoFragment">
 
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/info_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="동행인 정보"
-            android:textStyle="bold"
-            android:textSize="42sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:text="이름 : "
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/tel_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:text="홍길동"
-                android:textSize="24sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:text="전화번호 : "
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/tel_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:text="010-0000-0000"
-                android:textSize="24sp" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
+    <TextView
+        android:id="@+id/textView"
+        style="@style/app_one_line_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_height="50dp"
+        android:autoSizeMaxTextSize="30sp"
+        android:text="@string/info_verifying_text"
+        android:textAlignment="center"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.2" />
+
+    <FrameLayout
+        android:id="@+id/child_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="56dp"
+        android:background="@drawable/rounded_frame_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
 
 
-        <Button
-            android:id="@+id/no_button"
-            android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:layout_weight="1"
-            android:background="@drawable/rounded_button"
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="12sp"
-            android:autoSizeMaxTextSize="34sp"
-            android:autoSizeStepGranularity="1sp"
-            android:maxLines="1"
-            android:text="아니에요!"
-            app:backgroundTint="#FE7363" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/yes_button"
-            android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:layout_weight="1"
-            android:background="@drawable/rounded_button"
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="12sp"
-            android:autoSizeMaxTextSize="34sp"
-            android:autoSizeStepGranularity="1sp"
-            android:maxLines="1"
-            android:text="맞아요!"
-            app:backgroundTint="#FE7363" />
+            <TextView
+                android:id="@+id/info_text"
+                style="@style/app_one_line_text"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_marginTop="90dp"
+                android:layout_marginBottom="10dp"
+                android:autoSizeMaxTextSize="48sp"
+                android:gravity="center"
+                android:text="@string/companion_info_text"
+                android:textSize="48sp"
+                android:textStyle="bold" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/name"
+                    style="@style/app_one_line_text"
+                    android:layout_width="70dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="0"
+                    android:autoSizeMaxTextSize="24sp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/name_text"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/tel_name"
+                    style="@style/app_one_line_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:autoSizeMaxTextSize="24sp"
+                    android:paddingStart="0dp"
+                    android:text="@string/name_ex"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tel"
+                    style="@style/app_one_line_text"
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="0"
+                    android:autoSizeMaxTextSize="24sp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/phone_number_text"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/tel_text"
+                    style="@style/app_one_line_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:autoSizeMaxTextSize="24sp"
+                    android:paddingStart="0dp"
+                    android:text="@string/phone_number_ex"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_gravity="bottom"
+            android:layout_margin="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/no_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginEnd="1dp"
+                android:autoSizeMaxTextSize="50sp"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeStepGranularity="1sp"
+                android:autoSizeTextType="uniform"
+                android:background="@drawable/qr_button1"
+                android:fontFamily="@font/tmoney_round_wind_regular"
+                android:maxLines="1"
+                android:text="@string/no_text"
+                android:textSize="40sp"
+                app:backgroundTint="#FF8A80" />
+
+            <Button
+                android:id="@+id/yes_button"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="1dp"
+                android:autoSizeMaxTextSize="34sp"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeStepGranularity="1sp"
+                android:autoSizeTextType="uniform"
+                android:background="@drawable/qr_button2"
+                android:fontFamily="@font/tmoney_round_wind_regular"
+                android:maxLines="1"
+                android:text="@string/yes_text"
+                android:textSize="34sp"
+                app:backgroundTint="#FF8A80" />
+        </LinearLayout>
+
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
