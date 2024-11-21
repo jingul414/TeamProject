@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.screen.start.StartActivity;
+import com.donghaeng.withme.screen.start.signup.SignUpFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -75,6 +76,18 @@ public class LoginFragment extends Fragment {
         login_btn.setOnClickListener(v -> {
             // 로그인 검증 로직 추가
             startActivity.changeFragment("controller");
+        });
+
+        // '비밀번호를 정하지 않았어요' 문구 클릭 시 회원가입 화면으로 이동
+        TextView setPasswordText = view.findViewById(R.id.login_text_set_password);
+        setPasswordText.setOnClickListener(v -> {
+            // SignupFragment로 이동
+            startActivity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right) // 애니메이션 추가. GPT가 알려줘서 걍 해봄.
+                    .replace(R.id.fragment_container, new SignUpFragment())
+                    .addToBackStack(null) // 뒤로가기 기능 추가.
+                    .commit();
         });
 
         return view;
