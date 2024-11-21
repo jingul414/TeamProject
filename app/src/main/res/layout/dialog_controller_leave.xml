@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="30dp"
+    android:background="@drawable/dialog_background"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <!-- 다이얼로그 메시지 텍스트 -->
+    <TextView
+        android:id="@+id/dialog_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="@string/leave_alert"
+        style="@style/app_one_line_text"
+        android:lineSpacingExtra="5dp"
+        android:maxLines="5"
+        android:textSize="32sp"
+        android:autoSizeMaxTextSize="32sp"
+        android:textColor="#000000" />
+
+    <!-- 버튼을 감싸는 레이아웃 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <!-- '네' 버튼 -->
+        <Button
+            android:id="@+id/yes_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:layout_marginEnd="10dp"
+            app:backgroundTint="#FF8A80"
+            style="@style/app_one_line_text"
+            android:textSize="24sp"
+            android:autoSizeMaxTextSize="24sp"
+            android:text="@string/yes_btn"
+            android:textColor="#FFFFFF" />
+
+        <!-- '아니요' 버튼 -->
+        <Button
+            android:id="@+id/no_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            app:backgroundTint="#FF8A80"
+            style="@style/app_one_line_text"
+            android:textSize="24sp"
+            android:autoSizeMaxTextSize="24sp"
+            android:text="@string/no_btn"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+</LinearLayout>

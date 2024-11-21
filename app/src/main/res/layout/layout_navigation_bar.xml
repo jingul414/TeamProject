@@ -3,14 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- 네비게이션 바 -->
+    <!-- 액티비티에서 onCreate setOnApplyWindowInsetsListener 부분 수정 필요 (여백 제거 부분) -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
+        style="@style/BottomNavigationViewStyle"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:background="#FBF8D1"
-        style="@style/BottomNavigationViewStyle"
-        app:itemPaddingBottom="3dp"
-        app:itemPaddingTop="3dp"
+        app:itemPaddingTop="0dp"
+        app:itemPaddingBottom="0dp"
         app:labelVisibilityMode="labeled"
-        app:menu="@menu/bottom_nav_menu"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:itemHorizontalTranslationEnabled="false"
+        app:menu="@menu/bottom_nav_menu" />
+
 </FrameLayout>

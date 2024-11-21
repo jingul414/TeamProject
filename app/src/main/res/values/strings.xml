@@ -50,7 +50,7 @@
     <string name="opt_vibe">소리 모드 전환</string>
     <string name="off">끄기</string>
     <string name="on">켜기</string>
-    <string name="leave_alert">동행 멈추기(탈퇴)를 하면,\n더 이상 동행인을 도와드릴 수 없어요!\n\n정말 멈추실 건가요?</string>
+    <string name="leave_alert">동행 멈추기(탈퇴)를 하면,\n더 이상 동행인을\n도와드릴 수 없어요!\n\n정말 멈추실 건가요?</string>
     <string name="yes_btn">네</string>
     <string name="no_btn">아니요</string>
     <string name="leave_alert_target">동행 멈추기(탈퇴)를 하면,\n더 이상 보호자에게\n도움 받을 수 없어요!\n\n정말 멈추실 건가요?</string>
@@ -109,5 +109,18 @@
     <string name="phone_number_ex">010-0000-0000</string>
     <string name="no_text">아니에요!</string>
     <string name="yes_text">맞아요!</string>
+
+    <!-- Target -->
+    <string name="cotrol_text">제어 기록</string>
+    <string name="log_name">홍길동</string>
+    <string name="control_time">12월 31일 23시 59분 28초</string>
+    <string name="Profile">프로필</string>
+    <string name="controller_text">보호자</string>
+    <string name="controller_name">홍길동</string>
+    <string name="controller_number">010-0000-0000</string>
+    <string name="reject_text">제어 거절</string>
+    <string name="accept_text">제어 허용</string>
+    <string name="control_log_text">제어 기록</string>
+
 
 </resources>

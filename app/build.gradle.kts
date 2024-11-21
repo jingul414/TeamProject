@@ -34,6 +34,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -42,6 +45,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.room.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -75,6 +79,7 @@ dependencies {
 
     // ML Kit
     implementation(libs.mlkit.barcode)
+    annotationProcessor(libs.room.compiler)
 
     // Lifecycle components (for CameraX)
     val lifecycleVersion = "2.6.2"
@@ -96,4 +101,17 @@ dependencies {
     // Card View
     implementation ("androidx.cardview:cardview:1.0.0")
     implementation ("com.google.android.material:material:1.9.0") //MaterialCardView
+
+    // JSON
+    implementation("com.google.code.gson:gson:2.10.1")
+
+    //gms
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.android.gms:play-services-base:18.2.0")
+
+    // 네비게이션 바
+    val nav_version = "2.7.6"
+    implementation ("androidx.navigation:navigation-fragment:$nav_version")
+    implementation ("androidx.navigation:navigation-ui:$nav_version")
+
 }
