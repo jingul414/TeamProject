@@ -140,15 +140,12 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_marginEnd="1dp"
-                android:autoSizeMaxTextSize="50sp"
-                android:autoSizeMinTextSize="12sp"
-                android:autoSizeStepGranularity="1sp"
-                android:autoSizeTextType="uniform"
+                android:gravity="center"
                 android:background="@drawable/qr_button1"
                 android:fontFamily="@font/tmoney_round_wind_regular"
                 android:maxLines="1"
                 android:text="@string/no_text"
-                android:textSize="40sp"
+                android:textSize="30sp"
                 app:backgroundTint="#FF8A80" />
 
             <Button
@@ -157,15 +154,11 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_marginStart="1dp"
-                android:autoSizeMaxTextSize="34sp"
-                android:autoSizeMinTextSize="12sp"
-                android:autoSizeStepGranularity="1sp"
-                android:autoSizeTextType="uniform"
                 android:background="@drawable/qr_button2"
                 android:fontFamily="@font/tmoney_round_wind_regular"
                 android:maxLines="1"
                 android:text="@string/yes_text"
-                android:textSize="34sp"
+                android:textSize="30sp"
                 app:backgroundTint="#FF8A80" />
         </LinearLayout>
 
