@@ -49,8 +49,8 @@ public class SignupVerifyingPhoneNumberFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_signup_verifying_phone_number, container, false);
+
         // UI 요소 초기화
-        // TODO: 안내 문구를 두 줄로 나눠쓰면서 아이디가 변경되었는데 UI 요소 초기화에 뭘 넣어야하지..? 이게 머야
         phoneNumberNotificationText         = view.findViewById(R.id.signup_text_phone_number_notification1);
         phoneNumberEdit                     = view.findViewById(R.id.signup_edit_phone_number);
         sendingVerificationCodeBtn          = view.findViewById(R.id.signup_btn_send_verification_code);
