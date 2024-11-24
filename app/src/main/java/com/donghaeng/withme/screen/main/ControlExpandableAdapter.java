@@ -1,11 +1,17 @@
 package com.donghaeng.withme.screen.main;
 
-import android.app.TimePickerDialog;
+import static android.graphics.Color.rgb;
+
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,24 +19,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.screen.guide.ListItem;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
-
 
 public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<Object> displayedItems; // 실제 표시될 아이템들
-    private List<ControlListItem> originalItems; // 원본 아이템들
+    private List<Object> displayedItems;
+    private List<ControlListItem> originalItems;
 
     public ControlExpandableAdapter(List<ControlListItem> items) {
         this.originalItems = new ArrayList<>(items);
         this.displayedItems = new ArrayList<>(items);
     }
 
-    // ViewHolder 클래스들은 그대로 유지
     public class HeaderViewHolder extends RecyclerView.ViewHolder {
         ImageView profileImage;
         TextView nameText;
@@ -63,38 +65,211 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public class ControlViewHolder extends RecyclerView.ViewHolder {
         ImageButton callButton, notificationButton, soundButton;
-        View setAlarmButton;
-        TextInputEditText timePickerEditText;
+        ImageButton muteButton, autoLight;
+        SeekBar soundSeekbar, lightSeekbar;
+        TextView currentSoundPercent, changeSoundPercent;
+        TextView currentLightPercent, changeLightPercent;
+
+        // 타임피커 관련 요소들
+        NumberPicker hourPicker, minutePicker;
+        Button setAlarmButton;
+
+        private int call_volume = 0, notification_volume = 0, media_volume = 0;
+
+        private int SOUND_MODE = 0;
+        final private int SOUND_CALL = 0;
+        final private int SOUND_NOTIFICATION = 1;
+        final private int SOUND_MEDIA = 2;
+
+        private int LIGHT_MODE = 0;
+        final private int LIGHT_AUTO = 1;
+        final private int LIGHT_SET = 0;
+
+        private int lastSoundVolume = 0;
+        private int lastLightValue = 0;
+
 
         public ControlViewHolder(@NonNull View itemView) {
             super(itemView);
+            initializeViews(itemView);
+            setupTimePicker();
+            setupSoundControl();
+            setupLightControl();
+            setupButtonListeners();
+        }
+
+        private void initializeViews(View itemView) {
+            // 버튼들
             callButton = itemView.findViewById(R.id.callButton);
             notificationButton = itemView.findViewById(R.id.notificationButton);
             soundButton = itemView.findViewById(R.id.soundButton);
+            muteButton = itemView.findViewById(R.id.mute_button);
+            autoLight = itemView.findViewById(R.id.auto_light);
             setAlarmButton = itemView.findViewById(R.id.setAlarmButton);
-            timePickerEditText = itemView.findViewById(R.id.timePickerEditText);
 
-            setUpClickListeners();
+            // 시크바들
+            soundSeekbar = itemView.findViewById(R.id.sound_seekbar);
+            lightSeekbar = itemView.findViewById(R.id.light_seekbar);
+
+            // 텍스트뷰들
+            currentSoundPercent = itemView.findViewById(R.id.current_sound_percent);
+            changeSoundPercent = itemView.findViewById(R.id.change_sound_percent);
+            currentLightPercent = itemView.findViewById(R.id.current_light_percent);
+            changeLightPercent = itemView.findViewById(R.id.change_light_percent);
+
+            // 넘버피커
+            hourPicker = itemView.findViewById(R.id.hourPicker);
+            minutePicker = itemView.findViewById(R.id.minutePicker);
         }
 
-        private void setUpClickListeners() {
-            callButton.setOnClickListener(v -> {
-                // 통화 기능 구현
+        private void setupTimePicker() {
+            // 시간 설정 (0-23)
+            hourPicker.setMinValue(0);
+            hourPicker.setMaxValue(23);
+            hourPicker.setFormatter(value -> String.format("%02d", value));
+
+            // 분 설정 (0-59)
+            minutePicker.setMinValue(0);
+            minutePicker.setMaxValue(59);
+            minutePicker.setFormatter(value -> String.format("%02d", value));
+
+            // 현재 시간으로 초기값 설정
+            Calendar calendar = Calendar.getInstance();
+            hourPicker.setValue(calendar.get(Calendar.HOUR_OF_DAY));
+            minutePicker.setValue(calendar.get(Calendar.MINUTE));
+        }
+
+        private void setupSoundControl() {
+            soundSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    changeSoundPercent.setText(String.valueOf(progress));
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {}
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    currentSoundPercent.setText(String.valueOf(seekBar.getProgress()));
+                    // TODO 소리 설정 제어 관련 기능 구현
+                    switch (SOUND_MODE){
+                        case (SOUND_CALL):
+                            call_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            break;
+                        case (SOUND_NOTIFICATION):
+                            notification_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            break;
+                        case (SOUND_MEDIA):
+                            media_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            break;
+                    }
+                }
+            });
+        }
+
+        private void setupLightControl() {
+            lightSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    changeLightPercent.setText(String.valueOf(progress)  + "%");
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {}
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    // TODO seekBar 에서 손을 놨을 때 정보 전달
+                    currentLightPercent.setText(String.valueOf(seekBar.getProgress())  + "%");
+                }
+            });
+        }
+
+        private void setupButtonListeners() {
+            muteButton.setOnClickListener(v -> {
+                if (soundSeekbar.getProgress() > 0) {
+                    lastSoundVolume = soundSeekbar.getProgress();
+                    soundSeekbar.setProgress(0);
+                    currentSoundPercent.setText(String.valueOf(0));
+                    muteButton.setImageResource(R.drawable.ic_volume_mute);
+                    // TODO 소리 설정 제어 관련 기능 구현
+                    switch (SOUND_MODE){
+                        case (SOUND_CALL):
+                            call_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            break;
+                        case (SOUND_NOTIFICATION):
+                            notification_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            break;
+                        case (SOUND_MEDIA):
+                            media_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            break;
+                    }
+                } else {
+                    soundSeekbar.setProgress(lastSoundVolume);
+                    currentSoundPercent.setText(String.valueOf(lastSoundVolume));
+                    muteButton.setImageResource(R.drawable.ic_volume);
+                    // TODO 소리 설정 제어 관련 기능 구현
+                    switch (SOUND_MODE){
+                        case (SOUND_CALL):
+                            call_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            break;
+                        case (SOUND_NOTIFICATION):
+                            notification_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            break;
+                        case (SOUND_MEDIA):
+                            media_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            break;
+                    }
+                }
             });
 
-            notificationButton.setOnClickListener(v -> {
-                // 알림 기능 구현
-            });
-
-            soundButton.setOnClickListener(v -> {
-                // 소리 기능 구현
+            autoLight.setOnClickListener(v -> {
+                if (LIGHT_MODE != LIGHT_AUTO) {
+                    lastLightValue = lightSeekbar.getProgress();
+                    lightSeekbar.setProgress(0);
+                    LIGHT_MODE = LIGHT_AUTO;
+                    currentLightPercent.setText("auto");
+                    changeLightPercent.setText("auto");
+                    autoLight.setImageResource(R.drawable.ic_light_mode);
+                } else {
+                    lightSeekbar.setProgress(lastLightValue);
+                    LIGHT_MODE = LIGHT_SET;
+                    currentLightPercent.setText(String.valueOf(lastLightValue) + "%");
+                    changeLightPercent.setText(String.valueOf(lastLightValue) + "%");
+                    autoLight.setImageResource(R.drawable.ic_light_mode);
+                }
             });
 
             setAlarmButton.setOnClickListener(v -> {
-                // 알람 기능 구현
+                int hour = hourPicker.getValue();
+                int minute = minutePicker.getValue();
+                String time = String.format("%02d:%02d", hour, minute);
+                // TODO: 알람 설정 처리
             });
 
-            timePickerEditText.setOnClickListener(v -> showTimePickerDialog(timePickerEditText));
+            // 소리 제어 모드 변경
+            // TODO 소리 모드 변경 시 현재 음량 받아와서 SeekBar 설정 및 textView 수정 해야 함
+            callButton.setOnClickListener(v -> {
+                callButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FE7363")));
+                notificationButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5EFD897F")));
+                soundButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5EFD897F")));
+                SOUND_MODE = SOUND_CALL;
+            });
+
+            notificationButton.setOnClickListener(v -> {
+                callButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5EFD897F")));
+                notificationButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FE7363")));
+                soundButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5EFD897F")));
+                SOUND_MODE = SOUND_NOTIFICATION;
+            });
+
+            soundButton.setOnClickListener(v -> {
+                callButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5EFD897F")));
+                notificationButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5EFD897F")));
+                soundButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FE7363")));
+                SOUND_MODE = SOUND_MEDIA;
+            });
         }
     }
 
@@ -120,10 +295,8 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
             ControlListItem headerItem = (ControlListItem) item;
             headerHolder.nameText.setText(headerItem.getTitle());
             headerHolder.arrowIcon.setRotation(headerItem.isExpanded() ? 180 : 0);
-            // 프로필 이미지 설정
-            // headerHolder.profileImage.setImageResource(...);
         } else if (holder instanceof ControlViewHolder) {
-            ControlViewHolder controlHolder = (ControlViewHolder) holder;
+            // ControlPanel 바인딩 시 필요한 초기화 작업
             ControlPanel controlPanel = (ControlPanel) item;
         }
     }
@@ -143,14 +316,12 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         return displayedItems.size();
     }
 
-    // 컨트롤 패널을 위한 데이터 클래스
     private static class ControlPanel {
         private ControlListItem parentItem;
 
         public ControlPanel(ControlListItem parentItem) {
             this.parentItem = parentItem;
         }
-
     }
 
     private void expandItem(int position) {
@@ -160,11 +331,9 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         if (item instanceof ControlListItem) {
             ControlListItem headerItem = (ControlListItem) item;
             headerItem.setExpanded(true);
-
-            // 컨트롤 패널 추가
             displayedItems.add(position + 1, new ControlPanel(headerItem));
             notifyItemInserted(position + 1);
-            notifyItemChanged(position); // 헤더 상태 업데이트
+            notifyItemChanged(position);
         }
     }
 
@@ -175,48 +344,12 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         if (item instanceof ControlListItem) {
             ControlListItem headerItem = (ControlListItem) item;
             headerItem.setExpanded(false);
-
-            // 컨트롤 패널 제거
             if (position + 1 < displayedItems.size() &&
                     displayedItems.get(position + 1) instanceof ControlPanel) {
                 displayedItems.remove(position + 1);
                 notifyItemRemoved(position + 1);
-                notifyItemChanged(position); // 헤더 상태 업데이트
+                notifyItemChanged(position);
             }
         }
-    }
-
-    private void showTimePickerDialog(TextInputEditText timePickerEditText) {
-        // 현재 시간을 기본값으로 설정
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-
-        TimePickerDialog timePickerDialog = new TimePickerDialog(
-                timePickerEditText.getContext(),
-                (view, hourOfDay, selectedMinute) -> {
-                    // 24시간 형식을 12시간 형식으로 변환
-                    String period = "AM";
-                    int hour12 = hourOfDay;
-                    if (hourOfDay > 12) {
-                        hour12 = hourOfDay - 12;
-                        period = "PM";
-                    } else if (hourOfDay == 12) {
-                        period = "PM";
-                    } else if (hourOfDay == 0) {
-                        hour12 = 12;
-                    }
-
-                    // 선택된 시간을 텍스트로 표시
-                    String time = String.format(Locale.getDefault(),
-                            "%s %d:%02d", period, hour12, selectedMinute);
-                    timePickerEditText.setText(time);
-                },
-                hour,
-                minute,
-                false  // 24시간 형식 여부
-        );
-
-        timePickerDialog.show();
     }
 }
