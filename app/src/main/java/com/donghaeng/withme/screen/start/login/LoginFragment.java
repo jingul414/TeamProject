@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.screen.start.StartActivity;
 import com.donghaeng.withme.screen.start.signup.SignUpFragment;
+import com.donghaeng.withme.screen.start.signup.SignupNameFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -85,7 +86,7 @@ public class LoginFragment extends Fragment {
             startActivity.getSupportFragmentManager()
                     .beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right) // 애니메이션 추가. GPT가 알려줘서 걍 해봄.
-                    .replace(R.id.fragment_container, new SignUpFragment())
+                    .replace(R.id.fragment_container, new SignupNameFragment())
                     .addToBackStack(null) // 뒤로가기 기능 추가.
                     .commit();
         });
