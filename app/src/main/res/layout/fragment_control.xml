@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFF2"
+    android:fitsSystemWindows="true"
     tools:context=".screen.setting.SettingActivity">
 
     <TextView
@@ -48,7 +49,7 @@
         android:id="@+id/bottom_navigation"
         style="@style/BottomNavigationViewStyle"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:background="#FBF8D1"
         app:itemPaddingBottom="3dp"
         app:itemPaddingTop="3dp"

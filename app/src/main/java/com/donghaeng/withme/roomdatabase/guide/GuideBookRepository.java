@@ -1,6 +1,9 @@
 package com.donghaeng.withme.roomdatabase.guide;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,4 +49,19 @@ public class GuideBookRepository {
     public List<GuideBook> getControllerInstructions() {
         return guideBookDao.getGuidesByType(GuideBookType.CONTROLLER_INSTRUCTION);
     }
+
+    // 비동기로 데이터 불러오기
+    public interface OnGuideLoadedListener {
+        void onGuideLoaded(List<GuideBook> guides);
+    }
+
+    public void getAppGuidesAsync(OnGuideLoadedListener listener) {
+        executorService.execute(() -> {
+            List<GuideBook> guides = guideBookDao.getGuidesByType(GuideBookType.APP_GUIDE_BOOK);
+            new Handler(Looper.getMainLooper()).post(() -> {
+                listener.onGuideLoaded(guides);
+            });
+        });
+    }
+
 }
