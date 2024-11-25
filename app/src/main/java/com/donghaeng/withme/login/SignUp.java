@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 
 import com.donghaeng.withme.exception.phonenumber.EmptyPhoneNumberException;
 import com.donghaeng.withme.exception.phonenumber.InvalidPhoneNumberException;
+import com.donghaeng.withme.firebasestore.FireStoreManager;
 import com.donghaeng.withme.screen.start.StartActivity;
 import com.donghaeng.withme.user.Undefined;
 import com.donghaeng.withme.user.User;
@@ -37,12 +38,14 @@ public class SignUp {
     private String name;
     private String phoneNumber;
     private String hashedPassword;
+    private String userID;
 
     // 전화번호 인증 시 사용
     private FirebaseAuth mAuth;
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
+    private FireStoreManager db;
 
     // 비밀번호 경고문
     private Handler handler;
@@ -245,8 +248,24 @@ public class SignUp {
         } else {
             storeHashedPassword(pw);
             setUser();
+            setUserData();
             if(startActivity.getUser() instanceof Undefined) startActivity.changeFragment("SelectFragment");
         }
+    }
+
+    public void setUserData(){
+        db = FireStoreManager.getInstance();
+        db.setUserData(user,new FireStoreManager.FirestoreCallback() {
+            @Override
+            public void onSuccess(Object result) {
+                Log.e("Firestore", result.toString());
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("Firestore", "Error saving user data", e);
+            }
+        } );
     }
 
     public void storeHashedPassword(String password) {
@@ -255,7 +274,7 @@ public class SignUp {
     }
 
     public void setUser(){
-        String userID = mFirebaseUser.getUid();
+        userID = mFirebaseUser.getUid();
         user = new Undefined(name, phoneNumber, userID, hashedPassword);
         startActivity.setUser(user);
     }
