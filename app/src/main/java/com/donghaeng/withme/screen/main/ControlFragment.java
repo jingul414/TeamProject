@@ -45,7 +45,7 @@ public class ControlFragment extends Fragment {
         items.add(new ControlListItem("user1", "홍길동", "profile1"));
         items.add(new ControlListItem("user2", "홍길순", "profile2"));
 
-        adapter = new ControlExpandableAdapter(items);
+        adapter = new ControlExpandableAdapter(getActivity(), items);
         recyclerView.setAdapter(adapter);
 
         // 네비게이션 바 설정
