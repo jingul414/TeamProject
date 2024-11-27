@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.roomdatabase.guide.GuideBook;
+import com.donghaeng.withme.roomdatabase.guide.GuideBookRepository;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -105,12 +107,20 @@ public class ExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                             // 새로운 항목 추가
                             List<ListItem> newItems = new ArrayList<>();
-                            for (String subItem : subItems) {
+                            if(subItems.isEmpty()){
                                 newItems.add(new ListItem(
                                         UUID.randomUUID().toString(),
                                         ListItem.TYPE_ITEM,
-                                        subItem
+                                        "추가 된 가이드가 없습니다."
                                 ));
+                            } else {
+                                for (String subItem : subItems) {
+                                    newItems.add(new ListItem(
+                                            UUID.randomUUID().toString(),
+                                            ListItem.TYPE_ITEM,
+                                            subItem
+                                    ));
+                                }
                             }
 
                             items.addAll(loadingIndex, newItems);
@@ -217,17 +227,32 @@ public class ExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView contentText;
+        private GuideActivity guideActivity;
+        private GuideBookRepository guideBookRepository;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             contentText = itemView.findViewById(R.id.contentText);
+            guideActivity = guideFragment.getGuideActivity();
+            guideBookRepository = new GuideBookRepository(guideActivity);
 
             itemView.setOnClickListener(v -> {
                 // 가이드 목록 아이템 클릭 시 설명으로 이동하는 부분
                 // Todo 여기서 누른 목록에 대한 설명을 서버에서 불러와서 그 정보도 같이 넘겨줘야 함...
                 // 현재는 누른 아이템의 텍스트를 보내줌..
                 Log.d("ExpandableAdapter", "Item clicked: " + contentText.getText().toString());
-                guideFragment.changeFragment(new GuideInfoFragment(contentText.getText().toString()));
+                if(!contentText.getText().toString().equals("추가 된 가이드가 없습니다.")){
+                    guideBookRepository.getAppGuidesAsync(guides -> { // 가이드 정보 불러오기
+                        if (!guides.isEmpty()) {
+                            guideFragment.changeFragment(
+                                    new GuideInfoFragment(
+                                            contentText.getText().toString(),
+                                            guides.get(0).getContentJson()
+                                    )
+                            );
+                        }
+                    });
+                }
             });
         }
     }

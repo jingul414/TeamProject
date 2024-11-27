@@ -192,7 +192,7 @@
         android:layout_height="wrap_content"
         android:autoSizeMaxTextSize="30sp"
         android:background="@drawable/rounded_button"
-        app:backgroundTint="#FE7363"
+        app:backgroundTint="#FF8A80"
         android:text="@string/leave"
         android:textColor="@color/white"
         android:textSize="30sp"

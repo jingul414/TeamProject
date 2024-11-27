@@ -255,7 +255,7 @@ public class SignUp {
 
     public void setUserData(){
         db = FireStoreManager.getInstance();
-        db.setUserData(user,new FireStoreManager.FirestoreCallback() {
+        db.setUserData(user,new FireStoreManager.firestoreCallback() {
             @Override
             public void onSuccess(Object result) {
                 Log.e("Firestore", result.toString());
