@@ -41,6 +41,7 @@ public abstract class User {
     public String getId() {
         return id;
     }
+    public String getHashedPassword() { return hashedPassword; }
     public byte getUserType() {
         return userType;
     }

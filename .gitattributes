@@ -1,0 +1,7 @@
+# 모든 텍스트 파일 CRLF로 설정
+* text eol=crlf
+
+# 특정 파일 형식만 CRLF 강제 적용
+*.java text eol=crlf
+*.xml text eol=crlf
+*.kt text eol=crlf

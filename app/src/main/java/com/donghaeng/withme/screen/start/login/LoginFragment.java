@@ -4,14 +4,19 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.login.Login;
 import com.donghaeng.withme.screen.start.StartActivity;
+
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +29,11 @@ public class LoginFragment extends Fragment {
     Button login_btn;
     StartActivity startActivity;
     TextView testTextView;
+    Login loginAuth;
+    EditText phoneNumEdit;
+    EditText passwdEdit;
+
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -72,11 +82,25 @@ public class LoginFragment extends Fragment {
 
         login_btn = view.findViewById(R.id.login_button);
         startActivity = (StartActivity) requireActivity();
+        phoneNumEdit = view.findViewById(R.id.login_text_phone_number);
+        passwdEdit = view.findViewById(R.id.login_text_password);
+
         login_btn.setOnClickListener(v -> {
             // 로그인 검증 로직 추가
-            startActivity.changeFragment("controller");
+            String phoneNumStr = phoneNumEdit.getText().toString();
+            String passwdStr = passwdEdit.getText().toString();
+            loginAuth = new Login(phoneNumStr);
+            loginAuth.verifyUser(passwdStr, result -> {
+                if (result) {
+                    // 로그인 성공
+                    Log.e("LoginFragment", "로그인 성공");
+                    startActivity.changeFragment("controller");
+                } else {
+                    // 로그인 실패
+                    Log.e("LoginFragment", "로그인 실패");
+                }
+            });
         });
-
         return view;
     }
 

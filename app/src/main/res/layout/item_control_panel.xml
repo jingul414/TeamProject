@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/item_background"
     android:orientation="vertical"
+    android:layout_marginBottom="10dp"
     android:padding="16dp">
 
     <!-- ToDo 여기서 동행인 클릭 시 나오는 제어 판넬 디자인 수정하면 됨. -->
@@ -17,12 +18,12 @@
         android:paddingTop="5dp">
 
         <TextView
+            style="@style/app_one_line_text"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:text="@string/sound_mode_setting"
-            style="@style/app_one_line_text"
             android:autoSizeMaxTextSize="18sp"
+            android:text="@string/sound_mode_setting"
             android:textSize="18sp" />
 
         <LinearLayout
@@ -45,13 +46,13 @@
                 android:id="@+id/notificationButton"
                 android:layout_width="0dp"
                 android:layout_height="65dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button"
-                android:contentDescription="@string/control_notification"
                 android:backgroundTint="#5EFD897F"
+                android:contentDescription="@string/control_notification"
                 android:minWidth="48dp"
                 android:minHeight="48dp"
-                android:layout_marginEnd="5dp"
                 android:padding="12dp"
                 android:src="@drawable/ic_notification" />
 
@@ -67,84 +68,151 @@
                 android:minWidth="48dp"
                 android:minHeight="48dp"
                 android:padding="12dp"
-                android:src="@drawable/ic_sound" />
+                android:src="@drawable/ic_volume" />
 
         </LinearLayout>
-    </LinearLayout>
-
-    <!-- 구분선 -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#929292"
-        android:layout_marginVertical="10dp"/>
-
-    <!-- 음량 크기 조절 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingTop="5dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:text="@string/voliume_setting"
-            style="@style/app_one_line_text"
-            android:autoSizeMaxTextSize="18sp"
-            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="10dp"
             android:orientation="horizontal">
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/current_sound_text"
+                    style="@style/app_one_line_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMaxTextSize="18sp"
+                    android:gravity="center"
+                    android:text="@string/current_sound"
+                    android:textSize="18sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/current_sound_percent"
+                        style="@style/app_one_line_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:autoSizeMaxTextSize="18sp"
+                        android:gravity="end"
+                        android:paddingEnd="0dp"
+                        android:text="0"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/percent1"
+                        style="@style/app_one_line_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:autoSizeMaxTextSize="18sp"
+                        android:gravity="start"
+                        android:paddingStart="0dp"
+                        android:text="%"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_long_arrow_right" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/change_sound_text"
+                    style="@style/app_one_line_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMaxTextSize="18sp"
+                    android:gravity="center"
+                    android:text="@string/change_sound"
+                    android:textSize="18sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/change_sound_percent"
+                        style="@style/app_one_line_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:autoSizeMaxTextSize="18sp"
+                        android:gravity="end"
+                        android:paddingEnd="0dp"
+                        android:text="0"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/percent2"
+                        style="@style/app_one_line_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:autoSizeMaxTextSize="18sp"
+                        android:gravity="start"
+                        android:paddingStart="0dp"
+                        android:text="%"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/soundUpButton"
-                android:layout_width="0dp"
-                android:layout_height="65dp"
-                android:layout_weight="1"
-                android:background="@drawable/rounded_button"
-                android:contentDescription="@string/control_sound_up"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:layout_marginEnd="5dp"
-                android:padding="12dp"
-                android:src="@drawable/ic_arrow_upward" />
-
-            <ImageButton
-                android:id="@+id/muteButton"
-                android:layout_width="0dp"
-                android:layout_height="65dp"
-                android:layout_weight="1"
+                android:id="@+id/mute_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/rounded_button"
                 android:contentDescription="@string/control_sound_mute"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:layout_marginEnd="5dp"
-                android:padding="12dp"
-                android:src="@drawable/ic_sound" />
+                app:srcCompat="@drawable/ic_volume_mute" />
 
-            <ImageButton
-                android:id="@+id/soundDownButton"
-                android:layout_width="0dp"
-                android:layout_height="65dp"
-                android:layout_weight="1"
-                android:background="@drawable/rounded_button"
-                android:contentDescription="@string/control_sound_down"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:padding="12dp"
-                android:src="@drawable/ic_arrow_downward" />
+            <SeekBar
+                android:id="@+id/sound_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:progressDrawable="@drawable/custom_progressbar"
+                android:thumb="@drawable/seekbar_thumb"
+                android:max="100"
+                android:min="0" />
 
         </LinearLayout>
+
     </LinearLayout>
 
+
+
     <!-- 구분선 -->
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -170,48 +238,104 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="10dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/current_light_text"
+                    style="@style/app_one_line_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMaxTextSize="18sp"
+                    android:gravity="center"
+                    android:text="@string/current_light"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/current_light_percent"
+                    style="@style/app_one_line_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:autoSizeMaxTextSize="18sp"
+                    android:gravity="center"
+                    android:paddingEnd="0dp"
+                    android:text="0"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_long_arrow_right" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/change_light_text"
+                    style="@style/app_one_line_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMaxTextSize="18sp"
+                    android:gravity="center"
+                    android:text="@string/change_light"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/change_light_percent"
+                    style="@style/app_one_line_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:autoSizeMaxTextSize="18sp"
+                    android:gravity="center"
+                    android:paddingEnd="0dp"
+                    android:text="0"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/lightUpButton"
-                android:layout_width="0dp"
-                android:layout_height="65dp"
-                android:layout_weight="1"
-                android:background="@drawable/rounded_button"
-                android:contentDescription="@string/control_light_up"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:layout_marginEnd="5dp"
-                android:padding="12dp"
-                android:src="@drawable/ic_arrow_upward" />
-
-            <ImageButton
-                android:id="@+id/lightButton"
-                android:layout_width="0dp"
-                android:layout_height="65dp"
-                android:layout_weight="1"
+                android:id="@+id/auto_light"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/rounded_button"
                 android:contentDescription="@string/control_light_mode"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:layout_marginEnd="5dp"
-                android:padding="12dp"
-                android:src="@drawable/ic_light_mode" />
+                app:srcCompat="@drawable/ic_light_mode" />
 
-            <ImageButton
-                android:id="@+id/lightDownButton"
-                android:layout_width="0dp"
-                android:layout_height="65dp"
-                android:layout_weight="1"
-                android:background="@drawable/rounded_button"
-                android:contentDescription="@string/control_light_down"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:padding="12dp"
-                android:src="@drawable/ic_arrow_downward" />
+            <SeekBar
+                android:id="@+id/light_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:progressDrawable="@drawable/custom_progressbar"
+                android:thumb="@drawable/seekbar_thumb"
+                android:max="100"
+                android:min="0" />
+
         </LinearLayout>
+
     </LinearLayout>
 
     <!-- 구분선 -->
@@ -244,37 +368,48 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/timePickerLayout"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:gravity="center"
+                android:orientation="horizontal">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/timePickerEditText"
-                    android:layout_width="match_parent"
+                <!-- 시간 선택 -->
+                <NumberPicker
+                    android:id="@+id/hourPicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:theme="@style/NumberPickerStyle"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:focusable="false"
-                    android:gravity="end"
+                    android:text=":"
+                    android:textSize="20sp"
+                    android:layout_marginHorizontal="8dp"/>
+
+                <!-- 분 선택 -->
+                <NumberPicker
+                    android:id="@+id/minutePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:theme="@style/NumberPickerStyle"/>
+
+                <Button
+                    android:id="@+id/setAlarmButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/rounded_button"
+                    app:backgroundTint="#FF8A80"
+                    android:textColor="@color/black"
                     style="@style/app_one_line_text"
                     android:textSize="18sp"
                     android:autoSizeMaxTextSize="18sp"
-                    android:text="@string/control_default_time" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <Button
-                android:id="@+id/setAlarmButton"
-                android:background="@drawable/rounded_button"
-                app:backgroundTint="#FF8A80"
-                android:textColor="@color/black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/app_one_line_text"
-                android:textSize="18sp"
-                android:autoSizeMaxTextSize="18sp"
-                android:text="@string/control_set_btn" />
+                    android:text="@string/control_set_btn" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
