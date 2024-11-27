@@ -21,7 +21,7 @@ public class ControllerConnectFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_controller_connect, container, false);
     }
 
@@ -40,12 +40,20 @@ public class ControllerConnectFragment extends Fragment {
         }
     }
 
+    @OptIn(markerClass = ExperimentalGetImage.class)
     public void changeFragment(String fragmentName) {
         switch (fragmentName) {
             case "info":
+
                 getChildFragmentManager()
                         .beginTransaction()
                         .add(R.id.child_fragment, new ConnectInfoFragment())
+                        .commit();
+                break;
+            case "qr":
+                getChildFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.child_fragment, new ControllerQrFragment())
                         .commit();
                 break;
             default:

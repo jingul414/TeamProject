@@ -1,7 +1,7 @@
 <!-- drawable/line_1.xml -->
 <vector
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:width="301dp"
+        android:width="298dp"
         android:height="4dp"
         android:viewportWidth="301"
         android:viewportHeight="4">

@@ -28,6 +28,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginEnd="10dp"
         android:text="@string/service_name"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/icon" />
@@ -40,6 +41,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginEnd="10dp"
         android:text="@string/service_name_eng"
+        android:textStyle="bold"
         android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_login"
@@ -9,7 +8,7 @@
     android:background="#FFFFF2">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,73 +17,92 @@
 
         <TextView
             android:id="@+id/start_text_intro"
-            style="@style/app_main_24sp_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/app_one_line_text"
+            android:layout_width="400dp"
+            android:layout_height="45sp"
+            android:autoSizeMaxTextSize="24sp"
             android:gravity="center"
             android:text="@string/login_text_main"
+            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <RadioButton
+        <CheckBox
             android:id="@+id/login_radio_login_history"
-            style="@style/login_radio_login_history"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/app_one_line_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="80dp"
             android:layout_marginTop="10dp"
-            android:text="@string/login_radio_login_history"
+            android:autoSizeMaxTextSize="16sp"
+            android:text="@string/login_checkbox_login_history"
+            android:textSize="16sp"
+            android:theme="@style/CustomCheckBoxTheme"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_view_login_box" />
 
         <Button
             android:id="@+id/login_button"
-            style="@style/login_go"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/app_one_line_text"
+            android:layout_width="200dp"
+            android:layout_height="55dp"
             android:layout_marginStart="125dp"
             android:layout_marginEnd="125dp"
-            android:backgroundTint="#FE7363"
+            android:autoSizeMaxTextSize="24sp"
+            android:background="@drawable/rounded_button"
             android:paddingHorizontal="50dp"
             android:text="@string/login_go"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:backgroundTint="#FF8A80"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_radio_login_history" />
 
         <TextView
             android:id="@+id/login_text_set_password"
-            style="@style/login_text_set_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/app_one_line_text"
+            android:layout_width="350dp"
+            android:layout_height="40dp"
             android:layout_marginStart="120dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="45dp"
             android:layout_marginEnd="120dp"
+            android:autoSizeMaxTextSize="20sp"
             android:text="@string/login_text_set_password"
+            android:textAlignment="center"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_button" />
 
         <TextView
             android:id="@+id/login_text_find_password"
-            style="@style/login_text_find_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/app_one_line_text"
+            android:layout_width="330dp"
+            android:layout_height="40dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="135dp"
+            android:layout_marginTop="15dp"
             android:layout_marginEnd="135dp"
+            android:autoSizeMaxTextSize="20sp"
             android:text="@string/login_text_find_password"
+            android:textAlignment="center"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_text_set_password" />
 
         <LinearLayout
             android:id="@+id/login_view_login_box"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_width="310dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
             android:background="@drawable/login_view_login_box2"
+            android:clipChildren="true"
+            android:clipToOutline="true"
             android:orientation="vertical"
             android:paddingHorizontal="5dp"
             android:paddingVertical="10dp"
@@ -95,14 +113,18 @@
             <EditText
                 android:id="@+id/login_text_phone_number"
                 style="@style/app_one_line_text"
-                android:textSize="32sp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:autoSizeMaxTextSize="22sp"
                 android:autofillHints="phone"
                 android:background="@android:color/transparent"
                 android:gravity="center_vertical"
                 android:hint="@string/login_text_phone_number"
                 android:inputType="number"
+                android:paddingStart="15dp"
+                android:textColor="#000000"
+                android:textColorHint="#A9A9A9"
+                android:textSize="22sp"
                 tools:ignore="TextFields" />
 
             <View
@@ -114,14 +136,18 @@
             <EditText
                 android:id="@+id/login_text_password"
                 style="@style/app_one_line_text"
-                android:textSize="32sp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:autoSizeMaxTextSize="22sp"
                 android:autofillHints="password"
                 android:background="@android:color/transparent"
                 android:gravity="center_vertical"
                 android:hint="@string/login_text_password"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:paddingStart="15dp"
+                android:textColor="#000000"
+                android:textColorHint="#A9A9A9"
+                android:textSize="22sp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

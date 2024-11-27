@@ -14,8 +14,10 @@ import android.widget.Button;
 import com.donghaeng.withme.R;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-public class FragmentSetting extends Fragment {
+public class SettingFragment extends Fragment {
     private SettingActivity activity;
 
     private int FragmentMode = -1;  // 임시 변수들
@@ -28,7 +30,7 @@ public class FragmentSetting extends Fragment {
 
     }
 
-//    TODO 제어자인지 피제어자인지 받아와야 함
+    //    TODO 제어자인지 피제어자인지 받아와야 함
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,11 +53,21 @@ public class FragmentSetting extends Fragment {
         leave = view.findViewById(R.id.leave);
 
         change_number.setOnClickListener(v -> {
-            activity.changeFragment("ChangeNumber");
+            FragmentManager fragmentManager = getParentFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.fragment_container, new SettingPhoneNumFragment());
+            transaction.addToBackStack(null); // 뒤로 가기 버튼으로 돌아가기 가능
+            transaction.commit();
         });
+
         change_pw.setOnClickListener(v -> {
-            activity.changeFragment("ChangePW");
+            FragmentManager fragmentManager = getParentFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.fragment_container, new SettingPasswordFragment());
+            transaction.addToBackStack(null); // 뒤로 가기 버튼으로 돌아가기 가능
+            transaction.commit();
         });
+
         permit_list.setOnClickListener(v -> {
             // activity.changeFragment("PermitList"); 임시 버튼 사용
             view.findViewById(R.id.buttons).setVisibility(View.VISIBLE);
@@ -71,16 +83,16 @@ public class FragmentSetting extends Fragment {
         control = view.findViewById(R.id.control);
         target = view.findViewById(R.id.target);
         control.setOnClickListener(v -> {
-            if(FragmentMode == PERMIT){
+            if (FragmentMode == PERMIT) {
                 activity.changeFragment("PermitListControl");
-            } else if(FragmentMode == LEAVE){
+            } else if (FragmentMode == LEAVE) {
                 showLeaveDialog(true); // true 는 controller 용 다이얼로그
             }
         });
         target.setOnClickListener(v -> {
-            if(FragmentMode == PERMIT){
+            if (FragmentMode == PERMIT) {
                 activity.changeFragment("PermitListTarget");
-            } else if(FragmentMode == LEAVE){
+            } else if (FragmentMode == LEAVE) {
                 showLeaveDialog(false); // false 는 target 용 다이얼로그
             }
         });

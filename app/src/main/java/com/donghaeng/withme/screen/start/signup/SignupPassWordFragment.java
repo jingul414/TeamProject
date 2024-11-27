@@ -38,12 +38,14 @@ public class SignupPassWordFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_signup_password, container, false);
 
-        pwNotificationText = view.findViewById(R.id.signup_text_password_notification);
-        pwEdit = view.findViewById(R.id.signup_edit_password);
-        pwCheckEdit = view.findViewById(R.id.signup_edit_password_check);
-        warningText = view.findViewById(R.id.signup_text_warning);
-        nextBtn = view.findViewById(R.id.signup_btn_next);
-        startActivity = (StartActivity) requireActivity();
+        // UI 요소 초기화
+        pwNotificationText  = view.findViewById(R.id.signup_text_password_notification1);
+        pwEdit              = view.findViewById(R.id.signup_edit_password);
+        pwCheckEdit         = view.findViewById(R.id.signup_edit_password_check);
+        warningText         = view.findViewById(R.id.signup_text_warning);
+        nextBtn             = view.findViewById(R.id.signup_btn_next);
+        startActivity       = (StartActivity) requireActivity();
+
         warningText.setVisibility(View.INVISIBLE);
         nextBtn.setOnClickListener(new NextBtnListener());
         startActivity.getSignUpInstance().makeAlertTask(warningText);
