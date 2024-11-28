@@ -48,8 +48,8 @@ public class StartActivity extends AppCompatActivity {
         target_btn = findViewById(R.id.target_button);
         // 화면 이동용 임시 버튼 클릭 리스너 설정
         guide_btn.setOnClickListener(v -> startActivity(new Intent(this, GuideActivity.class)));
-        control_btn.setOnClickListener(v -> startActivity(new Intent(this, ControllerActivity.class)));
-        target_btn.setOnClickListener(v -> startActivity(new Intent(this, TargetActivity.class)));
+        control_btn.setOnClickListener(v -> changeFragment("controller_QR"));
+        target_btn.setOnClickListener(v -> changeFragment("target_QR"));
 
         // Fragment 초기화 로직을 분리
         if (savedInstanceState == null) {
