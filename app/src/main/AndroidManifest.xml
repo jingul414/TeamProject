@@ -6,6 +6,8 @@
 
     <uses-feature android:name="android.hardware.camera" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
@@ -43,6 +45,14 @@
         <activity
             android:name=".screen.start.StartActivity"
             android:exported="false"/>
-    </application>
+        <service
+            android:name=".service.VolumeControlService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
+        <service
+            android:name=".service.BrightnessControlService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
+    </application>
 </manifest>
