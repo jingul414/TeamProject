@@ -1,17 +1,17 @@
 package com.donghaeng.withme.login;
 
 import android.util.Log;
-import android.widget.Toast;
 
-import com.donghaeng.withme.firebasestore.FireStoreManager;
-import com.donghaeng.withme.screen.start.StartActivity;
 import com.donghaeng.withme.security.EncrpytPhoneNumber;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import org.mindrot.jbcrypt.BCrypt;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 // 로그인
 public class Login {
@@ -35,10 +35,11 @@ public class Login {
         String hashedPhoneNum = EncrpytPhoneNumber.hashPhoneNumber(this.phoneNum);
         db = FirebaseFirestore.getInstance();
         Log.e("Login", "phoneNum: "+this.phoneNum);
-        db.collection("controller").document(hashedPhoneNum).get().addOnCompleteListener(task -> {
+
+        db.collection("user").document(hashedPhoneNum).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult().exists()) {
                 // 문서가 존재할 경우
-                String hashedPW = task.getResult().getString("hashedPw");
+                String hashedPW = task.getResult().getString("hashedPW");
                 if (hashedPW != null && BCrypt.checkpw(passwd, hashedPW)) {
                     //비밀번호가 문서에 존재하고, 일치할 경우
                     Log.e("Login", "hashedPW: " + hashedPW);
