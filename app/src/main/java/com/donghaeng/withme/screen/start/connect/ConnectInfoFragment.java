@@ -16,11 +16,7 @@ import com.donghaeng.withme.user.Undefined;
 import com.donghaeng.withme.user.User;
 import com.donghaeng.withme.user.UserType;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ConnectInfoFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class ConnectInfoFragment extends Fragment {
     /**
      * Fragment 생성자 데이터
@@ -47,11 +43,15 @@ public class ConnectInfoFragment extends Fragment {
             user = getArguments().getParcelable(ARG_USER);
         }
     }
+    private ControllerConnectFragment connectFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_connect_info, container, false);
+
+        connectFragment = (ControllerConnectFragment) getParentFragment();
 
         TextView infoTextView = view.findViewById(R.id.info_text);
         TextView nameTextView = view.findViewById(R.id.tel_name);
@@ -72,9 +72,12 @@ public class ConnectInfoFragment extends Fragment {
             phoneTextView.setText(user.getPhone());
         }
         Button yesBtn = view.findViewById(R.id.yes_button);
-        Button noBtn = view.findViewById(R.id.no_button);
         yesBtn.setOnClickListener(new YesBtnListener());
-        noBtn.setOnClickListener(new NoBtnListener());
+        // 아니오 버튼 클릭시 뒤로 이동
+        View back = view.findViewById(R.id.no_button);
+        back.setOnClickListener(v -> {
+            connectFragment.changeFragment("qr");
+        });
         return view;
     }
 
@@ -82,13 +85,6 @@ public class ConnectInfoFragment extends Fragment {
         @Override
         public void onClick(View v) {
             Log.d("ConnectInfoFragment", "Yes button clicked");
-        }
-    }
-
-    static class NoBtnListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-
         }
     }
 }

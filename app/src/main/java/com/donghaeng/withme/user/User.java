@@ -80,6 +80,7 @@ public class User implements Serializable, Parcelable {
     public String getId() {
         return id;
     }
+    public String getHashedPassword() { return hashedPassword; }
     public byte getUserType() {
         return userType;
     }

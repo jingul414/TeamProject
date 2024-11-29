@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_start"
@@ -11,23 +10,23 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="140dp"
+        android:layout_marginTop="90dp"
         android:orientation="vertical"
         android:paddingLeft="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.100000024">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/start_text_intro"
-            style="@style/start_text_style_intro"
+            style="@style/app_one_line_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="65dp"
+            android:autoSizeMaxTextSize="45sp"
             android:gravity="top"
-            android:fontFamily="@font/tmoney_round_wind_regular"
-            android:text="안녕하세요!" />
+            android:text="@string/label_hello_text"
+            android:textSize="45sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,36 +35,42 @@
 
             <TextView
                 android:id="@+id/start_text_intro2"
-                style="@style/start_text_style_intro2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/tmoney_round_wind_extra_bold"
-                android:text="동행"
+                style="@style/app_one_line_text"
+                android:layout_width="113dp"
+                android:layout_height="75dp"
+                android:autoSizeMaxTextSize="55sp"
+                android:text="@string/with_me"
                 android:textColor="#FE7363"
+                android:textSize="55sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/start_text_intro3"
-                style="@style/start_text_style_intro"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/tmoney_round_wind_regular"
-                android:text="입니다." />
+                style="@style/app_one_line_text"
+                android:layout_width="150dp"
+                android:layout_height="68dp"
+                android:autoSizeMaxTextSize="45sp"
+                android:text="@string/label_ending_text"
+                android:textSize="45sp" />
         </LinearLayout>
     </LinearLayout>
 
 
     <TextView
         android:id="@+id/start_text_main"
-        style="@style/start_text_style_main"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/app_one_line_text"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_marginStart="13dp"
         android:layout_marginTop="40dp"
-        android:gravity="top"
-        android:fontFamily="@font/tmoney_round_wind_regular"
+        android:layout_marginEnd="13dp"
+        android:autoSizeMaxTextSize="42sp"
+        android:gravity="center_horizontal"
+        android:paddingHorizontal="0dp"
         android:text="@string/start_text_main"
+        android:textSize="42sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
@@ -74,85 +79,90 @@
     <LinearLayout
         android:id="@+id/login_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_height="145dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:paddingVertical="30dp"
-        android:paddingHorizontal="50dp"
-        android:gravity="center"
-        android:padding="15dp"
+        android:background="@drawable/rounded_button"
         android:clickable="true"
         android:focusable="true"
-        android:background="@drawable/rounded_button"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="15dp"
+        android:paddingHorizontal="50dp"
+        android:paddingVertical="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/start_text_main">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/tmoney_round_wind_extra_bold"
-            android:text="네,"
-            android:textSize="48sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"/>
+            style="@style/app_one_line_text"
+            android:layout_width="80dp"
+            android:layout_height="65dp"
+            android:autoSizeMaxTextSize="50sp"
+            android:paddingBottom="0sp"
+            android:text="@string/label_yes_text"
+            android:textColor="#FFFFFF"
+            android:textSize="50sp"
+            android:textStyle="bold" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/tmoney_round_wind_regular"
-            android:text="써본 적 있어요!"
-            android:textSize="24sp"
+            style="@style/app_one_line_text"
+            android:layout_width="170dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="4dp"
+            android:autoSizeMaxTextSize="24sp"
+            android:text="@string/label_do_text"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="4dp"/>
+            android:textSize="24sp" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/signup_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_height="145dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:paddingVertical="30dp"
-        android:paddingHorizontal="50dp"
-        android:gravity="center"
-        android:padding="15dp"
+        android:background="@drawable/rounded_button"
         android:clickable="true"
         android:focusable="true"
-        android:background="@drawable/rounded_button"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="15dp"
+        android:paddingHorizontal="50dp"
+        android:paddingVertical="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_button">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/tmoney_round_wind_extra_bold"
-            android:text="아니요,"
-            android:textSize="48sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"/>
+            style="@style/app_one_line_text"
+            android:layout_width="168dp"
+            android:layout_height="65dp"
+            android:autoSizeMaxTextSize="50sp"
+            android:paddingBottom="0sp"
+            android:text="@string/label_no_text"
+            android:textColor="#FFFFFF"
+
+            android:textSize="50sp"
+            android:textStyle="bold" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/tmoney_round_wind_regular"
-            android:text="처음 써봐요!"
-            android:textSize="24sp"
+            style="@style/app_one_line_text"
+            android:layout_width="140dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="1dp"
+            android:autoSizeMaxTextSize="24sp"
+            android:text="@string/label_didnt_text"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="4dp"/>
+            android:textSize="24sp" />
 
     </LinearLayout>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

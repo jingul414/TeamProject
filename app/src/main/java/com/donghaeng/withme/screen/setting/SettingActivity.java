@@ -22,7 +22,7 @@ public class SettingActivity extends AppCompatActivity {
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_container, new FragmentSetting())
+                .add(R.id.fragment_container, new SettingFragment())
                 .commit();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

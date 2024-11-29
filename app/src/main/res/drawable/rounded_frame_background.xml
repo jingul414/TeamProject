@@ -3,6 +3,6 @@
     <solid android:color="#FBF8D1"/>  <!-- 배경색 -->
     <corners android:radius="20dp"/>   <!-- 모서리 둥글기 -->
     <stroke
-        android:width="4dp"
-        android:color="#FE7363"/>      <!-- 테두리 색상 -->
+        android:width="3dp"
+        android:color="#FF8A80"/>      <!-- 테두리 색상 -->
 </shape>

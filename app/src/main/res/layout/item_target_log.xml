@@ -18,26 +18,28 @@
 
         <TextView
             android:id="@+id/control_log_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="제어 기록"
+            android:text="@string/cotrol_text"
+            style="@style/app_one_line_text"
+            android:autoSizeMaxTextSize="28sp"
             android:textSize="28sp" />
 
 
         <TextView
             android:id="@+id/name_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
-            android:text="홍길동"
+            android:text="@string/log_name"
             android:textSize="18sp" />}
 
 
         <TextView
             android:id="@+id/time_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="12월 31일 23시 59분 28초"
+            android:text="@string/control_time"
             android:textSize="18sp" />}
 
 

@@ -5,9 +5,11 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DIALOG" />
         <DropdownSelection timestamp="2024-11-17T10:25:42.986958200Z">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2024-11-18T07:47:33.512202100Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\PRO\.android\avd\Medium_Phone_API_35.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Won\.android\avd\Small_Phone_API_35.avd" />
             </handle>
           </Target>
         </DropdownSelection>
