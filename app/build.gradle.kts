@@ -117,5 +117,5 @@ dependencies {
 
     // 이미지 로드 관련
     implementation ("com.squareup.picasso:picasso:2.8")
-
+    implementation ("com.google.firebase:firebase-storage")
 }
