@@ -18,15 +18,10 @@ import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
 import com.google.android.gms.nearby.connection.ConnectionResolution;
 import com.google.android.gms.nearby.connection.ConnectionsClient;
 import com.google.android.gms.nearby.connection.ConnectionsStatusCodes;
-import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo;
-import com.google.android.gms.nearby.connection.DiscoveryOptions;
-import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
-import com.google.android.gms.nearby.connection.Strategy;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,7 +116,7 @@ public abstract class NearbyHandler {
      */
     protected final ConnectionLifecycleCallback mConnectionLifecycleCallback = new ConnectionLifecycleCallback() {
         @Override
-        public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
+        public void onConnectionInitiated(@NonNull String endpointId, ConnectionInfo connectionInfo) {
             logD(
                     String.format(
                             "onConnectionInitiated(endpointId=%s, endpointName=%s)",
@@ -134,7 +129,7 @@ public abstract class NearbyHandler {
         }
 
         @Override
-        public void onConnectionResult(String endpointId, ConnectionResolution result) {
+        public void onConnectionResult(@NonNull String endpointId, @NonNull ConnectionResolution result) {
             logD(String.format("onConnectionResponse(endpointId=%s, result=%s)", endpointId, result));
 
             // We're no longer connecting
@@ -152,11 +147,11 @@ public abstract class NearbyHandler {
             connectedToEndpoint(endpoint);
 
             // 하위 클래스에서 동작을 정의할 수 있도록 추가
-            onSuccessfulConnection(endpointId, endpoint);
+            onSuccessfulConnection(endpointId);
         }
 
         @Override
-        public void onDisconnected(String endpointId) {
+        public void onDisconnected(@NonNull String endpointId) {
             if (!mEstablishedConnections.containsKey(endpointId)) {
                 logW("Unexpected disconnection from endpoint " + endpointId);
                 return;
@@ -169,13 +164,13 @@ public abstract class NearbyHandler {
      */
     protected final PayloadCallback mPayloadCallback = new PayloadCallback() {
         @Override
-        public void onPayloadReceived(String endpointId, Payload payload) {
+        public void onPayloadReceived(@NonNull String endpointId, @NonNull Payload payload) {
             logD(String.format("onPayloadReceived(endpointId=%s, payload=%s)", endpointId, payload));
             onReceive(mEstablishedConnections.get(endpointId), payload);
         }
 
         @Override
-        public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
+        public void onPayloadTransferUpdate(@NonNull String endpointId, @NonNull PayloadTransferUpdate update) {
             logD(
                     String.format(
                             "onPayloadTransferUpdate(endpointId=%s, update=%s)", endpointId, update));
@@ -213,12 +208,7 @@ public abstract class NearbyHandler {
         mConnectionsClient
                 .acceptConnection(endpoint.getId(), mPayloadCallback)
                 .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                logW("acceptConnection() failed.", e);
-                            }
-                        });
+                        e -> logW("acceptConnection() failed.", e));
     }
 
     /**
@@ -464,7 +454,7 @@ public abstract class NearbyHandler {
     /**
      * 연결 성공 시 호출되는 메서드 (하위 클래스에서 재정의 가능)
      */
-    protected void onSuccessfulConnection(String endpointId, Endpoint endpoint) {
+    protected void onSuccessfulConnection(String endpointId) {
         // 기본적으로 아무 작업도 하지 않음
         logD("Connection succeeded with endpoint: " + endpointId);
     }

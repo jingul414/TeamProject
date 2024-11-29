@@ -33,17 +33,18 @@ public class QRCodeGenerator {
         new Random().nextBytes(array);
         String generatedString = new String(array, StandardCharsets.UTF_8).trim();
 
-        String data = BCrypt.hashpw(generatedString, BCrypt.gensalt());
+        if (mAdvertisementHandler != null) {
+            mAdvertisementHandler.setData(generatedString);
+            String data = BCrypt.hashpw(generatedString, BCrypt.gensalt());
 
-        if( mAdvertisementHandler != null ) mAdvertisementHandler.setData(generatedString);
-
-        try {
-            Bitmap bitmap = createQRCode(data);
-            qrCodeImageView.setImageBitmap(bitmap);
-        } catch (WriterException e) {
-            e.printStackTrace();
-            Log.e("QRCodeGenerator", "Error generating QR code", e);
-            Toast.makeText(mContext, "Error generating QR code", Toast.LENGTH_SHORT).show();
+            try {
+                Bitmap bitmap = createQRCode(data);
+                qrCodeImageView.setImageBitmap(bitmap);
+            } catch (WriterException e) {
+                e.printStackTrace();
+                Log.e("QRCodeGenerator", "Error generating QR code", e);
+                Toast.makeText(mContext, "Error generating QR code", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

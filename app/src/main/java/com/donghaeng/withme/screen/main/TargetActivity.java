@@ -12,21 +12,24 @@ import android.view.ViewGroup;
 import com.donghaeng.withme.R;
 
 import com.donghaeng.withme.screen.start.connect.TargetConnectFragment;
+import com.donghaeng.withme.user.Undefined;
+import com.donghaeng.withme.user.User;
 
 public class TargetActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_target);
 
+        User user = getIntent().getParcelableExtra("user");
+
         // Fragment 초기화 로직을 분리
         if (savedInstanceState == null && getIntent().getStringExtra("fragmentName") != null) {
             if(getIntent().getStringExtra("fragmentName").equals("target_QR")){
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .add(R.id.fragment_container, new TargetConnectFragment())
+                        .add(R.id.fragment_container, TargetConnectFragment.newInstance(user))
                         .commit();
             }
         }

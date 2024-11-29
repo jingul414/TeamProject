@@ -3,8 +3,16 @@ package com.donghaeng.withme.login.connect;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
+import androidx.camera.core.ExperimentalGetImage;
 import androidx.fragment.app.Fragment;
 
+import com.donghaeng.withme.screen.start.connect.ControllerConnectFragment;
+import com.donghaeng.withme.screen.start.connect.ControllerQrFragment;
+import com.donghaeng.withme.user.Controller;
+import com.donghaeng.withme.user.Target;
+import com.donghaeng.withme.user.User;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionsClient;
 import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo;
@@ -12,13 +20,14 @@ import com.google.android.gms.nearby.connection.DiscoveryOptions;
 import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.Strategy;
+import com.google.gson.Gson;
 
 import org.mindrot.jbcrypt.BCrypt;
 
 public class DiscoveryHandler extends NearbyHandler {
     private final EndpointDiscoveryCallback mEndpointDiscoveryCallback = new EndpointDiscoveryCallback() {
         @Override
-        public void onEndpointFound(String endpointId, DiscoveredEndpointInfo info) {
+        public void onEndpointFound(@NonNull String endpointId, DiscoveredEndpointInfo info) {
             // 발견된 기기를 처리
             logD(
                     String.format(
@@ -34,7 +43,7 @@ public class DiscoveryHandler extends NearbyHandler {
         }
 
         @Override
-        public void onEndpointLost(String endpointId) {
+        public void onEndpointLost(@NonNull String endpointId) {
             // 검색된 기기를 더 이상 찾을 수 없을 때 처리
             logD(String.format("onEndpointLost(endpointId=%s)", endpointId));
             Toast.makeText(mContext, "기기 연결 해제: " + endpointId, Toast.LENGTH_SHORT).show();
@@ -132,18 +141,33 @@ public class DiscoveryHandler extends NearbyHandler {
         // 수신된 데이터 처리 로직 추가
         Toast.makeText(mContext, "Received: " + data, Toast.LENGTH_SHORT).show();
 
-        String hashedData = BCrypt.hashpw(data, BCrypt.gensalt());
-        if (BCrypt.checkpw(mData, hashedData)) {
+        if (BCrypt.checkpw(data, mData)) {
             Toast.makeText(mContext, "데이터 일치", Toast.LENGTH_LONG).show();
-            performSomeAction(endpointId);
+            logD("데이터 일치");
+            sendUserInfo(endpointId);
+        }else{
+            processInformation(data);
         }
     }
 
-    private void performSomeAction(String endpointId) {
+    @OptIn(markerClass = ExperimentalGetImage.class)
+    private void sendUserInfo(String endpointId) {
         logD("Performing some action based on received data.");
-        // 추가 동작 구현
-        send(Payload.fromBytes("df".getBytes()), endpointId);
-        stopDiscovering();
-        stopAllEndpoints();
+        // JSON
+        Gson gson = new Gson();
+        User user = ((ControllerQrFragment)mFragment).getUser();
+        String userInfo = gson.toJson(user);
+        send(Payload.fromBytes(userInfo.getBytes()), endpointId);
+    }
+    private void processInformation(String data) {
+        logD("Performing some action based on received data.");
+        // 데이터 처리
+        Gson gson = new Gson();
+        User tempUser = gson.fromJson(data, Target.class);
+        Target opponent = new Target(tempUser.getName(), tempUser.getPhone(), tempUser.getId(), "");
+
+        ControllerConnectFragment nextFragment = (ControllerConnectFragment) mFragment.getParentFragment();
+        nextFragment.setOpponentUserInfo(opponent);
+        nextFragment.changeFragment("info");
     }
 }

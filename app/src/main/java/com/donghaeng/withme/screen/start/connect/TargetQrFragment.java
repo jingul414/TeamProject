@@ -18,6 +18,8 @@ import com.donghaeng.withme.R;
 import com.donghaeng.withme.login.connect.AdvertisementHandler;
 import com.donghaeng.withme.login.connect.NearbyHandler;
 import com.donghaeng.withme.login.connect.QRCodeGenerator;
+import com.donghaeng.withme.user.Undefined;
+import com.donghaeng.withme.user.User;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionsClient;
 
@@ -31,6 +33,25 @@ public class TargetQrFragment extends Fragment {
 
     // QR Generator
     private QRCodeGenerator qrCodeGenerator;
+
+
+    /**
+     * Fragment 생성자 데이터
+     */
+    private static final String ARG_USER = "user";
+    private User user;
+
+    public TargetQrFragment() {
+        // Required empty public constructor
+    }
+
+    public static TargetQrFragment newInstance(User user) {
+        TargetQrFragment fragment = new TargetQrFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_USER, user);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,6 +73,9 @@ public class TargetQrFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            user = getArguments().getParcelable(ARG_USER);
+        }
         connectionsClient = Nearby.getConnectionsClient(requireActivity());
     }
 
@@ -83,7 +107,7 @@ public class TargetQrFragment extends Fragment {
             int i = 0;
             for (int grantResult : grantResults) {
                 if (grantResult == PackageManager.PERMISSION_DENIED) {
-                    Log.w("TargetQRFragment","Permissions not granted"+permissions[i]);
+                    Log.w("TargetQRFragment", "Permissions not granted" + permissions[i]);
                     Toast.makeText(this.requireContext(), "Permissions not granted", Toast.LENGTH_LONG).show();
 
                     requireActivity().finish();
@@ -99,5 +123,21 @@ public class TargetQrFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         advertisementHandler.stopAdvertising();
+    }
+
+    public ImageView getQrCodeImageView() {
+        return qrCodeImageView;
+    }
+    public ConnectionsClient getConnectionsClient() {
+        return connectionsClient;
+    }
+    public AdvertisementHandler getAdvertisementHandler() {
+        return advertisementHandler;
+    }
+    public QRCodeGenerator getQrCodeGenerator() {
+        return qrCodeGenerator;
+    }
+    public User getUser() {
+        return user;
     }
 }

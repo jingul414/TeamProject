@@ -57,9 +57,9 @@ public class QRCodeReader {
     // DiscoveryHandler
     private DiscoveryHandler discoveryHandler;
 
-    public QRCodeReader(ControllerQrFragment qrFragment, PreviewView viewFinder, ControllerConnectFragment connectFragment, DiscoveryHandler discoveryHandler) {
+    public QRCodeReader(ControllerQrFragment qrFragment, PreviewView viewFinder,DiscoveryHandler discoveryHandler) {
         this.qrFragment = qrFragment;
-        this.connectFragment = connectFragment;
+        this.connectFragment = (ControllerConnectFragment) qrFragment.getParentFragment();
         this.viewFinder = viewFinder;
         requestPermissionLauncher =
                 qrFragment.registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {

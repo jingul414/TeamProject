@@ -3,6 +3,7 @@ package com.donghaeng.withme.screen.start;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
@@ -114,12 +115,14 @@ public class StartActivity extends AppCompatActivity {
                     break;
                 case "controller_QR":
                     intent = new Intent(this, ControllerActivity.class);
+                    intent.putExtra("user", (Parcelable) user);
                     intent.putExtra("fragmentName", "controller_QR");
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     break;
                 case "target_QR":
                     intent = new Intent(this, TargetActivity.class);
+                    intent.putExtra("user", (Parcelable) user);
                     intent.putExtra("fragmentName", "target_QR");
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

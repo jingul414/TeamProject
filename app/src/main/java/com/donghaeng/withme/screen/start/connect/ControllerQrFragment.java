@@ -20,6 +20,8 @@ import com.donghaeng.withme.login.connect.DiscoveryHandler;
 import com.donghaeng.withme.login.connect.NearbyHandler;
 import com.donghaeng.withme.login.connect.QRCodeGenerator;
 import com.donghaeng.withme.login.connect.QRCodeReader;
+import com.donghaeng.withme.user.Undefined;
+import com.donghaeng.withme.user.User;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionsClient;
 
@@ -27,14 +29,30 @@ import com.google.android.gms.nearby.connection.ConnectionsClient;
 public class ControllerQrFragment extends Fragment {
     private PreviewView viewFinder;
 
-    private ControllerConnectFragment connectFragment;
-
     // Discovery
     private ConnectionsClient connectionsClient;
     private DiscoveryHandler discoveryHandler;
 
     // QR Reader
     private QRCodeReader qrCodeReader;
+
+    /**
+     * Fragment 생성자 데이터
+     */
+    private static final String ARG_USER = "user";
+    private User user;
+
+    public ControllerQrFragment() {
+        // Required empty public constructor
+    }
+
+    public static ControllerQrFragment newInstance(User user) {
+        ControllerQrFragment fragment = new ControllerQrFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_USER, user);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,14 +62,13 @@ public class ControllerQrFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        connectFragment = (ControllerConnectFragment) getParentFragment();
 
         viewFinder = view.findViewById(R.id.viewFinder);
         viewFinder.setImplementationMode(PreviewView.ImplementationMode.PERFORMANCE);
         // DiscoveryHandler 설정
         discoveryHandler = new DiscoveryHandler(this, connectionsClient);
         // QR 코드만을 위한 스캐너 설정
-        qrCodeReader = new QRCodeReader(this, viewFinder, connectFragment, discoveryHandler);
+        qrCodeReader = new QRCodeReader(this, viewFinder, discoveryHandler);
         qrCodeReader.setScannerForQRcode();
     }
 
@@ -65,6 +82,9 @@ public class ControllerQrFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            user = getArguments().getParcelable(ARG_USER);
+        }
         connectionsClient = Nearby.getConnectionsClient(requireActivity());
     }
 
@@ -107,5 +127,21 @@ public class ControllerQrFragment extends Fragment {
         super.onDestroy();
         discoveryHandler.stopDiscovering();
         qrCodeReader.cleanupCamera();
+    }
+
+    public PreviewView getViewFinder() {
+        return viewFinder;
+    }
+    public ConnectionsClient getConnectionsClient() {
+        return connectionsClient;
+    }
+    public DiscoveryHandler getDiscoveryHandler() {
+        return discoveryHandler;
+    }
+    public QRCodeReader getQrCodeReader() {
+        return qrCodeReader;
+    }
+    public User getUser() {
+        return user;
     }
 }

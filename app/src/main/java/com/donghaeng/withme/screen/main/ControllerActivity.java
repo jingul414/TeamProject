@@ -11,21 +11,24 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.screen.start.connect.ControllerConnectFragment;
+import com.donghaeng.withme.user.Undefined;
+import com.donghaeng.withme.user.User;
 
 public class ControllerActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_controller);
 
+        User user = getIntent().getParcelableExtra("user");
+
         // Fragment 초기화 로직을 분리
         if (savedInstanceState == null && getIntent().getStringExtra("fragmentName") != null) {
             if(getIntent().getStringExtra("fragmentName").equals("controller_QR")){
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .add(R.id.fragment_container, new ControllerConnectFragment())
+                        .add(R.id.fragment_container, ControllerConnectFragment.newInstance(user))
                         .commit();
             }
         } else{
