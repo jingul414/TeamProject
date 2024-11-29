@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.login.Login;
@@ -97,6 +98,7 @@ public class LoginFragment extends Fragment {
                     startActivity.changeFragment("controller");
                 } else {
                     // 로그인 실패
+                    Toast.makeText(getActivity(), "로그인 실패", Toast.LENGTH_LONG).show();
                     Log.e("LoginFragment", "로그인 실패");
                 }
             });

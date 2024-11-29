@@ -1,7 +1,10 @@
 package com.donghaeng.withme.screen.main;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.AlarmClock;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +23,7 @@ public class ControllerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_controller);
+        handleIntent(getIntent());
 
         User user = getIntent().getParcelableExtra("user");
 
@@ -44,6 +48,43 @@ public class ControllerActivity extends AppCompatActivity {
             params.topMargin = systemBars.top;
             return insets;
         });
+    }
+
+    // 알람 설정 관련 메소드 들
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+    private void handleIntent(Intent intent) {
+        if (intent != null && intent.getBooleanExtra("SET_ALARM", false)) {
+            int hour = intent.getIntExtra("ALARM_HOUR", -1);
+            int minute = intent.getIntExtra("ALARM_MINUTE", -1);
+
+            if (hour != -1 && minute != -1) {
+                setAlarm(hour, minute);
+            }
+        }
+    }
+    private void setAlarm(int hour, int minute) {
+        Intent alarmIntent = new Intent(AlarmClock.ACTION_SET_ALARM)
+                .putExtra(AlarmClock.EXTRA_HOUR, hour)
+                .putExtra(AlarmClock.EXTRA_MINUTES, minute)
+                .putExtra(AlarmClock.EXTRA_MESSAGE, "알람")
+                .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+
+        try {
+            startActivity(alarmIntent);
+            Toast.makeText(this,
+                    String.format("%02d:%02d에 알람이 설정되었습니다", hour, minute),
+                    Toast.LENGTH_SHORT
+            ).show();
+        } catch (Exception e) {
+            Toast.makeText(this,
+                    "알람 설정 중 오류가 발생했습니다: " + e.getMessage(),
+                    Toast.LENGTH_LONG
+            ).show();
+        }
     }
 
     @Override
