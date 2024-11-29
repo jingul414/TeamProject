@@ -45,7 +45,7 @@ public class SignUp {
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
-    private FireStoreManager db;
+    private FireStoreManager firestoreManager;
 
     // 비밀번호 경고문
     private Handler handler;
@@ -254,8 +254,8 @@ public class SignUp {
     }
 
     public void setUserData(){
-        db = FireStoreManager.getInstance();
-        db.setUserData(user,new FireStoreManager.firestoreCallback() {
+        firestoreManager = FireStoreManager.getInstance();
+        firestoreManager.setUserData(user,new FireStoreManager.firestoreCallback() {
             @Override
             public void onSuccess(Object result) {
                 Log.e("Firestore", result.toString());
