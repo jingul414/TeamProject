@@ -22,6 +22,7 @@ public class GuideFragment extends Fragment {
     private ExpandableAdapter adapter;
     private GuideActivity activity;
     private View back;
+    private Button controlInputButton;
 
     public GuideFragment() {
         // Required empty public constructor
@@ -48,6 +49,11 @@ public class GuideFragment extends Fragment {
         back = view.findViewById(R.id.back);
         back.setOnClickListener(v -> {
             activity.onBackPressed();
+        });
+
+        controlInputButton = view.findViewById(R.id.control_input_button);
+        controlInputButton.setOnClickListener(v -> {
+            changeFragment(new GuideInputFragment());
         });
 
 

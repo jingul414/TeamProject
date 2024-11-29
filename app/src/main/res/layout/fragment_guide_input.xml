@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFF2"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/back"
+            android:layout_width="70dp"
+            android:layout_height="81dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/back" />
+
+        <TextView
+            android:id="@+id/head_text"
+            style="@style/app_one_line_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:autoSizeMaxTextSize="40sp"
+            android:gravity="center"
+            android:text="@string/guide_title"
+            android:textSize="40sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/nav_line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/login_view_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/head_text" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp"
+        android:hint="제목 입력">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/app_common_text"
+            android:textSize="18sp"
+            android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp"
+        android:hint="텍스트 입력">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            style="@style/app_common_text"
+            android:textSize="18sp"
+            android:minLines="3" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingHorizontal="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buttonAddText"
+            android:background="@drawable/rounded_button"
+            app:backgroundTint="#FF8A80"
+            style="@style/app_one_line_text"
+            android:textSize="24sp"
+            android:autoSizeMaxTextSize="24sp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="텍스트 추가" />
+
+        <Button
+            android:id="@+id/buttonAddImage"
+            android:background="@drawable/rounded_button"
+            app:backgroundTint="#FF8A80"
+            style="@style/app_one_line_text"
+            android:textSize="24sp"
+            android:autoSizeMaxTextSize="24sp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:text="이미지 추가" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingHorizontal="10dp"
+        android:text="미리 보기 :"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPreview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"/>
+
+    <Button
+        android:id="@+id/buttonGenerateJson"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        android:layout_marginHorizontal="10dp"
+        android:paddingHorizontal="10dp"
+        style="@style/app_one_line_text"
+        android:background="@drawable/rounded_button"
+        app:backgroundTint="#FF8A80"
+        android:textSize="24sp"
+        android:autoSizeMaxTextSize="24sp"
+        android:text="가이드 생성" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginTop="8dp"/>
+
+
+</LinearLayout>

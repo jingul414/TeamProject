@@ -118,4 +118,10 @@ dependencies {
     // 이미지 로드 관련
     implementation ("com.squareup.picasso:picasso:2.8")
     implementation ("com.google.firebase:firebase-storage")
+
+    // 보호자 가이드 입력
+    implementation ("com.google.android.material:material:1.11.0")
+    implementation ("com.google.code.gson:gson:2.10.1")
+    implementation ("commons-io:commons-io:2.11.0")  // IOUtils 사용을 위해 필요
+
 }

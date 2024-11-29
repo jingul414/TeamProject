@@ -254,6 +254,7 @@ public class ExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             GuideType = GuideBookType.SMARTPHONE_GUIDE_BOOK;
                             break;
                         case ("보호자의 설명"):
+                            // TODO 제어자가 추가한 가이드는 해당하는 피제어자만 불러오도록 바꿔야함...
                             GuideType = GuideBookType.CONTROLLER_INSTRUCTION;
                             break;
                     }
