@@ -32,7 +32,7 @@
             android:layout_marginEnd="20dp"
             android:autoSizeMaxTextSize="40sp"
             android:gravity="center"
-            android:text="@string/guide_title"
+            android:text="설명서 추가"
             android:textSize="40sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -141,7 +141,7 @@
         app:backgroundTint="#FF8A80"
         android:textSize="24sp"
         android:autoSizeMaxTextSize="24sp"
-        android:text="가이드 생성" />
+        android:text="설명서 생성" />
 
     <ProgressBar
         android:id="@+id/progressBar"
