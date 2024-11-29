@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO 텍스트 사이즈 폰트 ... 수정 필요 -->
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/guideText"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
-    style="@style/app_one_line_text"
-    android:textSize="24sp"
-    android:autoSizeMaxTextSize="24sp"
+    style="@style/app_common_text"
+    android:textSize="32sp"
     android:lineSpacingExtra="4dp" />

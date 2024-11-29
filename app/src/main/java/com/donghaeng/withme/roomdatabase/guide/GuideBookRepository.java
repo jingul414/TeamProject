@@ -55,9 +55,9 @@ public class GuideBookRepository {
         void onGuideLoaded(List<GuideBook> guides);
     }
 
-    public void getAppGuidesAsync(OnGuideLoadedListener listener) {
+    public void getAppGuidesAsync(String GuideType, OnGuideLoadedListener listener) {
         executorService.execute(() -> {
-            List<GuideBook> guides = guideBookDao.getGuidesByType(GuideBookType.APP_GUIDE_BOOK);
+            List<GuideBook> guides = guideBookDao.getGuidesByType(GuideType);
             new Handler(Looper.getMainLooper()).post(() -> {
                 listener.onGuideLoaded(guides);
             });
