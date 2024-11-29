@@ -2,11 +2,13 @@ package com.donghaeng.withme.screen.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.AlarmClock;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,12 +20,17 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.screen.guide.ListItem;
+import com.donghaeng.withme.service.AlarmService;
 import com.donghaeng.withme.service.BrightnessControlService;
 import com.donghaeng.withme.service.VolumeControlService;
 
@@ -191,28 +198,14 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                             selectedStreamType = AudioManager.STREAM_MUSIC;
                             break;
                     }
-
                     // 10초 후 서비스 실행 (즉시 볼륨 변경 X)
                     startVolumeControlService(seekBar.getProgress(), selectedStreamType, 10);
                 }
             });
-
             // 현재 볼륨 설정
             initializeVolume(audioManager);
         }
 
-        private void updateVolume(int streamType, int progress, AudioManager audioManager) {
-            // 오디오 스트림의 실제 최대 볼륨 값
-            int maxVolume = audioManager.getStreamMaxVolume(streamType);
-
-            // SeekBar 퍼센트 값을 실제 볼륨 값으로 변환
-            int newVolume = (progress * maxVolume) / 100;
-
-            // 볼륨 설정
-            audioManager.setStreamVolume(streamType, newVolume, 0);
-
-            Log.d("ControlViewHolder", "StreamType: " + streamType + ", NewVolume: " + newVolume + ", MaxVolume: " + maxVolume);
-        }
 
         private void initializeVolume(AudioManager audioManager) {
             int maxVolume;
@@ -342,7 +335,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                     soundSeekbar.setProgress(lastSoundVolume);
                     currentSoundPercent.setText(String.valueOf(lastSoundVolume));
                     muteButton.setImageResource(R.drawable.ic_volume);
-                    startVolumeControlService(lastSoundVolume, SOUND_MODE, 10);
+                    //startVolumeControlService(lastSoundVolume, SOUND_MODE, 10);
                     // TODO 소리 설정 제어 관련 기능 구현
                     switch (SOUND_MODE){
                         case (SOUND_CALL):
@@ -394,7 +387,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                 int hour = hourPicker.getValue();
                 int minute = minutePicker.getValue();
                 String time = String.format("%02d:%02d", hour, minute);
-                // TODO: 알람 설정 처리
+                checkPermissionsAndScheduleAlarm();
             });
 
             // 소리 제어 모드 변경
@@ -419,6 +412,37 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                 soundButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FE7363")));
                 SOUND_MODE = SOUND_MEDIA;
             });
+        }
+
+        // 알람 설정 관련 권한 확인 후 알람 설정 (백그라운드 foreGround)
+        private void checkPermissionsAndScheduleAlarm() {
+            if (Build.VERSION.SDK_INT >= 33) {
+                if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    // 권한이 없는 경우 토스트 메시지 표시
+                    Toast.makeText(context,
+                            "알림 권한이 필요합니다. 설정에서 권한을 허용해주세요.",
+                            Toast.LENGTH_LONG
+                    ).show();
+                    return;
+                }
+            }
+            startAlarmService();
+        }
+
+        // 백그라운드 에서 알람 보냄
+        private void startAlarmService() {
+            Intent serviceIntent = new Intent(context, AlarmService.class);
+            serviceIntent.putExtra("hour", hourPicker.getValue());
+            serviceIntent.putExtra("minute", minutePicker.getValue());
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(serviceIntent);
+            } else {
+                context.startService(serviceIntent);
+            }
+
+            Toast.makeText(context, "5초 후에 알람 설정 알림이 표시됩니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -527,6 +551,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
+    // setting 관련 권한 허용 메소드
     private void checkWriteSettingsPermission(Context context) {
         if (!Settings.System.canWrite(context)) {
             // 사용자에게 설정 화면으로 이동하도록 요청
@@ -537,6 +562,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
+    // 소리 제어 관련 메소드 (백그라운드 foreground)
     private void startVolumeControlService(int volume, int streamType, int delay) {
         Intent serviceIntent = new Intent(context, VolumeControlService.class);
         serviceIntent.putExtra("volume", volume);
@@ -550,6 +576,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
+    // 밝기 제어 관련 메소드 (백그라운드 foreground)
     private void startBrightnessControlService(boolean autoLight, int brightness, int delay) {
         Intent serviceIntent = new Intent(context, BrightnessControlService.class);
         serviceIntent.putExtra("autoLight", autoLight); // 자동 밝기 설정 여부
@@ -562,5 +589,4 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
             context.startService(serviceIntent);
         }
     }
-
 }

@@ -239,7 +239,6 @@ public class ExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             itemView.setOnClickListener(v -> {
                 // 가이드 목록 아이템 클릭 시 설명으로 이동하는 부분
-                // 현재는 누른 아이템의 텍스트를 보내줌..
                 int position = getAdapterPosition();
 
                 if (position != RecyclerView.NO_POSITION) {
