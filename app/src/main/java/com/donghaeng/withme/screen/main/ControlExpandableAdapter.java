@@ -1,9 +1,14 @@
 package com.donghaeng.withme.screen.main;
 
-import static android.graphics.Color.rgb;
-
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.screen.guide.ListItem;
+import com.donghaeng.withme.service.BrightnessControlService;
+import com.donghaeng.withme.service.VolumeControlService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,9 +33,12 @@ import java.util.List;
 
 public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Object> displayedItems;
+    private Context context;
+
     private List<ControlListItem> originalItems;
 
-    public ControlExpandableAdapter(List<ControlListItem> items) {
+    public ControlExpandableAdapter(Context context, List<ControlListItem> items) {
+        this.context = context;
         this.originalItems = new ArrayList<>(items);
         this.displayedItems = new ArrayList<>(items);
     }
@@ -91,6 +101,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
 
         public ControlViewHolder(@NonNull View itemView) {
             super(itemView);
+            checkWriteSettingsPermission(context);
             initializeViews(itemView);
             setupTimePicker();
             setupSoundControl();
@@ -140,10 +151,25 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         }
 
         private void setupSoundControl() {
+            // AudioManager 초기화
+            AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+            if (audioManager == null) {
+                Log.e("ControlViewHolder", "AudioManager is null");
+                return;
+            }
+
             soundSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     changeSoundPercent.setText(String.valueOf(progress));
+
+                    // 상태에 따라 muteButton 이미지 변경
+                    if (progress == 0) {
+                        muteButton.setImageResource(R.drawable.ic_volume_mute); // 음소거 이미지
+                    } else {
+                        muteButton.setImageResource(R.drawable.ic_volume); // 일반 볼륨 이미지
+                    }
                 }
 
                 @Override
@@ -152,27 +178,96 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
                     currentSoundPercent.setText(String.valueOf(seekBar.getProgress()));
-                    // TODO 소리 설정 제어 관련 기능 구현
-                    switch (SOUND_MODE){
-                        case (SOUND_CALL):
-                            call_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                    // 볼륨 설정을 즉시 적용하지 않고, 10초 후 Foreground Service로만 처리
+                    int selectedStreamType = AudioManager.STREAM_RING; // 기본값
+                    switch (SOUND_MODE) {
+                        case SOUND_CALL:
+                            selectedStreamType = AudioManager.STREAM_RING;
                             break;
-                        case (SOUND_NOTIFICATION):
-                            notification_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                        case SOUND_NOTIFICATION:
+                            selectedStreamType = AudioManager.STREAM_NOTIFICATION;
                             break;
-                        case (SOUND_MEDIA):
-                            media_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                        case SOUND_MEDIA:
+                            selectedStreamType = AudioManager.STREAM_MUSIC;
                             break;
                     }
+
+                    // 10초 후 서비스 실행 (즉시 볼륨 변경 X)
+                    startVolumeControlService(seekBar.getProgress(), selectedStreamType, 10);
                 }
             });
+
+            // 현재 볼륨 설정
+            initializeVolume(audioManager);
         }
 
+        private void updateVolume(int streamType, int progress, AudioManager audioManager) {
+            // 오디오 스트림의 실제 최대 볼륨 값
+            int maxVolume = audioManager.getStreamMaxVolume(streamType);
+
+            // SeekBar 퍼센트 값을 실제 볼륨 값으로 변환
+            int newVolume = (progress * maxVolume) / 100;
+
+            // 볼륨 설정
+            audioManager.setStreamVolume(streamType, newVolume, 0);
+
+            Log.d("ControlViewHolder", "StreamType: " + streamType + ", NewVolume: " + newVolume + ", MaxVolume: " + maxVolume);
+        }
+
+        private void initializeVolume(AudioManager audioManager) {
+            int maxVolume;
+            int currentVolume;
+
+            switch (SOUND_MODE) {
+                case SOUND_CALL:
+                    maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+                    currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+                    break;
+
+                case SOUND_NOTIFICATION:
+                    maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
+                    currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
+                    break;
+
+                case SOUND_MEDIA:
+                    maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                    currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                    break;
+
+                default:
+                    maxVolume = 100; // 기본값
+                    currentVolume = 0;
+                    break;
+            }
+
+            // SeekBar 최대값과 현재값 동기화
+            soundSeekbar.setMax(100);
+            soundSeekbar.setProgress((currentVolume * 100) / maxVolume);
+
+            // 텍스트뷰 초기화
+            currentSoundPercent.setText(String.valueOf((currentVolume * 100) / maxVolume));
+            changeSoundPercent.setText(String.valueOf((currentVolume * 100) / maxVolume));
+
+            // 초기 상태에 따라 muteButton 이미지 설정
+            if (currentVolume == 0) {
+                muteButton.setImageResource(R.drawable.ic_volume_mute); // 음소거 이미지
+            } else {
+                muteButton.setImageResource(R.drawable.ic_volume); // 일반 볼륨 이미지
+            }
+        }
+
+
         private void setupLightControl() {
+            // 초기 밝기 값 설정
+            int initialBrightness = getScreenBrightness(context);
+            lightSeekbar.setMax(255); // 밝기 최대값
+            lightSeekbar.setProgress(initialBrightness);
+            currentLightPercent.setText(String.valueOf((initialBrightness * 100) / 255));
+
             lightSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    changeLightPercent.setText(String.valueOf(progress)  + "%");
+                    changeLightPercent.setText(String.valueOf((progress * 100) / 255));
                 }
 
                 @Override
@@ -181,13 +276,46 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
                     // TODO seekBar 에서 손을 놨을 때 정보 전달
-                    currentLightPercent.setText(String.valueOf(seekBar.getProgress())  + "%");
+
+                    int brightness = seekBar.getProgress();
+//                    setScreenBrightness(context, brightness);
+
+                    // 현재 밝기 텍스트뷰 업데이트
+                    currentLightPercent.setText(String.valueOf((brightness * 100) / 255));
+
+                    // 10초 후 밝기 조절 서비스 실행
+                    startBrightnessControlService(false, brightness, 10);
                 }
             });
         }
 
+        private int getScreenBrightness(Context context) {
+            int brightness = 0;
+            try {
+                brightness = Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
+            } catch (Settings.SettingNotFoundException e) {
+                Log.e("ControlViewHolder", "Failed to get screen brightness", e);
+            }
+            return brightness;
+        }
+
+        private void setScreenBrightness(Context context, int brightness) {
+            try {
+                // 밝기 값 제한 (0 ~ 255)
+                int newBrightness = Math.max(0, Math.min(brightness, 255));
+
+                // 밝기 설정
+                Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, newBrightness);
+
+                Log.d("ControlViewHolder", "Screen Brightness set to: " + newBrightness);
+            } catch (Exception e) {
+                Log.e("ControlViewHolder", "Failed to set screen brightness", e);
+            }
+        }
+
         private void setupButtonListeners() {
             muteButton.setOnClickListener(v -> {
+                int selectedStreamType = AudioManager.STREAM_RING; // 기본값
                 if (soundSeekbar.getProgress() > 0) {
                     lastSoundVolume = soundSeekbar.getProgress();
                     soundSeekbar.setProgress(0);
@@ -197,47 +325,68 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                     switch (SOUND_MODE){
                         case (SOUND_CALL):
                             call_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            selectedStreamType = AudioManager.STREAM_RING;
                             break;
                         case (SOUND_NOTIFICATION):
                             notification_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            selectedStreamType = AudioManager.STREAM_NOTIFICATION;
                             break;
                         case (SOUND_MEDIA):
                             media_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            selectedStreamType = AudioManager.STREAM_MUSIC;
                             break;
                     }
+                    startVolumeControlService(0, selectedStreamType, 10);
+
                 } else {
                     soundSeekbar.setProgress(lastSoundVolume);
                     currentSoundPercent.setText(String.valueOf(lastSoundVolume));
                     muteButton.setImageResource(R.drawable.ic_volume);
+                    startVolumeControlService(lastSoundVolume, SOUND_MODE, 10);
                     // TODO 소리 설정 제어 관련 기능 구현
                     switch (SOUND_MODE){
                         case (SOUND_CALL):
                             call_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            selectedStreamType = AudioManager.STREAM_RING;
                             break;
                         case (SOUND_NOTIFICATION):
                             notification_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            selectedStreamType = AudioManager.STREAM_NOTIFICATION;
                             break;
                         case (SOUND_MEDIA):
-                            media_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            media_volume = Integer.parseInt(currentSoundPercent.getText().toString());                            selectedStreamType = AudioManager.STREAM_RING;
+                            selectedStreamType = AudioManager.STREAM_MUSIC;
                             break;
                     }
+                    startVolumeControlService(lastSoundVolume, selectedStreamType, 10);
                 }
             });
 
             autoLight.setOnClickListener(v -> {
-                if (LIGHT_MODE != LIGHT_AUTO) {
-                    lastLightValue = lightSeekbar.getProgress();
-                    lightSeekbar.setProgress(0);
-                    LIGHT_MODE = LIGHT_AUTO;
-                    currentLightPercent.setText("auto");
-                    changeLightPercent.setText("auto");
-                    autoLight.setImageResource(R.drawable.ic_light_mode);
-                } else {
-                    lightSeekbar.setProgress(lastLightValue);
+                boolean isCurrentlyAuto = isAutoBrightnessEnabled(context);
+
+                if (isCurrentlyAuto) {
+                    // 자동 밝기 모드를 끄고 수동 모드로 설정 (10초 후 적용)
+                    startBrightnessControlService(false, lightSeekbar.getProgress(), 10);
+
                     LIGHT_MODE = LIGHT_SET;
-                    currentLightPercent.setText(String.valueOf(lastLightValue) + "%");
-                    changeLightPercent.setText(String.valueOf(lastLightValue) + "%");
+
+                    // UI 업데이트
                     autoLight.setImageResource(R.drawable.ic_light_mode);
+                    currentLightPercent.setText(String.valueOf((lightSeekbar.getProgress() * 100) / 255));
+                    changeLightPercent.setText(String.valueOf((lightSeekbar.getProgress() * 100) / 255));
+                    lightSeekbar.setEnabled(true);
+                } else {
+                    // 자동 밝기 모드를 켜기 (10초 후 적용)
+                    startBrightnessControlService(true, -1, 10);
+
+                    LIGHT_MODE = LIGHT_AUTO;
+
+                    // UI 업데이트
+                    autoLight.setImageResource(R.drawable.ic_light_mode);
+                    currentLightPercent.setText(String.valueOf("Auto"));
+                    changeLightPercent.setText(String.valueOf("Auto"));
+                    lightSeekbar.setEnabled(false);
                 }
             });
 
@@ -271,6 +420,31 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                 SOUND_MODE = SOUND_MEDIA;
             });
         }
+    }
+
+    private void setAutoBrightness(Context context, boolean isEnabled) {
+        try {
+            int mode = isEnabled ? Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
+                    : Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;
+
+            // 자동 밝기 모드 설정
+            Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, mode);
+
+            Log.d("ControlViewHolder", "Auto Brightness Mode: " + (isEnabled ? "Enabled" : "Disabled"));
+        } catch (Exception e) {
+            Log.e("ControlViewHolder", "Failed to set auto brightness mode", e);
+        }
+    }
+
+    private boolean isAutoBrightnessEnabled(Context context) {
+        boolean isEnabled = false;
+        try {
+            int mode = Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE);
+            isEnabled = (mode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
+        } catch (Settings.SettingNotFoundException e) {
+            Log.e("ControlViewHolder", "Failed to get auto brightness mode", e);
+        }
+        return isEnabled;
     }
 
     @NonNull
@@ -352,4 +526,41 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
             }
         }
     }
+
+    private void checkWriteSettingsPermission(Context context) {
+        if (!Settings.System.canWrite(context)) {
+            // 사용자에게 설정 화면으로 이동하도록 요청
+            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+            intent.setData(Uri.parse("package:" + context.getPackageName()));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        }
+    }
+
+    private void startVolumeControlService(int volume, int streamType, int delay) {
+        Intent serviceIntent = new Intent(context, VolumeControlService.class);
+        serviceIntent.putExtra("volume", volume);
+        serviceIntent.putExtra("streamType", streamType);
+        serviceIntent.putExtra("delay", delay); // 10초 후 작업 실행
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(serviceIntent);
+        } else {
+            context.startService(serviceIntent);
+        }
+    }
+
+    private void startBrightnessControlService(boolean autoLight, int brightness, int delay) {
+        Intent serviceIntent = new Intent(context, BrightnessControlService.class);
+        serviceIntent.putExtra("autoLight", autoLight); // 자동 밝기 설정 여부
+        serviceIntent.putExtra("brightness", brightness); // 수동 밝기 값
+        serviceIntent.putExtra("delay", delay); // 초 단위 지연 시간
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(serviceIntent);
+        } else {
+            context.startService(serviceIntent);
+        }
+    }
+
 }
