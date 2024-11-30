@@ -1,12 +1,9 @@
-package com.donghaeng.withme.login.connect;
+package com.donghaeng.withme.login.connect.controller;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanResult;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 import android.util.Size;
 import android.widget.Toast;
@@ -20,8 +17,8 @@ import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.screen.start.connect.ControllerConnectFragment;
 import com.donghaeng.withme.screen.start.connect.ControllerQrFragment;
@@ -39,12 +36,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @ExperimentalGetImage
 public class QRCodeReader {
-
     private final static String TAG = "QRCodeReader";
+    protected static final String[] REQUIRED_PERMISSIONS;
 
-    private final ControllerQrFragment qrFragment;
+    static {
+        REQUIRED_PERMISSIONS = new String[]{
+                Manifest.permission.CAMERA
+        };
+    }
+
+    private final Fragment mFragment;
     private final ControllerConnectFragment connectFragment;
-    private final PreviewView viewFinder;
 
     // 카메라
     private ExecutorService cameraExecutor;
@@ -54,25 +56,25 @@ public class QRCodeReader {
     private final AtomicBoolean isScanning = new AtomicBoolean(false);
     private final ActivityResultLauncher<String> requestPermissionLauncher;
 
-    // DiscoveryHandler
-    private DiscoveryHandler discoveryHandler;
+    private final ControllerConnect mParent;
+    private final DiscoveryHandler mHandler;
 
-    public QRCodeReader(ControllerQrFragment qrFragment, PreviewView viewFinder,DiscoveryHandler discoveryHandler) {
-        this.qrFragment = qrFragment;
-        this.connectFragment = (ControllerConnectFragment) qrFragment.getParentFragment();
-        this.viewFinder = viewFinder;
+    public QRCodeReader(Fragment fragment, ControllerConnect parent) {
+        this.mFragment = fragment;
+        this.connectFragment = (ControllerConnectFragment) fragment.getParentFragment();
         requestPermissionLauncher =
-                qrFragment.registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                fragment.registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                     if (isGranted) {
                         startCamera();
                     } else {
-                        Toast.makeText(qrFragment.getActivity(), "카메라 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(fragment.getActivity(), "카메라 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
-        this.discoveryHandler = discoveryHandler;
+        this.mParent = parent;
+        this.mHandler = parent.getHandler();
     }
 
-    public void setScannerForQRcode() {
+    public void setScanner() {
         BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
                 .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
                 .build();
@@ -80,7 +82,7 @@ public class QRCodeReader {
 
         cameraExecutor = Executors.newSingleThreadExecutor();
 
-        if (ContextCompat.checkSelfPermission(qrFragment.requireContext(), Manifest.permission.CAMERA)
+        if (ContextCompat.checkSelfPermission(mFragment.requireContext(), Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
             startCamera();
         } else {
@@ -89,13 +91,13 @@ public class QRCodeReader {
     }
 
     private void showQrDialog(String qrContent) {
-        if (!isDialogShowing.get() && qrFragment.isAdded() && qrFragment.getActivity() != null && !qrFragment.getActivity().isFinishing()) {
+        if (!isDialogShowing.get() && mFragment.isAdded() && mFragment.getActivity() != null && !mFragment.getActivity().isFinishing()) {
             Log.d(TAG, "Showing dialog with QR content: " + qrContent);
             isDialogShowing.set(true);
 
-            qrFragment.getActivity().runOnUiThread(() -> {
+            mFragment.getActivity().runOnUiThread(() -> {
                 try {
-                    new AlertDialog.Builder(qrFragment.getActivity())
+                    new AlertDialog.Builder(mFragment.getActivity())
                             .setTitle("QR 코드 스캔 완료")
                             .setMessage("내용: " + qrContent)
                             .setPositiveButton("확인", (dialog, which) -> {
@@ -127,10 +129,10 @@ public class QRCodeReader {
     }
 
     @ExperimentalGetImage
-    private void startCamera() {
+    public void startCamera() {
         Log.d(TAG, "Starting camera");
         ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
-                ProcessCameraProvider.getInstance(qrFragment.requireContext());
+                ProcessCameraProvider.getInstance(mFragment.requireContext());
 
         cameraProviderFuture.addListener(() -> {
             try {
@@ -140,6 +142,7 @@ public class QRCodeReader {
                 // 프리뷰 설정
                 Preview preview = new Preview.Builder()
                         .build();
+                PreviewView viewFinder = ((ControllerQrFragment) mFragment).getViewFinder();
                 preview.setSurfaceProvider(viewFinder.getSurfaceProvider());
 
                 // 이미지 분석 설정
@@ -161,7 +164,7 @@ public class QRCodeReader {
                     Log.d(TAG, "Previous use cases unbound");
 
                     cameraProvider.bindToLifecycle(
-                            qrFragment,
+                            mFragment,
                             cameraSelector,
                             preview,
                             imageAnalysis
@@ -174,9 +177,9 @@ public class QRCodeReader {
 
             } catch (ExecutionException | InterruptedException e) {
                 Log.e(TAG, "Camera provider failed", e);
-                Toast.makeText(qrFragment.getActivity(), "카메라 시작 실패", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mFragment.getActivity(), "카메라 시작 실패", Toast.LENGTH_SHORT).show();
             }
-        }, ContextCompat.getMainExecutor(qrFragment.requireContext()));
+        }, ContextCompat.getMainExecutor(mFragment.requireContext()));
     }
 
     @ExperimentalGetImage
@@ -213,8 +216,8 @@ public class QRCodeReader {
                                     isScanning.set(false);
                                     try {
                                         // 광고 중인 기기 검색 시작
-                                        discoveryHandler.startDiscovering(qrContent);
-                                        if (!discoveryHandler.isDiscovering) {
+                                        mHandler.startDiscovering(qrContent);
+                                        if (!mHandler.isDiscovering) {
                                             // QR 스캔 관련 종료 로직
                                             cleanupCamera();
                                             connectFragment.changeFragment("info");
@@ -249,17 +252,21 @@ public class QRCodeReader {
 
         // ProcessCameraProvider 해제
         try {
-            ProcessCameraProvider cameraProvider = ProcessCameraProvider.getInstance(qrFragment.requireContext()).get();
+            ProcessCameraProvider cameraProvider = ProcessCameraProvider.getInstance(mFragment.requireContext()).get();
             cameraProvider.unbindAll();
         } catch (ExecutionException | InterruptedException e) {
             Log.e(TAG, "Error cleaning up camera", e);
         }
 
         // DiscoveryHandler 검색 중지
-        if (discoveryHandler != null) {
-            discoveryHandler.stopDiscovering();
+        if (mHandler != null) {
+            mHandler.stopDiscovering();
         }
 
         isScanning.set(false);
+    }
+
+    protected static String[] getRequiredPermissions() {
+        return REQUIRED_PERMISSIONS;
     }
 }

@@ -1,5 +1,6 @@
 package com.donghaeng.withme.screen.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -11,6 +12,8 @@ import android.view.ViewGroup;
 
 import com.donghaeng.withme.R;
 
+import com.donghaeng.withme.screen.start.StartActivity;
+import com.donghaeng.withme.screen.start.connect.ConnectInfoFragment;
 import com.donghaeng.withme.screen.start.connect.TargetConnectFragment;
 import com.donghaeng.withme.user.Undefined;
 import com.donghaeng.withme.user.User;
@@ -53,5 +56,13 @@ public class TargetActivity extends AppCompatActivity {
         super.onBackPressed();
         // 뒤로가기 애니메이션 설정
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    // ConnectInfoActivity에서 yes 버튼을 눌렀을 때 호출
+    public void onConnectionComplete() {
+        Intent intent = new Intent(this, StartActivity.class);
+        intent.putExtra("fragmentName", "LoginFragment");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // 이전 액티비티 종료
+        startActivity(intent);
     }
 }

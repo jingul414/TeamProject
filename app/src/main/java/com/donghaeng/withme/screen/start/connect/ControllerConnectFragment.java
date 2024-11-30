@@ -68,7 +68,6 @@ public class ControllerConnectFragment extends Fragment {
     public void changeFragment(String fragmentName) {
         switch (fragmentName) {
             case "info":
-
                 getChildFragmentManager()
                         .beginTransaction()
                         .add(R.id.child_fragment, ConnectInfoFragment.newInstance(user, opponent))

@@ -1,14 +1,13 @@
 package com.donghaeng.withme.screen.start.connect;
 
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.annotation.CallSuper;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.core.ExperimentalGetImage;
@@ -16,25 +15,21 @@ import androidx.camera.view.PreviewView;
 import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.login.connect.DiscoveryHandler;
-import com.donghaeng.withme.login.connect.NearbyHandler;
-import com.donghaeng.withme.login.connect.QRCodeGenerator;
-import com.donghaeng.withme.login.connect.QRCodeReader;
-import com.donghaeng.withme.user.Undefined;
+import com.donghaeng.withme.firebasestore.FireStoreManager;
+import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
+import com.donghaeng.withme.login.connect.controller.ControllerConnect;
+import com.donghaeng.withme.login.connect.controller.DiscoveryHandler;
+import com.donghaeng.withme.screen.main.ControllerActivity;
+import com.donghaeng.withme.user.Controller;
+import com.donghaeng.withme.user.Target;
 import com.donghaeng.withme.user.User;
-import com.google.android.gms.nearby.Nearby;
-import com.google.android.gms.nearby.connection.ConnectionsClient;
+import com.donghaeng.withme.user.UserType;
 
 @ExperimentalGetImage
 public class ControllerQrFragment extends Fragment {
     private PreviewView viewFinder;
-
-    // Discovery
-    private ConnectionsClient connectionsClient;
-    private DiscoveryHandler discoveryHandler;
-
-    // QR Reader
-    private QRCodeReader qrCodeReader;
+    private ControllerConnect connect;
+    private ActivityResultLauncher<String[]> requestPermissionsLauncher;
 
     /**
      * Fragment 생성자 데이터
@@ -56,6 +51,10 @@ public class ControllerQrFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // ControllerConnect 초기화
+        connect = new ControllerConnect(this);
+        connect.checkPermissions();
+        connect.getReader().setScanner();
         return inflater.inflate(R.layout.fragment_controller_qr, container, false);
     }
 
@@ -65,11 +64,6 @@ public class ControllerQrFragment extends Fragment {
 
         viewFinder = view.findViewById(R.id.viewFinder);
         viewFinder.setImplementationMode(PreviewView.ImplementationMode.PERFORMANCE);
-        // DiscoveryHandler 설정
-        discoveryHandler = new DiscoveryHandler(this, connectionsClient);
-        // QR 코드만을 위한 스캐너 설정
-        qrCodeReader = new QRCodeReader(this, viewFinder, discoveryHandler);
-        qrCodeReader.setScannerForQRcode();
     }
 
     @Override
@@ -85,7 +79,24 @@ public class ControllerQrFragment extends Fragment {
         if (getArguments() != null) {
             user = getArguments().getParcelable(ARG_USER);
         }
-        connectionsClient = Nearby.getConnectionsClient(requireActivity());
+        requestPermissionsLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    boolean allGranted = true;
+                    for (String permission : result.keySet()) {
+                        if (Boolean.FALSE.equals(result.get(permission))) {
+                            allGranted = false;
+                            break;
+                        }
+                    }
+                    if (allGranted) {
+                        Toast.makeText(requireContext(), "모든 권한이 허용되었습니다.", Toast.LENGTH_SHORT).show();
+                        connect.getReader().startCamera();
+                    } else {
+                        Toast.makeText(requireContext(), "필요한 권한이 허용되지 않았습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     /**
@@ -94,54 +105,51 @@ public class ControllerQrFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        NearbyHandler.checkPermissions(this);
-    }
-
-    /**
-     * 사용자가 권한 요청을 수락(또는 거부)했을 때 호출
-     */
-    @CallSuper
-    @Override
-    public void onRequestPermissionsResult(
-            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == NearbyHandler.REQUEST_CODE_REQUIRED_PERMISSIONS) {
-            int i = 0;
-            for (int grantResult : grantResults) {
-                if (grantResult == PackageManager.PERMISSION_DENIED) {
-                    Log.w("TargetQRFragment","Permissions not granted"+permissions[i]);
-                    Toast.makeText(this.requireContext(), "Permissions not granted", Toast.LENGTH_LONG).show();
-
-//                    requireActivity().finish();
-                    // 여기에서 뒤로 가기 동작을 수행합니다.
-                    requireActivity().getSupportFragmentManager().popBackStack();
-                    return;
-                }
-                i++;
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        discoveryHandler.stopDiscovering();
-        qrCodeReader.cleanupCamera();
     }
 
     public PreviewView getViewFinder() {
         return viewFinder;
     }
-    public ConnectionsClient getConnectionsClient() {
-        return connectionsClient;
-    }
-    public DiscoveryHandler getDiscoveryHandler() {
-        return discoveryHandler;
-    }
-    public QRCodeReader getQrCodeReader() {
-        return qrCodeReader;
-    }
+
     public User getUser() {
         return user;
+    }
+
+    public ActivityResultLauncher<String[]> getRequestPermissionsLauncher() {
+        return requestPermissionsLauncher;
+    }
+
+    public ControllerConnect getConnect() {
+        return connect;
+    }
+
+    public void checkAndProceed(User opponent) {
+        boolean bothConfirmed = LocalConfirmationStatus.isConfirmed(user.getId()) &&
+                LocalConfirmationStatus.isConfirmed(opponent.getId());
+
+        if (bothConfirmed) {
+            // User 정보 firestore에 저장
+            User undefinedUser = getUser();
+            if (opponent.getUserType() == UserType.CONTROLLER) {
+                user = new Target(undefinedUser.getName(), undefinedUser.getPhone(), undefinedUser.getId(), undefinedUser.getHashedPassword());
+                ((Target) user).addController((Controller) opponent);
+            } else if (opponent.getUserType() == UserType.TARGET) {
+                user = new Controller(undefinedUser.getName(), undefinedUser.getPhone(), undefinedUser.getId(), undefinedUser.getHashedPassword());
+                ((Controller) user).addTarget((Target) opponent);
+            }
+            FireStoreManager fireStoreManager = FireStoreManager.getInstance();
+            fireStoreManager.updateUserData(user);
+
+            /* Discovery 종료 */
+            DiscoveryHandler handler = DiscoveryHandler.getInstance();
+            handler.clear();
+
+            ((ControllerActivity) requireActivity()).onConnectionComplete();
+        }
     }
 }

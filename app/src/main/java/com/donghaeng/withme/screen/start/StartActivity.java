@@ -25,6 +25,7 @@ import com.donghaeng.withme.screen.main.TargetActivity;
 import com.donghaeng.withme.screen.start.signup.SignupNameFragment;
 import com.donghaeng.withme.screen.start.signup.SignupVerifyingPhoneNumberFragment;
 import com.donghaeng.withme.screen.start.signup.SignupPassWordFragment;
+import com.donghaeng.withme.user.Controller;
 import com.donghaeng.withme.user.Target;
 import com.donghaeng.withme.user.Undefined;
 import com.donghaeng.withme.user.User;
@@ -51,17 +52,7 @@ public class StartActivity extends AppCompatActivity {
         target_btn = findViewById(R.id.target_button);
         // 화면 이동용 임시 버튼 클릭 리스너 설정
         guide_btn.setOnClickListener(v -> startActivity(new Intent(this, GuideActivity.class)));
-//        control_btn.setOnClickListener(v -> changeFragment("controller_QR"));
-        control_btn.setOnClickListener(v -> {
-            User user = new Undefined("a", "b", "c", "d");
-            User opponent = new Target("z", "x", "c", "v");
-            Intent intent = new Intent(this, ControllerActivity.class);
-            intent.putExtra("fragmentName", "info");
-            intent.putExtra("user", (Parcelable) user);
-            intent.putExtra("opponent", (Parcelable) opponent);
-
-            startActivity(intent);
-        });
+        control_btn.setOnClickListener(v -> changeFragment("controller_QR"));
         target_btn.setOnClickListener(v -> changeFragment("target_QR"));
 
         // Fragment 초기화 로직을 분리
@@ -130,14 +121,26 @@ public class StartActivity extends AppCompatActivity {
                     break;
                 case "controller_QR":
                     intent = new Intent(this, ControllerActivity.class);
-                    intent.putExtra("user", (Parcelable) user);
+                    //
+                    User user1 = new Undefined("a", "b", "c", "d");
+                    User opponent1 = new Target("z", "x", "q", "v");
+                    intent.putExtra("user", (Parcelable) user1);
+                    intent.putExtra("opponent", (Parcelable) opponent1);
+                    //
+//                    intent.putExtra("user", (Parcelable) user);
                     intent.putExtra("fragmentName", "controller_QR");
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     break;
                 case "target_QR":
                     intent = new Intent(this, TargetActivity.class);
-                    intent.putExtra("user", (Parcelable) user);
+                    //
+                    User user2 = new Undefined("z", "x", "q", "v");
+                    User opponent2 = new Controller("a", "b", "c", "d");
+                    intent.putExtra("user", (Parcelable) user2);
+                    intent.putExtra("opponent", (Parcelable) opponent2);
+                    //
+//                    intent.putExtra("user", (Parcelable) user);
                     intent.putExtra("fragmentName", "target_QR");
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

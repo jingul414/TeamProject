@@ -1,8 +1,9 @@
 package com.donghaeng.withme.screen.start.connect;
 
-import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.OptIn;
+import androidx.camera.core.ExperimentalGetImage;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -13,13 +14,18 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.firebasestore.FireStoreManager;
+import com.donghaeng.withme.login.connect.controller.NearbyHandler;
+import com.donghaeng.withme.login.connect.message.ConfirmationPayload;
+import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
+import com.donghaeng.withme.login.connect.message.NearbyMessage;
+import com.donghaeng.withme.login.connect.target.AdvertisementHandler;
+import com.donghaeng.withme.login.connect.controller.DiscoveryHandler;
 import com.donghaeng.withme.screen.main.ControllerActivity;
-import com.donghaeng.withme.screen.start.StartActivity;
-import com.donghaeng.withme.user.Controller;
-import com.donghaeng.withme.user.Target;
+import com.donghaeng.withme.screen.main.TargetActivity;
 import com.donghaeng.withme.user.User;
 import com.donghaeng.withme.user.UserType;
+import com.google.android.gms.nearby.connection.Payload;
+import com.google.gson.Gson;
 
 
 public class ConnectInfoFragment extends Fragment {
@@ -54,13 +60,14 @@ public class ConnectInfoFragment extends Fragment {
     }
 
     private Fragment connectFragment;
+    private NearbyHandler handler;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_connect_info, container, false);
-        // 오류 이유 => 보호자만 연결된거임
+
         connectFragment = getParentFragment();
 
         TextView infoTextView = view.findViewById(R.id.info_text);
@@ -70,12 +77,15 @@ public class ConnectInfoFragment extends Fragment {
             switch (opponent.getUserType()) {
                 case UserType.CONTROLLER:
                     infoTextView.setText("보호자 정보");
+                    handler = AdvertisementHandler.getInstance();
                     break;
                 case UserType.TARGET:
                     infoTextView.setText("동행인 정보");
+                    handler = DiscoveryHandler.getInstance();
                     break;
                 default:
                     infoTextView.setText("알 수 없는 유저 정보");
+                    handler = null;
             }
             nameTextView.setText(opponent.getName());
             // 하이픈 넣고 싶으면 넣기
@@ -86,9 +96,14 @@ public class ConnectInfoFragment extends Fragment {
         // 아니오 버튼 클릭시 뒤로 이동
         View back = view.findViewById(R.id.no_button);
         back.setOnClickListener(v -> {
+            // TODO: 뒤로 가기 할 때 UI 이상함, 둘 중 하나가 뒤로 가기 하면 모두 뒤로 가지도록 하는 과정 추가
             switch (opponent.getUserType()) {
                 case UserType.CONTROLLER:
-                    ((TargetConnectFragment) connectFragment).changeFragment("qr");
+//                    ((TargetConnectFragment) connectFragment).changeFragment("qr");
+                    requireActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.fragment_container, TargetQrFragment.newInstance(user))
+                            .commit();
                     break;
                 case UserType.TARGET:
                     ((ControllerConnectFragment) connectFragment).changeFragment("qr");
@@ -99,30 +114,28 @@ public class ConnectInfoFragment extends Fragment {
     }
 
     class YesBtnListener implements View.OnClickListener {
+        @OptIn(markerClass = ExperimentalGetImage.class)
         @Override
         public void onClick(View v) {
             Log.d("ConnectInfoFragment", "Yes button clicked");
-            // TODO: 상대 응답 기다리는 과정 필요
+            /* 메세지 생성 */
+            ConfirmationPayload payload = new ConfirmationPayload(user.getId(), true);
+            NearbyMessage message = new NearbyMessage("CONNECT_CONFIRMATION", payload);
+            String jsonMessage = new Gson().toJson(message);
 
+            if (handler != null) {
+                /* 메세지 전송 */
+                handler.send(Payload.fromBytes(jsonMessage.getBytes()));
+                /* 로컬 상태 업데이트 */
+                LocalConfirmationStatus.updateStatus(user.getId(), true);
 
-            // User 정보 firestore에 저장
-            User undefinedUser = getUser();
-            if (getOpponent().getUserType() == UserType.CONTROLLER) {
-                user = new Target(undefinedUser.getName(), undefinedUser.getPhone(), undefinedUser.getId(), undefinedUser.getHashedPassword());
-                ((Target) user).addController((Controller) getOpponent());
-            } else if (getOpponent().getUserType() == UserType.TARGET) {
-                user = new Controller(undefinedUser.getName(), undefinedUser.getPhone(), undefinedUser.getId(), undefinedUser.getHashedPassword());
-                ((Controller) user).addTarget((Target) getOpponent());
+                /* 상태 확인 후 다음 단계로 이동 */
+                if (getOpponent().getUserType() == UserType.TARGET) {
+                    ((ControllerQrFragment) handler.getFragment()).checkAndProceed(getOpponent());
+                } else if (getOpponent().getUserType() == UserType.CONTROLLER) {
+                    ((TargetQrFragment) handler.getFragment()).checkAndProceed(getOpponent());
+                }
             }
-            FireStoreManager fireStoreManager = FireStoreManager.getInstance();
-            fireStoreManager.updateUserData(user);
-
-//            //TODO: 로그인 프래그먼트로 이동
-//            Intent intent = new Intent(requireActivity(), StartActivity.class);
-//            intent.putExtra("fragmentName","LoginFragment");
-//            startActivity(intent);
-            // TODO: ControllerActivity 에서 액티비티 넘어가게 함.
-            ((ControllerActivity)requireActivity()).onConnectionComplete();
         }
     }
 

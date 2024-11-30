@@ -1,14 +1,12 @@
-package com.donghaeng.withme.login.connect;
+package com.donghaeng.withme.login.connect.target;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import androidx.fragment.app.Fragment;
 
+import com.donghaeng.withme.screen.start.connect.TargetQrFragment;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -20,30 +18,29 @@ import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 public class QRCodeGenerator {
-    private final Context mContext;
-    private AdvertisementHandler mAdvertisementHandler;
+    private final Fragment mFragment;
+    private final AdvertisementHandler mHandler;
 
-    public QRCodeGenerator(Fragment fragment, AdvertisementHandler advertisementHandler) {
-        mContext = fragment.requireContext();
-        mAdvertisementHandler = advertisementHandler;
+    public QRCodeGenerator(Fragment fragment, TargetConnect parent) {
+        mFragment = fragment;
+        mHandler = parent.getHandler();
     }
 
-    public void generateQRCode(ImageView qrCodeImageView) {
+    public void generateQRCode() {
         byte[] array = new byte[20];
         new Random().nextBytes(array);
         String generatedString = new String(array, StandardCharsets.UTF_8).trim();
 
-        if (mAdvertisementHandler != null) {
-            mAdvertisementHandler.setData(generatedString);
+        if (mHandler != null) {
+            mHandler.setData(generatedString);
             String data = BCrypt.hashpw(generatedString, BCrypt.gensalt());
 
             try {
                 Bitmap bitmap = createQRCode(data);
-                qrCodeImageView.setImageBitmap(bitmap);
+                ((TargetQrFragment)mFragment).getQrCodeImageView().setImageBitmap(bitmap);
             } catch (WriterException e) {
                 e.printStackTrace();
                 Log.e("QRCodeGenerator", "Error generating QR code", e);
-                Toast.makeText(mContext, "Error generating QR code", Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -36,13 +36,6 @@ public class ControllerActivity extends AppCompatActivity {
                         .beginTransaction()
                         .add(R.id.fragment_container, ControllerConnectFragment.newInstance(user))
                         .commit();
-            } else if (getIntent().getStringExtra("fragmentName").equals("info")) {
-                // TODO: 테스트 후 삭제
-                User opponent = getIntent().getParcelableExtra("opponent");
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragment_container, ConnectInfoFragment.newInstance(user, opponent))
-                        .commit();
             }
         } else{
             getSupportFragmentManager()

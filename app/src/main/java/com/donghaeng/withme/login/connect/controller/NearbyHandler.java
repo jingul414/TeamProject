@@ -1,11 +1,10 @@
-package com.donghaeng.withme.login.connect;
+package com.donghaeng.withme.login.connect.controller;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -13,6 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
 import com.google.android.gms.nearby.connection.ConnectionResolution;
@@ -82,7 +82,6 @@ public abstract class NearbyHandler {
         }
     }
 
-    public static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
     /**
      * Nearby Connections 클라이언트
      */
@@ -178,21 +177,13 @@ public abstract class NearbyHandler {
     };
 
     protected static final String SERVICE_ID = "com.donghaeng.withme.connect";
-    protected final Fragment mFragment;
+    protected Fragment mFragment;
     protected final Context mContext;
 
-    public NearbyHandler(Fragment fragment, ConnectionsClient connectionsClient) {
+    public NearbyHandler(Fragment fragment) {
         mFragment = fragment;
         mContext = mFragment.requireContext();
-        mConnectionsClient = connectionsClient;
-    }
-
-    public static void checkPermissions(Fragment fragment) {
-        // TODO: getRequiredPermissions()가 static 이어도 괜찮은 지 확인 필요
-        if (!hasPermissions(fragment.requireContext(), getRequiredPermissions())) {
-            Toast.makeText(fragment.requireContext(), "Permissions not granted", Toast.LENGTH_SHORT).show();
-            fragment.requestPermissions(getRequiredPermissions(), REQUEST_CODE_REQUIRED_PERMISSIONS);
-        }
+        mConnectionsClient = Nearby.getConnectionsClient(mContext);
     }
 
     /**
@@ -237,7 +228,7 @@ public abstract class NearbyHandler {
     /**
      * 현재 연결된 모든 엔드포인트와의 연결 해제
      */
-    protected void disconnectFromAllEndpoints() {
+    public void disconnectFromAllEndpoints() {
         for (Endpoint endpoint : mEstablishedConnections.values()) {
             mConnectionsClient.disconnectFromEndpoint(endpoint.getId());
         }
@@ -247,7 +238,7 @@ public abstract class NearbyHandler {
     /**
      * Nearby Connections의 모든 상태 초기화 및 정리
      */
-    protected void stopAllEndpoints() {
+    public void stopAllEndpoints() {
         mConnectionsClient.stopAllEndpoints();
         isAdvertising = false;
         isDiscovering = false;
@@ -335,7 +326,7 @@ public abstract class NearbyHandler {
      *
      * @param payload 전송할 데이터
      */
-    protected void send(Payload payload) {
+    public void send(Payload payload) {
         send(payload, mEstablishedConnections.keySet());
     }
     protected void send(Payload payload, String endpointId) {
@@ -388,7 +379,7 @@ public abstract class NearbyHandler {
      * 필요한 모든 권한 반환
      * @return 앱이 정상 동작하기 위해 필요한 모든 권한
      */
-    protected static String[] getRequiredPermissions() {
+    public static String[] getRequiredPermissions() {
         return REQUIRED_PERMISSIONS;
     }
 
@@ -501,5 +492,12 @@ public abstract class NearbyHandler {
         public String toString() {
             return String.format("Endpoint{id=%s, name=%s}", id, name);
         }
+    }
+
+    public void setFragment(Fragment fragment){
+        mFragment = fragment;
+    }
+    public Fragment getFragment(){
+        return mFragment;
     }
 }

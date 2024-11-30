@@ -1,30 +1,57 @@
-package com.donghaeng.withme.login.connect;
+package com.donghaeng.withme.login.connect.target;
 
+import android.annotation.SuppressLint;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
+import com.donghaeng.withme.login.connect.controller.NearbyHandler;
+import com.donghaeng.withme.login.connect.message.ConfirmationPayload;
+import com.donghaeng.withme.login.connect.message.NearbyMessage;
+import com.donghaeng.withme.login.connect.message.TextMessagePayload;
+import com.donghaeng.withme.login.connect.message.UserPayload;
 import com.donghaeng.withme.screen.start.connect.TargetConnectFragment;
 import com.donghaeng.withme.screen.start.connect.TargetQrFragment;
 import com.donghaeng.withme.user.Controller;
-import com.donghaeng.withme.user.Target;
 import com.donghaeng.withme.user.User;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
-import com.google.android.gms.nearby.connection.ConnectionsClient;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.Strategy;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AdvertisementHandler extends NearbyHandler {
     private String data;
+    private final TargetConnect connect;
 
-    public AdvertisementHandler(Fragment fragment, ConnectionsClient client) {
-        super(fragment, client);
+    @SuppressLint("StaticFieldLeak")
+    private static AdvertisementHandler instance;
+
+    private AdvertisementHandler(Fragment fragment) {
+        super(fragment);
+        this.connect = ((TargetQrFragment)fragment).getConnect();
+    }
+
+    public static synchronized AdvertisementHandler newInstance(Fragment fragment) {
+        if (instance == null) {
+            instance = new AdvertisementHandler(fragment);
+        }
+        return instance;
+    }
+
+    public static AdvertisementHandler getInstance() {
+        return instance;
+    }
+
+    public void setAdvertiser() {
+        if (hasPermissions(mFragment.requireContext())) {
+            startAdvertising();
+        } else {
+            connect.checkPermissions();
+        }
     }
 
     /**
@@ -91,11 +118,15 @@ public class AdvertisementHandler extends NearbyHandler {
 
         // 연결 성공 시 데이터 전송
         if (data != null) {
-            send(Payload.fromBytes(data.getBytes()), endpointId);
+            TextMessagePayload payload = new TextMessagePayload(data);
+            NearbyMessage message = new NearbyMessage("QR_ORIGIN", payload);
+            String jsonMessage = new Gson().toJson(message);
+            send(Payload.fromBytes(jsonMessage.getBytes()), endpointId);
             logD("Sent data: " + data + " to endpoint: " + endpointId);
         } else {
             logW("No data to send upon connection.");
         }
+        stopAdvertising();
     }
 
     public void setData(String data) {
@@ -110,33 +141,64 @@ public class AdvertisementHandler extends NearbyHandler {
 
         // 수신된 데이터 처리 로직 추가
         Toast.makeText(mContext, "Received: " + data, Toast.LENGTH_SHORT).show();
-
-        processInformation(endpointId, data);
-    }
-
-    private void processInformation(String endpointId, String data) {
-        logD("Performing some action based on received data.");
-        // 추가 동작 구현
+        // 수신된 데이터 처리
         Gson gson = new Gson();
-
+        NearbyMessage message = gson.fromJson(data, NearbyMessage.class);
+        Type type;
+        switch (message.getType()) {
+            case "OPPONENT_USER":
+                type = new TypeToken<UserPayload>() {}.getType();
+                UserPayload opponent = gson.fromJson(gson.toJson(message.getPayload()), type);
+                receiveOpponent(endpointId, opponent);
+                break;
+            case "CONNECT_CONFIRMATION":
+                type = new TypeToken<ConfirmationPayload>() {}.getType();
+                ConfirmationPayload confirmationPayload = gson.fromJson(gson.toJson(message.getPayload()), type);                // 상대방 확인 상태 저장
+                // 상대방 확인 상태 저장
+                LocalConfirmationStatus.updateStatus(confirmationPayload.getUserId(), confirmationPayload.isConfirmation());
+                // 상태 확인 후 다음 단계로 이동
+                ((TargetQrFragment) mFragment).checkAndProceed(mOpponent);
+                break;
+            default:
+                break;
+        }
+    }
+    private Controller mOpponent;
+    private void receiveOpponent(String endpointId, UserPayload data) {
+        logD("Performing some action based on received data.");
         // 먼저 보내기
-        sendUserInfo(endpointId);
+        sendMyInformation(endpointId);
 
         // 데이터 처리
-        User tempUser = gson.fromJson(data, Controller.class);
+        User tempUser = data.getUser();
         Controller opponent = new Controller(tempUser.getName(), tempUser.getPhone(), tempUser.getId(), "");
-
+        mOpponent = opponent;
         TargetConnectFragment nextFragment = (TargetConnectFragment) mFragment.getParentFragment();
-        nextFragment.setOpponentUserInfo(opponent);
-        nextFragment.changeFragment("info");
+        if (nextFragment != null) {
+            nextFragment.setOpponentUserInfo(opponent);
+            nextFragment.changeFragment("info");
+        }
     }
 
-    private void sendUserInfo(String endpointId) {
+    private void sendMyInformation(String endpointId) {
         logD("Performing some action based on received data.");
         // JSON
-        Gson gson = new Gson();
-        User user = ((TargetQrFragment)mFragment).getUser();
-        String userInfo = gson.toJson(user);
-        send(Payload.fromBytes(userInfo.getBytes()), endpointId);
+        User user = ((TargetQrFragment) mFragment).getUser();
+        UserPayload payload = new UserPayload(user);
+        NearbyMessage message = new NearbyMessage("OPPONENT_USER", payload);
+        String jsonMessage = new Gson().toJson(message);
+        send(Payload.fromBytes(jsonMessage.getBytes()), endpointId);
+    }
+
+    public void clear() {
+        stopAdvertising();
+        mConnectionsClient.stopAllEndpoints();
+        mConnectionsClient.stopDiscovery();
+        mConnectionsClient.stopAdvertising();
+        disconnectFromAllEndpoints();
+        stopAllEndpoints();
+        mDiscoveredEndpoints.clear();
+
+        instance = null;
     }
 }

@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.user.User;
 
-
 public class TargetConnectFragment extends Fragment {
     /**
      * Fragment 생성자 데이터

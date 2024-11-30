@@ -1,39 +1,33 @@
 package com.donghaeng.withme.screen.start.connect;
 
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.CallSuper;
-import androidx.annotation.NonNull;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.login.connect.AdvertisementHandler;
-import com.donghaeng.withme.login.connect.NearbyHandler;
-import com.donghaeng.withme.login.connect.QRCodeGenerator;
-import com.donghaeng.withme.user.Undefined;
+import com.donghaeng.withme.firebasestore.FireStoreManager;
+import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
+import com.donghaeng.withme.login.connect.target.AdvertisementHandler;
+import com.donghaeng.withme.login.connect.target.TargetConnect;
+import com.donghaeng.withme.screen.main.TargetActivity;
+import com.donghaeng.withme.user.Controller;
+import com.donghaeng.withme.user.Target;
 import com.donghaeng.withme.user.User;
-import com.google.android.gms.nearby.Nearby;
-import com.google.android.gms.nearby.connection.ConnectionsClient;
+import com.donghaeng.withme.user.UserType;
 
 /*  피제어자 => QR 생성  */
 public class TargetQrFragment extends Fragment {
     private ImageView qrCodeImageView;
-
-    // Advertise
-    private ConnectionsClient connectionsClient;
-    private AdvertisementHandler advertisementHandler;
-
-    // QR Generator
-    private QRCodeGenerator qrCodeGenerator;
-
+    private TargetConnect connect;
+    private ActivityResultLauncher<String[]> requestPermissionsLauncher;
 
     /**
      * Fragment 생성자 데이터
@@ -58,13 +52,18 @@ public class TargetQrFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_target_qr, container, false);
         qrCodeImageView = view.findViewById(R.id.qrCodeImageView);
+
+        // ControllerConnect 초기화
+        connect = new TargetConnect(this);
+        connect.getGenerator().generateQRCode();
+        connect.checkPermissions();
+        connect.getHandler().setAdvertiser();
         return view;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        advertisementHandler.stopAdvertising();
     }
 
     /**
@@ -76,7 +75,23 @@ public class TargetQrFragment extends Fragment {
         if (getArguments() != null) {
             user = getArguments().getParcelable(ARG_USER);
         }
-        connectionsClient = Nearby.getConnectionsClient(requireActivity());
+        requestPermissionsLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    boolean allGranted = true;
+                    for (String permission : result.keySet()) {
+                        if (Boolean.FALSE.equals(result.get(permission))) {
+                            allGranted = false;
+                            break;
+                        }
+                    }
+                    if (allGranted) {
+                        Toast.makeText(requireContext(), "모든 권한이 허용되었습니다.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), "필요한 권한이 허용되지 않았습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     /**
@@ -85,59 +100,51 @@ public class TargetQrFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        // 권한 받기
-        NearbyHandler.checkPermissions(this);
-
-        advertisementHandler = new AdvertisementHandler(this, connectionsClient);
-        advertisementHandler.startAdvertising();
-
-        qrCodeGenerator = new QRCodeGenerator(this, advertisementHandler);
-        qrCodeGenerator.generateQRCode(qrCodeImageView);
-    }
-
-    /**
-     * 사용자가 권한 요청을 수락(또는 거부)했을 때 호출
-     */
-    @CallSuper
-    @Override
-    public void onRequestPermissionsResult(
-            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == NearbyHandler.REQUEST_CODE_REQUIRED_PERMISSIONS) {
-            int i = 0;
-            for (int grantResult : grantResults) {
-                if (grantResult == PackageManager.PERMISSION_DENIED) {
-                    Log.w("TargetQRFragment", "Permissions not granted" + permissions[i]);
-                    Toast.makeText(this.requireContext(), "Permissions not granted", Toast.LENGTH_LONG).show();
-
-                    requireActivity().finish();
-                    return;
-                }
-                i++;
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        advertisementHandler.stopAdvertising();
     }
 
     public ImageView getQrCodeImageView() {
         return qrCodeImageView;
     }
-    public ConnectionsClient getConnectionsClient() {
-        return connectionsClient;
-    }
-    public AdvertisementHandler getAdvertisementHandler() {
-        return advertisementHandler;
-    }
-    public QRCodeGenerator getQrCodeGenerator() {
-        return qrCodeGenerator;
-    }
+
     public User getUser() {
         return user;
+    }
+
+    public ActivityResultLauncher<String[]> getRequestPermissionsLauncher() {
+        return requestPermissionsLauncher;
+    }
+
+    public TargetConnect getConnect() {
+        return connect;
+    }
+
+    public void checkAndProceed(User opponent) {
+        boolean bothConfirmed = LocalConfirmationStatus.isConfirmed(user.getId()) &&
+                LocalConfirmationStatus.isConfirmed(opponent.getId());
+
+        if (bothConfirmed) {
+            // User 정보 firestore에 저장
+            User undefinedUser = getUser();
+            if (opponent.getUserType() == UserType.CONTROLLER) {
+                user = new Target(undefinedUser.getName(), undefinedUser.getPhone(), undefinedUser.getId(), undefinedUser.getHashedPassword());
+                ((Target) user).addController((Controller) opponent);
+            } else if (opponent.getUserType() == UserType.TARGET) {
+                user = new Controller(undefinedUser.getName(), undefinedUser.getPhone(), undefinedUser.getId(), undefinedUser.getHashedPassword());
+                ((Controller) user).addTarget((Target) opponent);
+            }
+            FireStoreManager fireStoreManager = FireStoreManager.getInstance();
+            fireStoreManager.updateUserData(user);
+
+            /* Advertiser 종료 */
+            AdvertisementHandler handler = AdvertisementHandler.getInstance();
+            handler.clear();
+
+            ((TargetActivity) requireActivity()).onConnectionComplete();
+        }
     }
 }
