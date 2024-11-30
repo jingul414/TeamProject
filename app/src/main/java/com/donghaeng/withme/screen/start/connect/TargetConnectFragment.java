@@ -71,7 +71,7 @@ public class TargetConnectFragment extends Fragment {
             case "info":
                 getChildFragmentManager()
                         .beginTransaction()
-                        .add(R.id.child_fragment, ConnectInfoFragment.newInstance(opponent))
+                        .add(R.id.child_fragment, ConnectInfoFragment.newInstance(user, opponent))
                         .commit();
                 break;
             default:

@@ -12,26 +12,32 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.user.Undefined;
+import com.donghaeng.withme.firebasestore.FireStoreManager;
+import com.donghaeng.withme.user.Controller;
+import com.donghaeng.withme.user.Target;
 import com.donghaeng.withme.user.User;
 import com.donghaeng.withme.user.UserType;
 
 
 public class ConnectInfoFragment extends Fragment {
+    private FireStoreManager fireStoreManager;
     /**
      * Fragment 생성자 데이터
      */
     private static final String ARG_USER = "user";
+    private static final String ARG_OPPONENT = "opponent";
     private User user;
+    private User opponent;
 
     public ConnectInfoFragment() {
         // Required empty public constructor
     }
 
-    public static ConnectInfoFragment newInstance(User user) {
+    public static ConnectInfoFragment newInstance(User user, User opponent) {
         ConnectInfoFragment fragment = new ConnectInfoFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_USER, user);
+        args.putParcelable(ARG_OPPONENT, opponent);
         fragment.setArguments(args);
         return fragment;
     }
@@ -41,8 +47,10 @@ public class ConnectInfoFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             user = getArguments().getParcelable(ARG_USER);
+            opponent = getArguments().getParcelable(ARG_OPPONENT);
         }
     }
+
     private ControllerConnectFragment connectFragment;
 
     @Override
@@ -50,14 +58,14 @@ public class ConnectInfoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_connect_info, container, false);
-
+        // 오류 이유 => 보호자만 연결된거임
         connectFragment = (ControllerConnectFragment) getParentFragment();
 
         TextView infoTextView = view.findViewById(R.id.info_text);
         TextView nameTextView = view.findViewById(R.id.tel_name);
         TextView phoneTextView = view.findViewById(R.id.tel_text);
-        if (user != null) {
-            switch (user.getUserType()) {
+        if (opponent != null) {
+            switch (opponent.getUserType()) {
                 case UserType.CONTROLLER:
                     infoTextView.setText("보호자 정보");
                     break;
@@ -67,9 +75,9 @@ public class ConnectInfoFragment extends Fragment {
                 default:
                     infoTextView.setText("알 수 없는 유저 정보");
             }
-            nameTextView.setText(user.getName());
+            nameTextView.setText(opponent.getName());
             // 하이픈 넣고 싶으면 넣기
-            phoneTextView.setText(user.getPhone());
+            phoneTextView.setText(opponent.getPhone());
         }
         Button yesBtn = view.findViewById(R.id.yes_button);
         yesBtn.setOnClickListener(new YesBtnListener());
@@ -81,10 +89,30 @@ public class ConnectInfoFragment extends Fragment {
         return view;
     }
 
-    static class YesBtnListener implements View.OnClickListener {
+    class YesBtnListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             Log.d("ConnectInfoFragment", "Yes button clicked");
+            // TODO: 상대 응답 기다리는 과정 필요
+            User undefinedUser = getUser();
+            if (getOpponent().getUserType() == UserType.CONTROLLER) {
+                user = new Target(undefinedUser.getName(), undefinedUser.getPhone(), undefinedUser.getId(), undefinedUser.getHashedPassword());
+//  오류예상              ((Target)user).addController((Controller) getOpponent());
+            } else if (getOpponent().getUserType() == UserType.TARGET) {
+                user = new Controller(undefinedUser.getName(), undefinedUser.getPhone(), undefinedUser.getId(), undefinedUser.getHashedPassword());
+//  오류발생              ((Controller)user).addTarget((Target) getOpponent());
+            }
+            fireStoreManager = FireStoreManager.getInstance();
+            fireStoreManager.updateUserData(user);
+            connectFragment.changeFragment("qr");
         }
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public User getOpponent() {
+        return opponent;
     }
 }

@@ -72,7 +72,7 @@ public class ControllerConnectFragment extends Fragment {
 
                 getChildFragmentManager()
                         .beginTransaction()
-                        .add(R.id.child_fragment, ConnectInfoFragment.newInstance(opponent))
+                        .add(R.id.child_fragment, ConnectInfoFragment.newInstance(user, opponent))
                         .commit();
                 break;
             case "qr":

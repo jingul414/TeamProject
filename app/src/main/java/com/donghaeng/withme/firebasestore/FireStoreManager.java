@@ -4,17 +4,22 @@ import android.util.Log;
 import android.widget.Switch;
 
 import com.donghaeng.withme.security.EncrpytPhoneNumber;
+import com.donghaeng.withme.user.Controller;
+import com.donghaeng.withme.user.Target;
 import com.donghaeng.withme.user.User;
 import com.donghaeng.withme.user.UserType;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FireStoreManager {
@@ -68,12 +73,7 @@ public class FireStoreManager {
 
     //firestore 에 유저의 정보를 넣는 역할을 하는 메소드, 파라미터 User 객체의 정보를 firestore 에 입력, 각 유저 문서의 이름은 해시화한 전화번호로 함
     public void setUserData(User usr, firestoreCallback callback){
-        Map<String, Object> user = new HashMap<>();
-        user.put("name", usr.getName());
-        user.put("phoneNum", usr.getPhone());
-        user.put("hashedPW", usr.getHashedPassword());
-        user.put("uid", usr.getId());
-        user.put("userType", (long)(usr.getUserType()));
+        Map<String, Object> user = processUserInfo(usr);
 
         String hashedPhoneNumber = EncrpytPhoneNumber.hashPhoneNumber(usr.getPhone());   //전화번호 해시화해서 저장 -> 로그인을 위해 각 유저의 firestore 문서의 이름으로 사용
 
@@ -82,6 +82,44 @@ public class FireStoreManager {
                 .set(user)
                 .addOnSuccessListener(aVoid -> callback.onSuccess("User data saved successfully"))
                 .addOnFailureListener(callback::onFailure);
+    }
+
+    public void updateUserData(User user){
+        Map<String, Object> userData = processUserInfo(user);
+
+        db.collection("user").document(EncrpytPhoneNumber.hashPhoneNumber(user.getPhone()))
+                .set(userData, SetOptions.merge());
+    }
+
+    private Map<String, Object> processUserInfo(User user){
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("name", user.getName());
+        userData.put("phoneNum", user.getPhone());
+        userData.put("hashedPW", user.getHashedPassword());
+        userData.put("uid", user.getId());
+        long userType = user.getUserType();
+        userData.put("userType", userType);
+
+        if(userType == UserType.CONTROLLER){
+            List<Map<String, Object>> targetsData = new ArrayList<>();
+            for(Target target : ((Controller)user).getTargets()){
+                Map<String, Object> targetData = new HashMap<>();
+                targetData.put("name", target.getName());
+                targetData.put("phoneNum", target.getPhone());
+                targetData.put("uid", target.getId());
+                targetsData.add(targetData);
+            }
+            userData.put("targets", targetsData.toArray());
+        }else if(userType == UserType.TARGET){
+            Map<String, Object> controllerData = new HashMap<>();
+            Controller controller = ((Target)user).getController();
+            controllerData.put("name", controller.getName());
+            controllerData.put("phoneNum", controller.getPhone());
+            controllerData.put("uid", controller.getId());
+            userData.put("controller", controllerData);
+        }
+
+        return userData;
     }
 
     //TODO : 아래 3개 메소드 테스트 미실시상태.
