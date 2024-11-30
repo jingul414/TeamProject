@@ -1,5 +1,6 @@
 package com.donghaeng.withme.screen.start.connect;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.firebasestore.FireStoreManager;
+import com.donghaeng.withme.screen.start.StartActivity;
 import com.donghaeng.withme.user.Controller;
 import com.donghaeng.withme.user.Target;
 import com.donghaeng.withme.user.User;
@@ -20,7 +22,6 @@ import com.donghaeng.withme.user.UserType;
 
 
 public class ConnectInfoFragment extends Fragment {
-    private FireStoreManager fireStoreManager;
     /**
      * Fragment 생성자 데이터
      */
@@ -51,7 +52,7 @@ public class ConnectInfoFragment extends Fragment {
         }
     }
 
-    private ControllerConnectFragment connectFragment;
+    private Fragment connectFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,7 +60,7 @@ public class ConnectInfoFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_connect_info, container, false);
         // 오류 이유 => 보호자만 연결된거임
-        connectFragment = (ControllerConnectFragment) getParentFragment();
+        connectFragment = getParentFragment();
 
         TextView infoTextView = view.findViewById(R.id.info_text);
         TextView nameTextView = view.findViewById(R.id.tel_name);
@@ -84,7 +85,14 @@ public class ConnectInfoFragment extends Fragment {
         // 아니오 버튼 클릭시 뒤로 이동
         View back = view.findViewById(R.id.no_button);
         back.setOnClickListener(v -> {
-            connectFragment.changeFragment("qr");
+            switch (opponent.getUserType()) {
+                case UserType.CONTROLLER:
+                    ((TargetConnectFragment) connectFragment).changeFragment("qr");
+                    break;
+                case UserType.TARGET:
+                    ((ControllerConnectFragment) connectFragment).changeFragment("qr");
+                    break;
+            }
         });
         return view;
     }
@@ -94,17 +102,24 @@ public class ConnectInfoFragment extends Fragment {
         public void onClick(View v) {
             Log.d("ConnectInfoFragment", "Yes button clicked");
             // TODO: 상대 응답 기다리는 과정 필요
+
+
+            // User 정보 firestore에 저장
             User undefinedUser = getUser();
             if (getOpponent().getUserType() == UserType.CONTROLLER) {
                 user = new Target(undefinedUser.getName(), undefinedUser.getPhone(), undefinedUser.getId(), undefinedUser.getHashedPassword());
-//  오류예상              ((Target)user).addController((Controller) getOpponent());
+                ((Target) user).addController((Controller) getOpponent());
             } else if (getOpponent().getUserType() == UserType.TARGET) {
                 user = new Controller(undefinedUser.getName(), undefinedUser.getPhone(), undefinedUser.getId(), undefinedUser.getHashedPassword());
-//  오류발생              ((Controller)user).addTarget((Target) getOpponent());
+                ((Controller) user).addTarget((Target) getOpponent());
             }
-            fireStoreManager = FireStoreManager.getInstance();
+            FireStoreManager fireStoreManager = FireStoreManager.getInstance();
             fireStoreManager.updateUserData(user);
-            connectFragment.changeFragment("qr");
+
+            //TODO: 로그인 프래그먼트로 이동
+            Intent intent = new Intent(requireActivity(), StartActivity.class);
+            intent.putExtra("fragmentName","LoginFragment");
+            startActivity(intent);
         }
     }
 

@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.user.Undefined;
 import com.donghaeng.withme.user.User;
 
 
@@ -23,7 +22,6 @@ public class TargetConnectFragment extends Fragment {
     private User user;
 
     private User opponent;
-
 
     public TargetConnectFragment() {
         // Required empty public constructor
@@ -72,6 +70,12 @@ public class TargetConnectFragment extends Fragment {
                 getChildFragmentManager()
                         .beginTransaction()
                         .add(R.id.child_fragment, ConnectInfoFragment.newInstance(user, opponent))
+                        .commit();
+                break;
+            case "qr":
+                getChildFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.child_fragment, TargetQrFragment.newInstance(user))
                         .commit();
                 break;
             default:

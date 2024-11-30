@@ -109,7 +109,7 @@ public class FireStoreManager {
                 targetData.put("uid", target.getId());
                 targetsData.add(targetData);
             }
-            userData.put("targets", targetsData.toArray());
+            userData.put("targets", targetsData);
         }else if(userType == UserType.TARGET){
             Map<String, Object> controllerData = new HashMap<>();
             Controller controller = ((Target)user).getController();

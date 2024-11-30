@@ -25,6 +25,8 @@ import com.donghaeng.withme.screen.main.TargetActivity;
 import com.donghaeng.withme.screen.start.signup.SignupNameFragment;
 import com.donghaeng.withme.screen.start.signup.SignupVerifyingPhoneNumberFragment;
 import com.donghaeng.withme.screen.start.signup.SignupPassWordFragment;
+import com.donghaeng.withme.user.Target;
+import com.donghaeng.withme.user.Undefined;
 import com.donghaeng.withme.user.User;
 
 public class StartActivity extends AppCompatActivity {
@@ -49,15 +51,29 @@ public class StartActivity extends AppCompatActivity {
         target_btn = findViewById(R.id.target_button);
         // 화면 이동용 임시 버튼 클릭 리스너 설정
         guide_btn.setOnClickListener(v -> startActivity(new Intent(this, GuideActivity.class)));
-        control_btn.setOnClickListener(v -> changeFragment("controller_QR"));
+//        control_btn.setOnClickListener(v -> changeFragment("controller_QR"));
+        control_btn.setOnClickListener(v -> {
+            User user = new Undefined("a", "b", "c", "d");
+            User opponent = new Target("z", "x", "c", "v");
+            Intent intent = new Intent(this, ControllerActivity.class);
+            intent.putExtra("fragmentName", "info");
+            intent.putExtra("user", (Parcelable) user);
+            intent.putExtra("opponent", (Parcelable) opponent);
+
+            startActivity(intent);
+        });
         target_btn.setOnClickListener(v -> changeFragment("target_QR"));
 
         // Fragment 초기화 로직을 분리
         if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.fragment_container, new StartFragment())
-                    .commit();
+            if (getIntent().getStringExtra("fragmentName") != null) {
+                changeFragment(getIntent().getStringExtra("fragmentName"));
+            } else {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragment_container, new StartFragment())
+                        .commit();
+            }
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -67,7 +83,7 @@ public class StartActivity extends AppCompatActivity {
         });
     }
 
-    public void changeFragment(String fragmentName){
+    public void changeFragment(String fragmentName) {
         // 액티비티가 유효한 상태인지 확인
         if (!isFinishing() && !isDestroyed()) {
             Intent intent = null;
@@ -134,21 +150,26 @@ public class StartActivity extends AppCompatActivity {
 
     }
 
-    public void setSignUpInstance(SignUp signUp){
+    public void setSignUpInstance(SignUp signUp) {
         this.signUp = signUp;
     }
-    public void setLoginInstance(Login login){
+
+    public void setLoginInstance(Login login) {
         this.login = login;
     }
-    public SignUp getSignUpInstance(){
+
+    public SignUp getSignUpInstance() {
         return this.signUp;
     }
-    public Login getLoginInstance(){
+
+    public Login getLoginInstance() {
         return this.login;
     }
-    public void setUser(User user){
+
+    public void setUser(User user) {
         this.user = user;
     }
+
     public User getUser() {
         return this.user;
     }

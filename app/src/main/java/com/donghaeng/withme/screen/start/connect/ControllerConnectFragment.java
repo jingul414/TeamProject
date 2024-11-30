@@ -11,7 +11,6 @@ import androidx.camera.core.ExperimentalGetImage;
 import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.user.Undefined;
 import com.donghaeng.withme.user.User;
 
 public class ControllerConnectFragment extends Fragment {
@@ -78,7 +77,7 @@ public class ControllerConnectFragment extends Fragment {
             case "qr":
                 getChildFragmentManager()
                         .beginTransaction()
-                        .add(R.id.child_fragment, new ControllerQrFragment())
+                        .add(R.id.child_fragment, ControllerQrFragment.newInstance(user))
                         .commit();
                 break;
             default:

@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.screen.start.connect.ConnectInfoFragment;
 import com.donghaeng.withme.screen.start.connect.ControllerConnectFragment;
 import com.donghaeng.withme.user.Undefined;
 import com.donghaeng.withme.user.User;
@@ -33,6 +34,13 @@ public class ControllerActivity extends AppCompatActivity {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .add(R.id.fragment_container, ControllerConnectFragment.newInstance(user))
+                        .commit();
+            } else if (getIntent().getStringExtra("fragmentName").equals("info")) {
+                // TODO: 테스트 후 삭제
+                User opponent = getIntent().getParcelableExtra("opponent");
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragment_container, ConnectInfoFragment.newInstance(user, opponent))
                         .commit();
             }
         } else{

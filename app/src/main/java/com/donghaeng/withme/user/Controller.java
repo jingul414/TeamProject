@@ -4,6 +4,7 @@ import android.os.Parcel;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Controller extends User{
@@ -37,6 +38,7 @@ public class Controller extends User{
     };
 
     public void addTarget(Target target) {
+        if( targets == null ) targets = new ArrayList<>();
         targets.add(target);
     }
     public List<Target> getTargets() {
