@@ -66,13 +66,12 @@ public class StartActivity extends AppCompatActivity {
 
         // Fragment 초기화 로직을 분리
         if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment_container, new StartFragment())
+                    .commit();
             if (getIntent().getStringExtra("fragmentName") != null) {
                 changeFragment(getIntent().getStringExtra("fragmentName"));
-            } else {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragment_container, new StartFragment())
-                        .commit();
             }
         }
 

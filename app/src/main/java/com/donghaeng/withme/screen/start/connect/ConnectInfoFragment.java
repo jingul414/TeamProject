@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.firebasestore.FireStoreManager;
+import com.donghaeng.withme.screen.main.ControllerActivity;
 import com.donghaeng.withme.screen.start.StartActivity;
 import com.donghaeng.withme.user.Controller;
 import com.donghaeng.withme.user.Target;
@@ -116,10 +117,12 @@ public class ConnectInfoFragment extends Fragment {
             FireStoreManager fireStoreManager = FireStoreManager.getInstance();
             fireStoreManager.updateUserData(user);
 
-            //TODO: 로그인 프래그먼트로 이동
-            Intent intent = new Intent(requireActivity(), StartActivity.class);
-            intent.putExtra("fragmentName","LoginFragment");
-            startActivity(intent);
+//            //TODO: 로그인 프래그먼트로 이동
+//            Intent intent = new Intent(requireActivity(), StartActivity.class);
+//            intent.putExtra("fragmentName","LoginFragment");
+//            startActivity(intent);
+            // TODO: ControllerActivity 에서 액티비티 넘어가게 함.
+            ((ControllerActivity)requireActivity()).onConnectionComplete();
         }
     }
 
