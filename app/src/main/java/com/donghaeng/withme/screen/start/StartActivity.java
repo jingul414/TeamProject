@@ -25,10 +25,10 @@ import com.donghaeng.withme.screen.main.TargetActivity;
 import com.donghaeng.withme.screen.start.signup.SignupNameFragment;
 import com.donghaeng.withme.screen.start.signup.SignupVerifyingPhoneNumberFragment;
 import com.donghaeng.withme.screen.start.signup.SignupPassWordFragment;
-import com.donghaeng.withme.user.Controller;
-import com.donghaeng.withme.user.Target;
-import com.donghaeng.withme.user.Undefined;
-import com.donghaeng.withme.user.User;
+import com.donghaeng.withme.data.user.Controller;
+import com.donghaeng.withme.data.user.Target;
+import com.donghaeng.withme.data.user.Undefined;
+import com.donghaeng.withme.data.user.User;
 
 public class StartActivity extends AppCompatActivity {
     // 회원가입, 로그인 객체
@@ -122,8 +122,8 @@ public class StartActivity extends AppCompatActivity {
                 case "controller_QR":
                     intent = new Intent(this, ControllerActivity.class);
                     //
-                    User user1 = new Undefined("a", "b", "c", "d");
-                    User opponent1 = new Target("z", "x", "q", "v");
+                    User user1 = new Undefined("a", "123", "c", "$2a$10$vDA55gUIBGqlamAYLJBXXuqOoeeuQPvdoy5AQMzLmpQPis.xTG8Vm");
+                    User opponent1 = new Target("z", "456", "q", "$2a$10$vDA55gUIBGqlamAYLJBXXuqOoeeuQPvdoy5AQMzLmpQPis.xTG8Vm");
                     intent.putExtra("user", (Parcelable) user1);
                     intent.putExtra("opponent", (Parcelable) opponent1);
                     //
@@ -135,8 +135,8 @@ public class StartActivity extends AppCompatActivity {
                 case "target_QR":
                     intent = new Intent(this, TargetActivity.class);
                     //
-                    User user2 = new Undefined("z", "x", "q", "v");
-                    User opponent2 = new Controller("a", "b", "c", "d");
+                    User user2 = new Undefined("z", "456", "q", "$2a$10$vDA55gUIBGqlamAYLJBXXuqOoeeuQPvdoy5AQMzLmpQPis.xTG8Vm");
+                    User opponent2 = new Controller("a", "123", "c", "$2a$10$vDA55gUIBGqlamAYLJBXXuqOoeeuQPvdoy5AQMzLmpQPis.xTG8Vm");
                     intent.putExtra("user", (Parcelable) user2);
                     intent.putExtra("opponent", (Parcelable) opponent2);
                     //

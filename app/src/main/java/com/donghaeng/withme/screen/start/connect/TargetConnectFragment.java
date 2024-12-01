@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.user.User;
+import com.donghaeng.withme.data.user.User;
 
 public class TargetConnectFragment extends Fragment {
     /**

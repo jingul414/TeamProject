@@ -11,10 +11,10 @@ import androidx.annotation.NonNull;
 
 import com.donghaeng.withme.exception.phonenumber.EmptyPhoneNumberException;
 import com.donghaeng.withme.exception.phonenumber.InvalidPhoneNumberException;
-import com.donghaeng.withme.firebasestore.FireStoreManager;
+import com.donghaeng.withme.data.database.firestore.FireStoreManager;
 import com.donghaeng.withme.screen.start.StartActivity;
-import com.donghaeng.withme.user.Undefined;
-import com.donghaeng.withme.user.User;
+import com.donghaeng.withme.data.user.Undefined;
+import com.donghaeng.withme.data.user.User;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuth;

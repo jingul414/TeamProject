@@ -12,9 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.roomdatabase.guide.GuideBook;
-import com.donghaeng.withme.roomdatabase.guide.GuideBookRepository;
-import com.donghaeng.withme.roomdatabase.guide.GuideBookType;
+import com.donghaeng.withme.data.guide.GuideBook;
+import com.donghaeng.withme.data.database.room.guide.GuideBookRepository;
+import com.donghaeng.withme.data.guide.GuideBookType;
 
 import java.util.ArrayList;
 import java.util.HashSet;

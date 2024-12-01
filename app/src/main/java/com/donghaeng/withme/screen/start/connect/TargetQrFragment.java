@@ -13,15 +13,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.firebasestore.FireStoreManager;
+import com.donghaeng.withme.data.database.firestore.FireStoreManager;
 import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
 import com.donghaeng.withme.login.connect.target.AdvertisementHandler;
 import com.donghaeng.withme.login.connect.target.TargetConnect;
 import com.donghaeng.withme.screen.main.TargetActivity;
-import com.donghaeng.withme.user.Controller;
-import com.donghaeng.withme.user.Target;
-import com.donghaeng.withme.user.User;
-import com.donghaeng.withme.user.UserType;
+import com.donghaeng.withme.data.user.Controller;
+import com.donghaeng.withme.data.user.Target;
+import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.data.user.UserType;
 
 /*  피제어자 => QR 생성  */
 public class TargetQrFragment extends Fragment {

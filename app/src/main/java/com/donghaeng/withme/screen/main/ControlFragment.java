@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.donghaeng.withme.data.database.room.user.UserRepository;
+import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.screen.guide.DataRepository;
 import com.donghaeng.withme.screen.guide.GuideActivity;
 import com.donghaeng.withme.screen.setting.SettingActivity;
@@ -40,10 +42,14 @@ public class ControlFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
 
-        // 컨트롤 리스트 초기화
+        /* 피제어자 모두 불러오기 */
+        UserRepository repository = new UserRepository(requireContext());
+        List<User> users = repository.getAllUsers();
         List<ControlListItem> items = new ArrayList<>();
-        items.add(new ControlListItem("user1", "홍길동", "profile1"));
-        items.add(new ControlListItem("user2", "홍길순", "profile2"));
+        for(User user : users) {
+            // TODO: 프로필 이미지 변경
+            items.add(new ControlListItem(user.getId(), user.getName(), "profile1"));
+        }
 
         adapter = new ControlExpandableAdapter(getActivity(), items);
         recyclerView.setAdapter(adapter);
