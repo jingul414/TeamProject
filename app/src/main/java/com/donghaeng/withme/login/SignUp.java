@@ -15,8 +15,14 @@ import com.donghaeng.withme.data.database.firestore.FireStoreManager;
 import com.donghaeng.withme.screen.start.StartActivity;
 import com.donghaeng.withme.data.user.Undefined;
 import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.security.appcheck.WithMeProvider;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
+import com.google.firebase.appcheck.BuildConfig;
+import com.google.firebase.appcheck.FirebaseAppCheck;
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException;
@@ -46,6 +52,7 @@ public class SignUp {
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private FireStoreManager firestoreManager;
+    private WithMeProvider appCheck;
 
     // 비밀번호 경고문
     private Handler handler;
@@ -58,6 +65,8 @@ public class SignUp {
     public SignUp(StartActivity startActivity) {
         // 회원가입 생성
         this.startActivity = startActivity;
+        appCheck = new WithMeProvider();
+        appCheck.init(startActivity);
     }
 
     // 이름 저장

@@ -7,6 +7,7 @@ import com.donghaeng.withme.data.user.Controller;
 import com.donghaeng.withme.data.user.Target;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.user.UserType;
+import com.google.firebase.appcheck.FirebaseAppCheck;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -23,10 +24,12 @@ public class FireStoreManager {
     private Byte userType;
     private static FireStoreManager instance;
     private final FirebaseFirestore db;
+    private final FirebaseAppCheck firebaseAppCheck;
 
     //싱글톤으로 구현, 생성자
     private FireStoreManager(){
         db = FirebaseFirestore.getInstance();
+        firebaseAppCheck = FirebaseAppCheck.getInstance();
     }
 
     //인스턴스 반환 메소드
@@ -84,7 +87,10 @@ public class FireStoreManager {
         Map<String, Object> userData = processUserInfo(user);
 
         db.collection("user").document(EncrpytPhoneNumber.hashPhoneNumber(user.getPhone()))
-                .set(userData, SetOptions.merge());
+//                .set(userData, SetOptions.merge());
+                .set(userData)
+                .addOnSuccessListener(aVoid -> Log.e("Firestore db", "데이터 업데이트 성공"))
+                .addOnFailureListener(e -> Log.e("Firestore db", "데이터 업데이트 실패"));
     }
 
     private Map<String, Object> processUserInfo(User user){

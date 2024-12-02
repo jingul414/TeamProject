@@ -140,6 +140,9 @@ public class TargetQrFragment extends Fragment {
             FireStoreManager fireStoreManager = FireStoreManager.getInstance();
             fireStoreManager.updateUserData(user);
 
+            /* Local Confirm Status 초기화 */
+            LocalConfirmationStatus.clear();
+
             /* Advertiser 종료 */
             AdvertisementHandler handler = AdvertisementHandler.getInstance();
             handler.clear();

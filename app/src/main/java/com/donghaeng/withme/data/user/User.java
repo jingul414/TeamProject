@@ -8,15 +8,15 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 public class User implements Serializable, Parcelable {
-    @PrimaryKey(autoGenerate = true)
-    private String index;
-
     protected String name;
     protected String phone;
-    protected String id;
+    @PrimaryKey
+    @NonNull
+    protected String id = "";
     protected transient String hashedPassword;
     protected byte userType = UserType.UNDEFINED;
 
@@ -34,7 +34,7 @@ public class User implements Serializable, Parcelable {
     protected User(Parcel in) {
         name = in.readString();
         phone = in.readString();
-        id = in.readString();
+        id = Objects.requireNonNull(in.readString());
         userType = in.readByte();
     }
 
@@ -63,20 +63,19 @@ public class User implements Serializable, Parcelable {
         }
     };
 
-    // set은 반드시 클래스 내부에서만 수정하게 할 것
-    private void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
-    private void setPhone(String phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
-    private void setId(String id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
-    private void setHashedPassword(String hashedPassword) {
+    public void setHashedPassword(String hashedPassword) {
         this.hashedPassword = hashedPassword;
     }
-    private void setUserType(byte userType) {
+    public void setUserType(byte userType) {
         this.userType = userType;
     }
 
@@ -86,6 +85,7 @@ public class User implements Serializable, Parcelable {
     public String getPhone() {
         return phone;
     }
+    @NonNull
     public String getId() {
         return id;
     }

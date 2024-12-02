@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.data.database.room.user.UserRepository;
+import com.donghaeng.withme.screen.start.StartActivity;
 import com.donghaeng.withme.security.EncrpytPhoneNumber;
 import com.donghaeng.withme.data.user.Controller;
 import com.donghaeng.withme.data.user.Target;
@@ -92,8 +93,11 @@ public class Login {
                                 for (Target target : ((Controller) user).getTargets()) {
                                     repository.insert(target);
                                 }
+                                ((StartActivity)fragment.requireActivity()).changeFragment("controller");
+
                             } else {
                                 repository.insert(((Target) user).getController());
+                                ((StartActivity)fragment.requireActivity()).changeFragment("target");
                             }
                         }
                     }

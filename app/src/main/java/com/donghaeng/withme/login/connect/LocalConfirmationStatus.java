@@ -13,4 +13,8 @@ public class LocalConfirmationStatus {
         Boolean status = confirmationStatus.get(userId);
         return status != null ? status : false;
     }
+
+    public static void clear() {
+        confirmationStatus.clear();
+    }
 }

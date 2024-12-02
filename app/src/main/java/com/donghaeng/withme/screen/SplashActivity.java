@@ -14,6 +14,9 @@ import com.donghaeng.withme.data.guide.GuideBook;
 import com.donghaeng.withme.data.database.room.guide.GuideBookDatabase;
 import com.donghaeng.withme.data.database.room.guide.GuideBookRepository;
 import com.donghaeng.withme.screen.start.StartActivity;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.appcheck.FirebaseAppCheck;
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -21,12 +24,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class SplashActivity extends AppCompatActivity {
     private GuideBookDatabase guideBookDatabase;
     private GuideBookRepository guideBookRepository;
+    private FirebaseAppCheck firebaseAppCheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_splash);
+
+        FirebaseApp.initializeApp(this);
+        firebaseAppCheck = FirebaseAppCheck.getInstance();
+        firebaseAppCheck.installAppCheckProviderFactory(DebugAppCheckProviderFactory.getInstance());
 
         // 최초 실행 여부 확인
         checkFirstRun();
