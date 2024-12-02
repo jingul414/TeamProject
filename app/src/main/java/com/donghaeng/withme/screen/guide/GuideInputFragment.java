@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.donghaeng.withme.R;
@@ -95,6 +97,13 @@ public class GuideInputFragment extends Fragment {
         previewAdapter = new PreviewAdapter(requireContext());
         binding.recyclerViewPreview.setAdapter(previewAdapter);
         binding.recyclerViewPreview.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        // 삭제 리스너 설정
+        previewAdapter.setOnItemDeleteListener(position -> {
+            contentList.remove(position);
+            // 어댑터의 removeItem 메서드가 이미 notifyItemRemoved를 호출하므로
+            // 여기서 따로 어댑터를 갱신할 필요 없음
+        });
 
         // 뒤로가기 버튼
         binding.back.setOnClickListener(v -> requireActivity().onBackPressed());
@@ -229,6 +238,12 @@ public class GuideInputFragment extends Fragment {
         }
     }
 
+    public void removeContent(int position) {
+        if (position >= 0 && position < contentList.size()) {
+            contentList.remove(position);
+        }
+    }
+
     // PreviewAdapter 클래스
     private static class PreviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private static final int TYPE_TEXT = 0;
@@ -243,6 +258,13 @@ public class GuideInputFragment extends Fragment {
         void updateItems(List<GuideContent> newItems) {
             this.items = new ArrayList<>(newItems);
             notifyDataSetChanged();
+        }
+
+        void removeItem(int position) {
+            if (position >= 0 && position < items.size()) {
+                items.remove(position);
+                notifyItemRemoved(position);
+            }
         }
 
         @Override
@@ -264,18 +286,43 @@ public class GuideInputFragment extends Fragment {
             }
         }
 
+        public interface OnItemDeleteListener {
+            void onItemDelete(int position);
+        }
+
+        private OnItemDeleteListener deleteListener;
+
+        public void setOnItemDeleteListener(OnItemDeleteListener listener) {
+            this.deleteListener = listener;
+        }
+
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             GuideContent item = items.get(position);
+
+            // Delete button click listener
+            View.OnClickListener deleteClickListener = v -> {
+                int adapterPosition = holder.getAdapterPosition();
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    removeItem(adapterPosition);
+                    if (deleteListener != null) {
+                        deleteListener.onItemDelete(adapterPosition);
+                    }
+                }
+            };
+
             if (holder instanceof TextViewHolder) {
-                ((TextViewHolder) holder).textView.setText(item.value);
+                TextViewHolder textHolder = (TextViewHolder) holder;
+                textHolder.textView.setText(item.value);
+                textHolder.deleteButton.setOnClickListener(deleteClickListener);
             } else if (holder instanceof ImageViewHolder) {
-                ImageView imageView = ((ImageViewHolder) holder).imageView;
+                ImageViewHolder imageHolder = (ImageViewHolder) holder;
                 Picasso.get()
                         .load(Uri.parse(item.value))
                         .placeholder(R.drawable.placeholder_image)
                         .error(R.drawable.error_image)
-                        .into(imageView);
+                        .into(imageHolder.imageView);
+                imageHolder.deleteButton.setOnClickListener(deleteClickListener);
             }
         }
 
@@ -286,22 +333,27 @@ public class GuideInputFragment extends Fragment {
 
         static class TextViewHolder extends RecyclerView.ViewHolder {
             TextView textView;
+            ImageButton deleteButton;
 
             TextViewHolder(View view) {
                 super(view);
                 textView = view.findViewById(R.id.guideText);
+                deleteButton = view.findViewById(R.id.deleteButton);
             }
         }
 
         static class ImageViewHolder extends RecyclerView.ViewHolder {
             ImageView imageView;
+            ImageButton deleteButton;
 
             ImageViewHolder(View view) {
                 super(view);
                 imageView = view.findViewById(R.id.guideImage);
+                deleteButton = view.findViewById(R.id.deleteButton);
             }
         }
     }
+
 
     @Override
     public void onDestroyView() {
