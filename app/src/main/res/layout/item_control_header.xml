@@ -28,7 +28,7 @@
             android:background="@drawable/image_rounded_shape"
             android:clipToOutline="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/user_image" />
+            android:src="@drawable/default_profile" />
 
         <TextView
             android:id="@+id/nameText"
