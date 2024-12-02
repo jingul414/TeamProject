@@ -12,10 +12,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.database.room.user.UserRepository;
+import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.data.user.UserType;
+import com.donghaeng.withme.screen.main.ControlListItem;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SettingFragment extends Fragment {
     private SettingActivity activity;
@@ -23,11 +30,22 @@ public class SettingFragment extends Fragment {
     private int FragmentMode = -1;  // 임시 변수들
     private final int PERMIT = 0;
     private final int LEAVE = 1;
+    private User user;
+
+    public static Fragment newInstance(User user) {
+        Bundle args = new Bundle();
+        args.putParcelable("user", user);
+        Fragment fragment = new SettingFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (getArguments() != null) {
+            user = getArguments().getParcelable("user");
+        }
     }
 
     //    TODO 제어자인지 피제어자인지 받아와야 함
@@ -67,32 +85,19 @@ public class SettingFragment extends Fragment {
             transaction.addToBackStack(null); // 뒤로 가기 버튼으로 돌아가기 가능
             transaction.commit();
         });
+        byte usetType = user.getUserType();
 
         permit_list.setOnClickListener(v -> {
-            // activity.changeFragment("PermitList"); 임시 버튼 사용
-            view.findViewById(R.id.buttons).setVisibility(View.VISIBLE);
-            FragmentMode = PERMIT;
-        });
-        leave.setOnClickListener(v -> {
-//             activity.changeFragment("Leave"); 임시 버튼 사용
-            view.findViewById(R.id.buttons).setVisibility(View.VISIBLE);
-            FragmentMode = LEAVE;
-        });
-
-        // 임시 버튼들 초기화
-        control = view.findViewById(R.id.control);
-        target = view.findViewById(R.id.target);
-        control.setOnClickListener(v -> {
-            if (FragmentMode == PERMIT) {
+            if(usetType == UserType.CONTROLLER){
                 activity.changeFragment("PermitListControl");
-            } else if (FragmentMode == LEAVE) {
-                showLeaveDialog(true); // true 는 controller 용 다이얼로그
+            } else if (usetType == UserType.TARGET) {
+                activity.changeFragment("PermitListTarget");
             }
         });
-        target.setOnClickListener(v -> {
-            if (FragmentMode == PERMIT) {
-                activity.changeFragment("PermitListTarget");
-            } else if (FragmentMode == LEAVE) {
+        leave.setOnClickListener(v -> {
+            if(usetType == UserType.CONTROLLER){
+                showLeaveDialog(true); // true 는 controller 용 다이얼로그
+            } else if (usetType == UserType.TARGET) {
                 showLeaveDialog(false); // false 는 target 용 다이얼로그
             }
         });
@@ -134,14 +139,10 @@ public class SettingFragment extends Fragment {
         noBtn.setOnClickListener(v -> {
             dialog.dismiss();
             // buttons 레이아웃을 다시 숨김
-            requireView().findViewById(R.id.buttons).setVisibility(View.INVISIBLE);
-            FragmentMode = -1;
         });
 
         // 다이얼로그가 취소되면 버튼들을 숨김
         dialog.setOnCancelListener(dialogInterface -> {
-            requireView().findViewById(R.id.buttons).setVisibility(View.INVISIBLE);
-            FragmentMode = -1;
         });
 
         // 다이얼로그 표시

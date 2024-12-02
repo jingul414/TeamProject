@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -33,8 +34,14 @@ public class AlarmService extends Service {
         int minute = intent.getIntExtra("minute", 0);
 
         // Foreground 서비스 시작을 위한 알림
-        startForeground(NOTIFICATION_ID, createInitialNotification());
+        Notification initialNotification = createInitialNotification();
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(NOTIFICATION_ID, initialNotification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE);
+        } else {
+            startForeground(NOTIFICATION_ID, initialNotification);
+        }
         // 5초 후에 알람 설정 알림 표시
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             showAlarmNotification(hour, minute);

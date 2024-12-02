@@ -1,6 +1,6 @@
 package com.donghaeng.withme.login.connect.message;
 
-import com.donghaeng.withme.user.User;
+import com.donghaeng.withme.data.user.User;
 
 public class UserPayload {
     private final User user;

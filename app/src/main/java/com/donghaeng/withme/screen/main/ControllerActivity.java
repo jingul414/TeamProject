@@ -14,10 +14,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.screen.start.StartActivity;
-import com.donghaeng.withme.screen.start.connect.ConnectInfoFragment;
 import com.donghaeng.withme.screen.start.connect.ControllerConnectFragment;
-import com.donghaeng.withme.user.Undefined;
-import com.donghaeng.withme.user.User;
+import com.donghaeng.withme.data.user.User;
 
 public class ControllerActivity extends AppCompatActivity {
     @Override
@@ -40,7 +38,7 @@ public class ControllerActivity extends AppCompatActivity {
         } else{
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment_container, new ControlFragment())
+                    .add(R.id.fragment_container, ControlFragment.newInstance(user))
                     .commit();
         }
 

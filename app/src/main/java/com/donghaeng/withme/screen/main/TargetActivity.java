@@ -12,11 +12,10 @@ import android.view.ViewGroup;
 
 import com.donghaeng.withme.R;
 
+import com.donghaeng.withme.data.user.Controller;
 import com.donghaeng.withme.screen.start.StartActivity;
-import com.donghaeng.withme.screen.start.connect.ConnectInfoFragment;
 import com.donghaeng.withme.screen.start.connect.TargetConnectFragment;
-import com.donghaeng.withme.user.Undefined;
-import com.donghaeng.withme.user.User;
+import com.donghaeng.withme.data.user.User;
 
 public class TargetActivity extends AppCompatActivity {
     @Override

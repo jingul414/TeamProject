@@ -11,7 +11,7 @@ import androidx.camera.core.ExperimentalGetImage;
 import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.user.User;
+import com.donghaeng.withme.data.user.User;
 
 public class ControllerConnectFragment extends Fragment {
     /**

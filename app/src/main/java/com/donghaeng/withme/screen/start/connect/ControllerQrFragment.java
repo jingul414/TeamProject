@@ -15,15 +15,15 @@ import androidx.camera.view.PreviewView;
 import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.firebasestore.FireStoreManager;
+import com.donghaeng.withme.data.database.firestore.FireStoreManager;
 import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
 import com.donghaeng.withme.login.connect.controller.ControllerConnect;
 import com.donghaeng.withme.login.connect.controller.DiscoveryHandler;
 import com.donghaeng.withme.screen.main.ControllerActivity;
-import com.donghaeng.withme.user.Controller;
-import com.donghaeng.withme.user.Target;
-import com.donghaeng.withme.user.User;
-import com.donghaeng.withme.user.UserType;
+import com.donghaeng.withme.data.user.Controller;
+import com.donghaeng.withme.data.user.Target;
+import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.data.user.UserType;
 
 @ExperimentalGetImage
 public class ControllerQrFragment extends Fragment {

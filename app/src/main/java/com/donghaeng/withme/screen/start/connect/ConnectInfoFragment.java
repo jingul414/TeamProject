@@ -20,10 +20,8 @@ import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
 import com.donghaeng.withme.login.connect.message.NearbyMessage;
 import com.donghaeng.withme.login.connect.target.AdvertisementHandler;
 import com.donghaeng.withme.login.connect.controller.DiscoveryHandler;
-import com.donghaeng.withme.screen.main.ControllerActivity;
-import com.donghaeng.withme.screen.main.TargetActivity;
-import com.donghaeng.withme.user.User;
-import com.donghaeng.withme.user.UserType;
+import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.data.user.UserType;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.gson.Gson;
 

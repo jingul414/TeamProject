@@ -11,18 +11,21 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.user.User;
 
 public class SettingActivity extends AppCompatActivity {
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_setting);
+        user = getIntent().getParcelableExtra("user");
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_container, new SettingFragment())
+                .add(R.id.fragment_container, SettingFragment.newInstance(user))
                 .commit();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
