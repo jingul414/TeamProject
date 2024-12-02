@@ -44,6 +44,12 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private List<ControlListItem> originalItems;
 
+    public void updateItems(List<ControlListItem> newItems) {
+        this.originalItems = new ArrayList<>(newItems);
+        this.displayedItems = new ArrayList<>(newItems);
+        notifyDataSetChanged();
+    }
+
     public ControlExpandableAdapter(Context context, List<ControlListItem> items) {
         this.context = context;
         this.originalItems = new ArrayList<>(items);

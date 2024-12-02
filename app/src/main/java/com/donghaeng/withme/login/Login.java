@@ -61,7 +61,7 @@ public class Login {
                         String phone = Objects.requireNonNull(userData.get("phoneNum")).toString();
                         String uid = Objects.requireNonNull(userData.get("uid")).toString();
                         String hashedPassword = Objects.requireNonNull(userData.get("hashedPW")).toString();
-                        byte userType = Objects.requireNonNull(userData.get("userType")).toString().getBytes()[0];
+                        byte userType = Byte.parseByte(Objects.requireNonNull(userData.get("userType")).toString());
 
                         switch (userType) {
                             case UserType.CONTROLLER:
@@ -93,10 +93,12 @@ public class Login {
                                 for (Target target : ((Controller) user).getTargets()) {
                                     repository.insert(target);
                                 }
+                                ((StartActivity)fragment.requireActivity()).setUser(user);
                                 ((StartActivity)fragment.requireActivity()).changeFragment("controller");
 
                             } else {
                                 repository.insert(((Target) user).getController());
+                                ((StartActivity)fragment.requireActivity()).setUser(user);
                                 ((StartActivity)fragment.requireActivity()).changeFragment("target");
                             }
                         }

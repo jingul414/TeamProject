@@ -38,7 +38,7 @@ public class ControllerActivity extends AppCompatActivity {
         } else{
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment_container, new ControlFragment())
+                    .add(R.id.fragment_container, ControlFragment.newInstance(user))
                     .commit();
         }
 

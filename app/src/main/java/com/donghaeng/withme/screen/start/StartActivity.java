@@ -89,10 +89,17 @@ public class StartActivity extends AppCompatActivity {
             switch (fragmentName) {
                 case "controller":
                     intent = new Intent(this, ControllerActivity.class);
+                    intent.putExtra("user", (Parcelable) user);
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     // 선택적: 현재 액티비티 종료
                     // finish();
+                    break;
+                case "target":
+                    intent = new Intent(this, TargetActivity.class);
+                    intent.putExtra("user", (Parcelable) user);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     break;
                 case "LoginFragment":
                     transaction.replace(R.id.fragment_container, new LoginFragment());
