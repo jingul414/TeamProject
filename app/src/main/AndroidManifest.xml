@@ -79,7 +79,9 @@
             android:name=".service.BrightnessControlService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
-        <service android:name=".service.AlarmService" />
-
+        <service
+            android:name=".service.AlarmService"
+            android:foregroundServiceType="dataSync|shortService"
+            android:exported="false" />
     </application>
 </manifest>
