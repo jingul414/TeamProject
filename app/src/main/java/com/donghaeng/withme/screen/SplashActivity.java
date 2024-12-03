@@ -37,7 +37,7 @@ public class SplashActivity extends AppCompatActivity {
         firebaseAppCheck.installAppCheckProviderFactory(DebugAppCheckProviderFactory.getInstance());
 
         // 최초 실행 여부 확인
-        checkFirstRun();
+//        checkFirstRun(); 가이드 화면에서 불러오게 수정
 
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(SplashActivity.this, StartActivity.class);

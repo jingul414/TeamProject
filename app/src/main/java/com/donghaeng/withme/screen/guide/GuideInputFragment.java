@@ -160,24 +160,20 @@ public class GuideInputFragment extends Fragment {
             document.put("date", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
             document.put("title", title);
             document.put("type", "ControllerInstruction");
+            document.put("controllerUid", user.getId()); // 제어자의 Uid 추가
 
-            // TODO 문서 이름을 제어자 ID로 사용? 혹은 다른 방법 이용해서 문서 이름으로 구분?
-            // 문서 이름 지정할 때 add 대신 .document().set 사용
-            //  String documentId = "document1";  // 원하는 문서 이름
-            //  db.collection("controller_instruction")
-            //       .document(documentId)  // 문서 ID 직접 지정
-            //       .set(document)
-
-            // Firestore에 저장
+            // 문서 ID를 제어자의 Uid로 설정하여 저장
+            String documentId = UUID.randomUUID().toString() + "_" + user.getId();
             db.collection("controller_instruction")
-                    .add(document)
-                    .addOnSuccessListener(documentReference -> {
+                    .document(documentId)
+                    .set(document)
+                    .addOnSuccessListener(aVoid -> {
                         Toast.makeText(getContext(), "저장되었습니다", Toast.LENGTH_SHORT).show();
-                        // 클립보드에 복사
-                        ClipboardManager clipboard = (ClipboardManager)
-                                requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("JSON", jsonString);
-                        clipboard.setPrimaryClip(clip);
+                        if (getActivity() != null) {
+                            getActivity().runOnUiThread(() ->
+                                    requireActivity().onBackPressed()
+                            );
+                        }
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(getContext(), "저장 실패: " + e.getMessage(),
