@@ -14,10 +14,13 @@
         android:padding="8dp" />
 
     <FrameLayout
+        android:id="@+id/delete"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_gravity="top|end"
         android:layout_margin="8dp"
+        android:visibility="invisible"
+        android:clickable="false"
         android:background="@drawable/delete_button_background">
 
         <ImageButton

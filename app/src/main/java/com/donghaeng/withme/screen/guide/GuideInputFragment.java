@@ -278,10 +278,14 @@ public class GuideInputFragment extends Fragment {
             if (viewType == TYPE_TEXT) {
                 View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.item_guide_text, parent, false);
+                view.findViewById(R.id.delete).setClickable(true);
+                view.findViewById(R.id.delete).setVisibility(View.VISIBLE);
                 return new TextViewHolder(view);
             } else {
                 View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.item_guide_image, parent, false);
+                view.findViewById(R.id.delete).setClickable(true);
+                view.findViewById(R.id.delete).setVisibility(View.VISIBLE);
                 return new ImageViewHolder(view);
             }
         }
