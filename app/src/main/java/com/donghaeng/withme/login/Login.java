@@ -89,6 +89,7 @@ public class Login {
                         }
                         if (user != null) {
                             UserRepository repository = new UserRepository(fragment.requireContext());
+                            repository.deleteAllUsers();  // 기존 데이터 모두 삭제
                             if (user.getUserType() == UserType.CONTROLLER) {
                                 for (Target target : ((Controller) user).getTargets()) {
 //                                    repository.insert(target);

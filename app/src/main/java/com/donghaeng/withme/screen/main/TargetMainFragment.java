@@ -65,13 +65,13 @@ public class TargetMainFragment extends Fragment {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_guide) {
                 intent = new Intent(getActivity(), GuideActivity.class);
-                startActivity(intent);
+                requireActivity().startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             } else if (itemId == R.id.nav_home) {
                 // home 관련 처리
             } else if (itemId == R.id.nav_setting) {
                 intent = new Intent(getActivity(), SettingActivity.class);
-                startActivity(intent);
+                requireActivity().startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
             return true;
