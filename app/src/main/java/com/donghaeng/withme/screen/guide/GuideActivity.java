@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.user.User;
 
 public class GuideActivity extends AppCompatActivity {
 
@@ -20,11 +21,12 @@ public class GuideActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_guide);
+        User user = getIntent().getParcelableExtra("user");
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment_container, new GuideFragment())
+                    .add(R.id.fragment_container, GuideFragment.newInstance(user))
                     .commit();
         }
 

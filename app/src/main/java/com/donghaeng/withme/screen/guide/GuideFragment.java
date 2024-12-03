@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.data.user.UserType;
+import com.donghaeng.withme.screen.main.TargetMainFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +26,18 @@ public class GuideFragment extends Fragment {
     private GuideActivity activity;
     private View back;
     private Button controlInputButton;
+    private User user;
 
     public GuideFragment() {
         // Required empty public constructor
+    }
+
+    public static GuideFragment newInstance(User user) {
+        GuideFragment fragment = new GuideFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("user", user);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     public static GuideFragment newInstance() {
@@ -35,6 +47,9 @@ public class GuideFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments() != null){
+            user = getArguments().getParcelable("user");
+        }
     }
 
     @Override
@@ -52,8 +67,12 @@ public class GuideFragment extends Fragment {
         });
 
         controlInputButton = view.findViewById(R.id.control_input_button);
+        if(user.getUserType() == UserType.TARGET){
+            controlInputButton.setVisibility(View.INVISIBLE);
+            controlInputButton.setClickable(false);
+        }
         controlInputButton.setOnClickListener(v -> {
-            changeFragment(new GuideInputFragment());
+            activity.changeFragment(GuideInputFragment.newInstance(user));
         });
 
 
@@ -77,9 +96,10 @@ public class GuideFragment extends Fragment {
         DataRepository.getInstance().clearCache();
     }
 
-    public void changeFragment(Fragment fragment) {
+    public void changeFragment(Fragment fragment){
         activity.changeFragment(fragment);
     }
+
 
     public GuideActivity getGuideActivity() {
         return activity;

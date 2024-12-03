@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.databinding.FragmentGuideInputBinding;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -45,6 +46,7 @@ public class GuideInputFragment extends Fragment {
     private StorageReference storageRef;
     private PreviewAdapter previewAdapter;
     private FirebaseFirestore db;
+    private User user;
 
     // JSON 구조를 위한 클래스들
     private static class GuideContent {
@@ -64,6 +66,13 @@ public class GuideInputFragment extends Fragment {
             this.content = content;
         }
     }
+    public static GuideInputFragment newInstance(User user) {
+        GuideInputFragment fragment = new GuideInputFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("user", user);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,6 +81,10 @@ public class GuideInputFragment extends Fragment {
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference().child("guide_images");
         db = FirebaseFirestore.getInstance();  // Firestore 초기화
+
+        if(getArguments() != null){
+            user = getArguments().getParcelable("user");
+        }
 
         getContent = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
