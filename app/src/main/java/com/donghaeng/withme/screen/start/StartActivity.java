@@ -3,6 +3,7 @@ package com.donghaeng.withme.screen.start;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
@@ -24,7 +25,10 @@ import com.donghaeng.withme.screen.main.TargetActivity;
 import com.donghaeng.withme.screen.start.signup.SignupNameFragment;
 import com.donghaeng.withme.screen.start.signup.SignupVerifyingPhoneNumberFragment;
 import com.donghaeng.withme.screen.start.signup.SignupPassWordFragment;
-import com.donghaeng.withme.user.User;
+import com.donghaeng.withme.data.user.Controller;
+import com.donghaeng.withme.data.user.Target;
+import com.donghaeng.withme.data.user.Undefined;
+import com.donghaeng.withme.data.user.User;
 
 public class StartActivity extends AppCompatActivity {
     // 회원가입, 로그인 객체
@@ -48,8 +52,8 @@ public class StartActivity extends AppCompatActivity {
         target_btn = findViewById(R.id.target_button);
         // 화면 이동용 임시 버튼 클릭 리스너 설정
         guide_btn.setOnClickListener(v -> startActivity(new Intent(this, GuideActivity.class)));
-        control_btn.setOnClickListener(v -> startActivity(new Intent(this, ControllerActivity.class)));
-        target_btn.setOnClickListener(v -> startActivity(new Intent(this, TargetActivity.class)));
+        control_btn.setOnClickListener(v -> changeFragment("controller_QR"));
+        target_btn.setOnClickListener(v -> changeFragment("target_QR"));
 
         // Fragment 초기화 로직을 분리
         if (savedInstanceState == null) {
@@ -57,6 +61,9 @@ public class StartActivity extends AppCompatActivity {
                     .beginTransaction()
                     .add(R.id.fragment_container, new StartFragment())
                     .commit();
+            if (getIntent().getStringExtra("fragmentName") != null) {
+                changeFragment(getIntent().getStringExtra("fragmentName"));
+            }
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -66,7 +73,7 @@ public class StartActivity extends AppCompatActivity {
         });
     }
 
-    public void changeFragment(String fragmentName){
+    public void changeFragment(String fragmentName) {
         // 액티비티가 유효한 상태인지 확인
         if (!isFinishing() && !isDestroyed()) {
             Intent intent = null;
@@ -82,10 +89,17 @@ public class StartActivity extends AppCompatActivity {
             switch (fragmentName) {
                 case "controller":
                     intent = new Intent(this, ControllerActivity.class);
+                    intent.putExtra("user", (Parcelable) user);
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     // 선택적: 현재 액티비티 종료
                     // finish();
+                    break;
+                case "target":
+                    intent = new Intent(this, TargetActivity.class);
+                    intent.putExtra("user", (Parcelable) user);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     break;
                 case "LoginFragment":
                     transaction.replace(R.id.fragment_container, new LoginFragment());
@@ -114,12 +128,26 @@ public class StartActivity extends AppCompatActivity {
                     break;
                 case "controller_QR":
                     intent = new Intent(this, ControllerActivity.class);
+                    //
+                    User user1 = new Undefined("a", "123", "c", "$2a$10$vDA55gUIBGqlamAYLJBXXuqOoeeuQPvdoy5AQMzLmpQPis.xTG8Vm");
+                    User opponent1 = new Target("z", "456", "q", "$2a$10$vDA55gUIBGqlamAYLJBXXuqOoeeuQPvdoy5AQMzLmpQPis.xTG8Vm");
+                    intent.putExtra("user", (Parcelable) user1);
+                    intent.putExtra("opponent", (Parcelable) opponent1);
+                    //
+//                    intent.putExtra("user", (Parcelable) user);
                     intent.putExtra("fragmentName", "controller_QR");
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     break;
                 case "target_QR":
                     intent = new Intent(this, TargetActivity.class);
+                    //
+                    User user2 = new Undefined("z", "456", "q", "$2a$10$vDA55gUIBGqlamAYLJBXXuqOoeeuQPvdoy5AQMzLmpQPis.xTG8Vm");
+                    User opponent2 = new Controller("a", "123", "c", "$2a$10$vDA55gUIBGqlamAYLJBXXuqOoeeuQPvdoy5AQMzLmpQPis.xTG8Vm");
+                    intent.putExtra("user", (Parcelable) user2);
+                    intent.putExtra("opponent", (Parcelable) opponent2);
+                    //
+//                    intent.putExtra("user", (Parcelable) user);
                     intent.putExtra("fragmentName", "target_QR");
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -131,21 +159,26 @@ public class StartActivity extends AppCompatActivity {
 
     }
 
-    public void setSignUpInstance(SignUp signUp){
+    public void setSignUpInstance(SignUp signUp) {
         this.signUp = signUp;
     }
-    public void setLoginInstance(Login login){
+
+    public void setLoginInstance(Login login) {
         this.login = login;
     }
-    public SignUp getSignUpInstance(){
+
+    public SignUp getSignUpInstance() {
         return this.signUp;
     }
-    public Login getLoginInstance(){
+
+    public Login getLoginInstance() {
         return this.login;
     }
-    public void setUser(User user){
+
+    public void setUser(User user) {
         this.user = user;
     }
+
     public User getUser() {
         return this.user;
     }

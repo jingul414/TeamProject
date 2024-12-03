@@ -12,9 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.roomdatabase.guide.GuideBook;
-import com.donghaeng.withme.roomdatabase.guide.GuideBookRepository;
-import com.donghaeng.withme.roomdatabase.guide.GuideBookType;
+import com.donghaeng.withme.data.guide.GuideBook;
+import com.donghaeng.withme.data.database.room.guide.GuideBookRepository;
+import com.donghaeng.withme.data.guide.GuideBookType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -239,7 +239,6 @@ public class ExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             itemView.setOnClickListener(v -> {
                 // 가이드 목록 아이템 클릭 시 설명으로 이동하는 부분
-                // 현재는 누른 아이템의 텍스트를 보내줌..
                 int position = getAdapterPosition();
 
                 if (position != RecyclerView.NO_POSITION) {
@@ -255,6 +254,7 @@ public class ExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             GuideType = GuideBookType.SMARTPHONE_GUIDE_BOOK;
                             break;
                         case ("보호자의 설명"):
+                            // TODO 제어자가 추가한 가이드는 해당하는 피제어자만 불러오도록 바꿔야함...
                             GuideType = GuideBookType.CONTROLLER_INSTRUCTION;
                             break;
                     }

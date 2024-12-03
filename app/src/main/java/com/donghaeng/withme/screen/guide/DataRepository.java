@@ -3,13 +3,10 @@ package com.donghaeng.withme.screen.guide;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.donghaeng.withme.roomdatabase.guide.GuideBook;
-import com.donghaeng.withme.roomdatabase.guide.GuideBookRepository;
-import com.donghaeng.withme.roomdatabase.guide.GuideBookType;
+import com.donghaeng.withme.data.guide.GuideBook;
+import com.donghaeng.withme.data.database.room.guide.GuideBookRepository;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

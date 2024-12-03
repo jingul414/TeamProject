@@ -7,13 +7,16 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.screen.guide.GuideActivity;
 import com.donghaeng.withme.screen.setting.SettingActivity;
+import com.donghaeng.withme.screen.start.connect.TargetQrFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.checkerframework.checker.units.qual.N;
@@ -26,15 +29,28 @@ public class TargetMainFragment extends Fragment {
     private RecyclerView recyclerView;
     private TargetExpandableAdapter adapter;
 
+    private static final String ARG_USER = "user";
+    private User user;
+
     public TargetMainFragment() {
         // Required empty public constructor
     }
 
 
+    public static TargetMainFragment newInstance(User user) {
+        TargetMainFragment fragment = new TargetMainFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_USER, user);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (getArguments() != null) {
+            user = getArguments().getParcelable("user");
+        }
     }
 
     @Override
@@ -65,13 +81,15 @@ public class TargetMainFragment extends Fragment {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_guide) {
                 intent = new Intent(getActivity(), GuideActivity.class);
-                startActivity(intent);
+                intent.putExtra("user", (Parcelable) user);
+                requireActivity().startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             } else if (itemId == R.id.nav_home) {
                 // home 관련 처리
             } else if (itemId == R.id.nav_setting) {
                 intent = new Intent(getActivity(), SettingActivity.class);
-                startActivity(intent);
+                intent.putExtra("user", (Parcelable) user);
+                requireActivity().startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
             return true;

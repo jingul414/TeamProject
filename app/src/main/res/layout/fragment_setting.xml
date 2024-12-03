@@ -58,7 +58,7 @@
             android:layout_height="150dp"
             android:background="@drawable/image_rounded_shape"
             android:clipToOutline="true"
-            android:src="@drawable/user_image"
+            android:src="@drawable/default_profile"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -145,44 +145,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/change_pw" />
-
-<!-- 임시 버튼들 -> 제어 허용 목록 버튼 클릭 시 제어자 피제어자 선택-->
-    <LinearLayout
-        android:id="@+id/buttons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/leave"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/permit_list">
-
-        <Button
-            android:id="@+id/control"
-            style="@style/app_one_line_text"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:autoSizeMaxTextSize="30sp"
-            android:background="@drawable/rounded_button"
-            android:text="보호자"
-            android:textSize="30sp"
-            app:backgroundTint="#FE7363" />
-
-        <Button
-            android:id="@+id/target"
-            style="@style/app_one_line_text"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:autoSizeMaxTextSize="30sp"
-            android:background="@drawable/rounded_button"
-            android:text="동행인"
-            android:textSize="30sp"
-            app:backgroundTint="#FE7363" />
-    </LinearLayout>
 
     <!-- TODO: 탈퇴 버튼이 너무 큰 것 같음. 회원 유출 우려됨 -->
     <Button

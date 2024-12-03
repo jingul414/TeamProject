@@ -21,7 +21,6 @@ public class SelectFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,19 +35,8 @@ public class SelectFragment extends Fragment {
 
         startActivity = (StartActivity) getActivity();
 
-        controller_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity.changeFragment("controller_QR");
-            }
-        });
-
-        target_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity.changeFragment("target_QR");
-            }
-        });
+        controller_btn.setOnClickListener(v -> startActivity.changeFragment("controller_QR"));
+        target_btn.setOnClickListener(v -> startActivity.changeFragment("target_QR"));
         return view;
     }
 }
