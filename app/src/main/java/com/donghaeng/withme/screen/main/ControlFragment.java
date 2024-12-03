@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.donghaeng.withme.R;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +31,7 @@ public class ControlFragment extends Fragment {
     public ControlFragment() {
         // Required empty public constructor
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,12 +72,13 @@ public class ControlFragment extends Fragment {
 
         // 백그라운드에서 데이터 로드
         new Thread(() -> {
-            UserRepository repository = new UserRepository(requireContext());
-            List<User> users = repository.getAllUsers();
             List<ControlListItem> items = new ArrayList<>();
-            for(User user : users) {
-                items.add(new ControlListItem(user.getId(), user.getName(), "profile1"));
-            }
+            UserRepository repository = new UserRepository(requireContext());
+            repository.getAllUsers(users -> {
+                for (User user : users) {
+                    items.add(new ControlListItem(user.getId(), user.getName(), "profile1"));
+                }
+            });
 
             // UI 업데이트는 메인 스레드에서
             requireActivity().runOnUiThread(() -> {

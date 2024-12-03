@@ -9,11 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.app.AutomaticLoginChecker;
+import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.data.user.UserType;
 import com.donghaeng.withme.login.Login;
 import com.donghaeng.withme.screen.start.StartActivity;
 
@@ -27,6 +31,7 @@ public class LoginFragment extends Fragment {
     Login loginAuth;
     EditText phoneNumEdit;
     EditText passwdEdit;
+    CheckBox autoLoginCheck;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -35,6 +40,26 @@ public class LoginFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AutomaticLoginChecker.performLoginIfEnabled(
+                this.requireContext(),
+                () -> {
+                    User user = AutomaticLoginChecker.getUser();
+                    if (user != null) { // User 객체 null 체크 추가
+                        ((StartActivity) requireActivity()).setUser(user);
+                        if (user.getUserType() == UserType.CONTROLLER) {
+                            ((StartActivity) requireActivity()).changeFragment("controller");
+                        } else if (user.getUserType() == UserType.TARGET) {
+                            ((StartActivity) requireActivity()).changeFragment("target");
+                        }
+                        requireActivity().finish();
+                    } else {
+                        Log.e("LoginFragment", "자동 로그인 User 객체가 null입니다.");
+                    }
+                },
+                () -> {
+                    Log.e("LoginFragment", "자동 로그인 실패 또는 비활성화 상태.");
+                });
     }
 
     @Override
@@ -46,6 +71,7 @@ public class LoginFragment extends Fragment {
         startActivity = (StartActivity) requireActivity();
         phoneNumEdit = view.findViewById(R.id.login_text_phone_number);
         passwdEdit = view.findViewById(R.id.login_text_password);
+        autoLoginCheck = view.findViewById(R.id.login_radio_login_history);
 
         login_btn.setOnClickListener(v -> {
             // 로그인 검증 로직 추가
@@ -66,4 +92,7 @@ public class LoginFragment extends Fragment {
         return view;
     }
 
+    public CheckBox getCheckBox(){
+        return autoLoginCheck;
+    }
 }
