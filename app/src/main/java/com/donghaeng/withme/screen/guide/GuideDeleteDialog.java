@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +27,8 @@ public class GuideDeleteDialog extends Dialog {
     private RecyclerView recyclerView;
     private GuideListAdapter adapter;
     private Context context;
-    private String userUid; // 추가
+    private String userUid;
+    private ProgressBar progressBar;
 
     public GuideDeleteDialog(@NonNull Context context, String userUid) { // 생성자 수정
         super(context);
@@ -34,10 +36,6 @@ public class GuideDeleteDialog extends Dialog {
         this.userUid = userUid;
     }
 
-    public GuideDeleteDialog(@NonNull Context context) {
-        super(context);
-        this.context = context;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +47,7 @@ public class GuideDeleteDialog extends Dialog {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         adapter = new GuideListAdapter();
         recyclerView.setAdapter(adapter);
+        progressBar = findViewById(R.id.progressBar);  // 추가
 
         loadGuides();
 
@@ -56,6 +55,17 @@ public class GuideDeleteDialog extends Dialog {
         findViewById(R.id.buttonClose).setOnClickListener(v -> dismiss());
     }
 
+    private void showLoading(boolean show) {
+        if (show) {
+            progressBar.setVisibility(View.VISIBLE);
+            recyclerView.setAlpha(0.5f);  // 리사이클러뷰 흐리게
+            recyclerView.setClickable(false);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            recyclerView.setAlpha(1.0f);
+            recyclerView.setClickable(true);
+        }
+    }
 
     private void loadGuides() {
         db.collection("controller_instruction")
@@ -124,6 +134,7 @@ public class GuideDeleteDialog extends Dialog {
         }
 
         private void deleteGuide(GuideItem item, int position) {
+            showLoading(true);  // 로딩 시작
             db.collection("controller_instruction")
                     .document(item.id)
                     .delete()
@@ -131,10 +142,17 @@ public class GuideDeleteDialog extends Dialog {
                         items.remove(position);
                         notifyItemRemoved(position);
                         Toast.makeText(context, "가이드가 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                        showLoading(false);  // 로딩 종료
+
+                        // 모든 가이드가 삭제되었는지 확인
+                        if (items.isEmpty()) {
+                            dismiss();  // 다이얼로그 닫기
+                        }
                     })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(context, "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show()
-                    );
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(context, "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                        showLoading(false);  // 로딩 종료
+                    });
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
