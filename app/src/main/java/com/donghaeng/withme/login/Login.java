@@ -91,13 +91,16 @@ public class Login {
                             UserRepository repository = new UserRepository(fragment.requireContext());
                             if (user.getUserType() == UserType.CONTROLLER) {
                                 for (Target target : ((Controller) user).getTargets()) {
-                                    repository.insert(target);
+//                                    repository.insert(target);
+                                    repository.insertOrUpdate(target);  // REPLACE 전략 사용
+
                                 }
                                 ((StartActivity)fragment.requireActivity()).setUser(user);
                                 ((StartActivity)fragment.requireActivity()).changeFragment("controller");
 
                             } else {
-                                repository.insert(((Target) user).getController());
+//                                repository.insert(((Target) user).getController());
+                                repository.insertOrUpdate(((Target) user).getController());  // REPLACE 전략 사용
                                 ((StartActivity)fragment.requireActivity()).setUser(user);
                                 ((StartActivity)fragment.requireActivity()).changeFragment("target");
                             }

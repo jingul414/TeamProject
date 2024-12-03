@@ -22,6 +22,10 @@ public class UserRepository {
         executorService.execute(() -> userDao.insert(user));
     }
 
+    public void insertOrUpdate(User user){
+        executorService.execute(() -> userDao.insertOrUpdate(user));
+    }
+
     public void update(User user){
         executorService.execute(() -> userDao.update(user));
     }

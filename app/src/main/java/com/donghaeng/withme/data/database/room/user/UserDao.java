@@ -3,6 +3,7 @@ package com.donghaeng.withme.data.database.room.user;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -20,6 +21,10 @@ public interface UserDao {
     // 기존 User 업데이트
     @Update
     void update(User user);
+
+    // 새로운 User 삽입 하거나 업데이트
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertOrUpdate(User user);
 
     // 특정 User 삭제
     @Delete

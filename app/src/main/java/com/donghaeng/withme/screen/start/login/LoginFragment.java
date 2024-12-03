@@ -56,7 +56,6 @@ public class LoginFragment extends Fragment {
                 if (result) {
                     // 로그인 성공
                     Log.e("LoginFragment", "로그인 성공");
-                    startActivity.changeFragment("controller");
                 } else {
                     // 로그인 실패
                     Toast.makeText(getActivity(), "로그인 실패", Toast.LENGTH_LONG).show();
