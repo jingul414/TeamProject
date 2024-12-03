@@ -27,6 +27,8 @@ public class ControlFragment extends Fragment {
     private RecyclerView recyclerView;
     private ControlExpandableAdapter adapter;
     private User user;
+    private UserRepository repository;
+
 
     public ControlFragment() {
         // Required empty public constructor
@@ -39,6 +41,7 @@ public class ControlFragment extends Fragment {
         if (getArguments() != null) {
             user = getArguments().getParcelable("user");
         }
+        repository = new UserRepository(requireContext());
     }
 
     public static ControlFragment newInstance(User user) {
@@ -54,8 +57,13 @@ public class ControlFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_control, container, false);
 
-        recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        initializeViews(view);
+        setupRecyclerView();
+        loadTarget();
+        setupBottomNavigation(view);
+
+//        recyclerView = view.findViewById(R.id.recyclerView);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
 
 //        /* 피제어자 모두 불러오기 */
@@ -67,8 +75,8 @@ public class ControlFragment extends Fragment {
 //            items.add(new ControlListItem(user.getId(), user.getName(), "profile1"));
 //        }
 
-        adapter = new ControlExpandableAdapter(getActivity(), new ArrayList<>());
-        recyclerView.setAdapter(adapter);
+//        adapter = new ControlExpandableAdapter(getActivity(), new ArrayList<>());
+//        recyclerView.setAdapter(adapter);
 
         // 백그라운드에서 데이터 로드
         new Thread(() -> {
@@ -86,7 +94,67 @@ public class ControlFragment extends Fragment {
             });
         }).start();
 
-        // 네비게이션 바 설정
+//        // 네비게이션 바 설정
+//        BottomNavigationView bottomNav = view.findViewById(R.id.bottom_navigation);
+//        bottomNav.setOnItemSelectedListener(item -> {
+//            Intent intent;
+//            int itemId = item.getItemId();
+//            if (itemId == R.id.nav_guide) {
+//                intent = new Intent(getActivity(), GuideActivity.class);
+//                intent.putExtra("user", (Parcelable) user);
+//                requireActivity().startActivity(intent);
+//                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+//            } else if (itemId == R.id.nav_home) {
+//                // home 관련 처리
+//            } else if (itemId == R.id.nav_setting) {
+//                intent = new Intent(getActivity(), SettingActivity.class);
+//                intent.putExtra("user", (Parcelable) user);
+//                requireActivity().startActivity(intent);
+//                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+//            }
+//            return true;
+//        });
+
+        return view;
+    }
+
+    private void loadTarget() {
+        if (user == null) {
+            return;
+        }
+        List<ControlListItem> items = new ArrayList<>();
+        repository.getAllUsers(targets -> {
+            for (User target : targets) {
+                if (target == null) {
+                    continue;
+                }
+                items.add(new ControlListItem(target.getId(), target.getName(), "profile1"));
+            }
+            // UI 업데이트는 메인 스레드에서
+            requireActivity().runOnUiThread(() -> {
+                adapter.updateItems(items);  // ControlExpandableAdapter에 updateItems 메서드 추가 필요
+            });
+        });
+    }
+
+    private void setupRecyclerView() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        adapter = new ControlExpandableAdapter(getActivity(), new ArrayList<>());
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void initializeViews(View view) {
+        recyclerView = view.findViewById(R.id.recyclerView);
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        DataRepository.getInstance().clearCache();
+    }
+
+    private void setupBottomNavigation(View view) {
         BottomNavigationView bottomNav = view.findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(item -> {
             Intent intent;
@@ -106,15 +174,5 @@ public class ControlFragment extends Fragment {
             }
             return true;
         });
-
-        return view;
     }
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        DataRepository.getInstance().clearCache();
-    }
-
 }
