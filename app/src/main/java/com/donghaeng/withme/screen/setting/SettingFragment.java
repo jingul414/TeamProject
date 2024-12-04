@@ -83,7 +83,7 @@ public class SettingFragment extends Fragment {
         change_number.setOnClickListener(v -> {
             FragmentManager fragmentManager = getParentFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.fragment_container, new SettingPhoneNumFragment());
+            transaction.replace(R.id.fragment_container, new SettingPhoneNumFragment(user));
             transaction.addToBackStack(null); // 뒤로 가기 버튼으로 돌아가기 가능
             transaction.commit();
         });
@@ -91,7 +91,7 @@ public class SettingFragment extends Fragment {
         change_pw.setOnClickListener(v -> {
             FragmentManager fragmentManager = getParentFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.fragment_container, new SettingPasswordFragment());
+            transaction.replace(R.id.fragment_container, new SettingPasswordFragment(user));
             transaction.addToBackStack(null); // 뒤로 가기 버튼으로 돌아가기 가능
             transaction.commit();
         });

@@ -163,6 +163,42 @@ public class FireStoreManager {
                 .addOnFailureListener(callback::onFailure);
     }
 
+    // 전화번호 변경 메소드
+    public void changePhoneNumber(String oldPhoneNum, String newPhoneNum, User user, firestoreCallback callback) {
+        String oldHashedPhoneNum = EncrpytPhoneNumber.hashPhoneNumber(oldPhoneNum);
+        String newHashedPhoneNum = EncrpytPhoneNumber.hashPhoneNumber(newPhoneNum);
+
+        // 현재 데이터를 가져와서 새 문서에 저장
+        db.collection("user")
+                .document(oldHashedPhoneNum)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult().exists()) {
+                        // 기존 데이터 모두 가져오기
+                        Map<String, Object> existingData = task.getResult().getData();
+                        // 새 전화번호만 업데이트
+                        existingData.put("phoneNum", newPhoneNum);
+
+                        // 새 문서에 데이터 저장
+                        db.collection("user")
+                                .document(newHashedPhoneNum)
+                                .set(existingData)
+                                .addOnSuccessListener(aVoid -> {
+                                    // 성공적으로 새 문서를 만들었으면 이전 문서 삭제
+                                    db.collection("user")
+                                            .document(oldHashedPhoneNum)
+                                            .delete()
+                                            .addOnSuccessListener(aVoid2 -> callback.onSuccess("Phone number changed successfully"))
+                                            .addOnFailureListener(callback::onFailure);
+                                })
+                                .addOnFailureListener(callback::onFailure);
+                    } else {
+                        callback.onFailure(new Exception("Original document not found"));
+                    }
+                });
+    }
+
+
     public String getHashedPW() {
         return hashedPW;
     }
