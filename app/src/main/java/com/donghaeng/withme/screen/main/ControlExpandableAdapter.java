@@ -225,7 +225,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                     String headerId = adapter.findItem(getAdapterPosition());
                     if (headerId != null) {
                         sendDataMessage.sendDataMessage(headerId, "Brightness",
-                                String.valueOf((brightness * 100) / 255));
+                                String.valueOf(brightness));
                     }
                     //startBrightnessControlService(false, brightness, 10);
                     currentLightPercent.setText(String.valueOf((brightness * 100) / 255) + "%");

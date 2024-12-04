@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.donghaeng.withme.data.database.firestore.TokenManager;
 import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
 import com.donghaeng.withme.login.connect.controller.NearbyHandler;
 import com.donghaeng.withme.login.connect.message.ConfirmationPayload;
@@ -172,6 +173,7 @@ public class AdvertisementHandler extends NearbyHandler {
         // 데이터 처리
         User tempUser = data.getUser();
         Controller opponent = new Controller(tempUser.getName(), tempUser.getPhone(), tempUser.getId(), "");
+        opponent.setToken(tempUser.getToken());
         mOpponent = opponent;
         TargetConnectFragment nextFragment = (TargetConnectFragment) mFragment.getParentFragment();
         if (nextFragment != null) {
@@ -184,6 +186,7 @@ public class AdvertisementHandler extends NearbyHandler {
         logD("Performing some action based on received data.");
         // JSON
         User user = ((TargetQrFragment) mFragment).getUser();
+        user.setToken(TokenManager.getInstance().getToken());
         UserPayload payload = new UserPayload(user);
         NearbyMessage message = new NearbyMessage("OPPONENT_USER", payload);
         String jsonMessage = new Gson().toJson(message);

@@ -31,18 +31,39 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void handleCustomData(Map<String, String> data) {
-        // 데이터 메시지 내용을 바탕으로 앱 내부 작업 처리
         String commandType = data.get("commandType");
         String commandValue = data.get("commandValue");
 
         Log.e("FCM Data", "commandType :" + commandType);
         Log.e("FCM Data", "commandValue :" + commandValue);
 
-        // 필요한 로직 추가 (예: 데이터 처리, UI 업데이트 등)
+        // 밝기 조절 명령인 경우
+        if ("Brightness".equals(commandType) && commandValue != null) {
+            try {
+                // 퍼센트 값(0-100)을 실제 밝기 값(0-255)으로 변환
+                int brightnessPercent = Integer.parseInt(commandValue);
+                //int actualBrightness = (brightnessPercent * 255) / 100;
 
-        //startBrightnessControlService(false, Integer.parseInt(Objects.requireNonNull(commandValue)), 10);
-
+                startBrightnessControlService(false, brightnessPercent, 0);
+            } catch (NumberFormatException e) {
+                Log.e("FCM Data", "Invalid brightness value", e);
+            }
+        }
     }
+
+    private void startBrightnessControlService(boolean autoLight, int brightness, int delay) {
+        Intent serviceIntent = new Intent(this, BrightnessControlService.class);
+        serviceIntent.putExtra("autoLight", autoLight);
+        serviceIntent.putExtra("brightness", brightness);
+        serviceIntent.putExtra("delay", delay);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
+    }
+
 
     @Override
     public void onNewToken(@NonNull String token) {

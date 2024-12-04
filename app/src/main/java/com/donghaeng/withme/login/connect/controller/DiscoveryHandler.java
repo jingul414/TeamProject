@@ -9,6 +9,7 @@ import androidx.annotation.OptIn;
 import androidx.camera.core.ExperimentalGetImage;
 import androidx.fragment.app.Fragment;
 
+import com.donghaeng.withme.data.database.firestore.TokenManager;
 import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
 import com.donghaeng.withme.login.connect.message.ConfirmationPayload;
 import com.donghaeng.withme.login.connect.message.NearbyMessage;
@@ -33,6 +34,7 @@ import java.lang.reflect.Type;
 
 public class DiscoveryHandler extends NearbyHandler {
     private final EndpointDiscoveryCallback mEndpointDiscoveryCallback = new EndpointDiscoveryCallback() {
+        @ExperimentalGetImage
         @Override
         public void onEndpointFound(@NonNull String endpointId, DiscoveredEndpointInfo info) {
             // 발견된 기기를 처리
@@ -54,6 +56,7 @@ public class DiscoveryHandler extends NearbyHandler {
             }
         }
 
+        @ExperimentalGetImage
         @Override
         public void onEndpointLost(@NonNull String endpointId) {
             // 검색된 기기를 더 이상 찾을 수 없을 때 처리
@@ -90,6 +93,7 @@ public class DiscoveryHandler extends NearbyHandler {
     /**
      * 검색 모드 시작 (성공 시 onDiscoveryStarted, 실패 시 onDiscoveryFailed 호출)
      */
+    @ExperimentalGetImage
     public void startDiscovering(String data) {
         mData = data;
         if (isDiscovering) {
@@ -157,6 +161,7 @@ public class DiscoveryHandler extends NearbyHandler {
     protected void onDiscoveryFailed() {
     }
 
+    @ExperimentalGetImage
     public void requestConnection(String endpointId) {
         Nearby.getConnectionsClient(mContext)
                 .requestConnection(getUserName(), endpointId, mConnectionLifecycleCallback)
@@ -181,11 +186,13 @@ public class DiscoveryHandler extends NearbyHandler {
     /**
      * 엔드포인트 발견 시 호출되는 메소드
      */
+    @ExperimentalGetImage
     protected void onEndpointDiscovered(Endpoint endpoint) {
         // 연결 요청을 보낼 수 있음
         requestConnection(endpoint.getId());
     }
 
+    @ExperimentalGetImage
     @Override
     protected void onConnectionFailed(Endpoint endpoint) {
         super.onConnectionFailed(endpoint);
@@ -237,6 +244,7 @@ public class DiscoveryHandler extends NearbyHandler {
         logD("Performing some action based on received data.");
         // JSON
         User user = ((ControllerQrFragment) mFragment).getUser();
+        user.setToken(TokenManager.getInstance().getToken());
         UserPayload payload = new UserPayload(user);
         NearbyMessage message = new NearbyMessage("OPPONENT_USER", payload);
         String jsonMessage = new Gson().toJson(message);
@@ -249,6 +257,7 @@ public class DiscoveryHandler extends NearbyHandler {
         // 데이터 처리
         User tempUser = data.getUser();
         Target opponent = new Target(tempUser.getName(), tempUser.getPhone(), tempUser.getId(), "");
+        opponent.setToken(tempUser.getToken());
         mOpponent = opponent;
         ControllerConnectFragment nextFragment = (ControllerConnectFragment) mFragment.getParentFragment();
         if (nextFragment != null) {
