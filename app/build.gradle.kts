@@ -76,6 +76,8 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")    // analytics
     implementation("com.google.firebase:firebase-auth")         // authentication
     implementation("com.google.firebase:firebase-firestore")    // database
+    implementation("com.google.firebase:firebase-messaging")    // firebase messaging
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // CameraX
     implementation(libs.camera.core)

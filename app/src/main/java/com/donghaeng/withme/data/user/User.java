@@ -19,7 +19,7 @@ public class User implements Serializable, Parcelable {
     protected String id = "";
     protected transient String hashedPassword;
     protected byte userType = UserType.UNDEFINED;
-
+    protected String token;
     public User() {
     }
 
@@ -29,6 +29,16 @@ public class User implements Serializable, Parcelable {
         setId(id);
         setHashedPassword(hashedPassword);
         setUserType(userType);
+    }
+
+    //TODO : TEST용 생성자
+    public User(String name, String phone, String id, String hashedPassword, byte userType, String token) {
+        setName(name);
+        setPhone(phone);
+        setId(id);
+        setHashedPassword(hashedPassword);
+        setUserType(userType);
+        setToken(token);
     }
 
     protected User(Parcel in) {
@@ -80,6 +90,7 @@ public class User implements Serializable, Parcelable {
     public void setUserType(byte userType) {
         this.userType = userType;
     }
+    public void setToken(String token) { this.token = token; }
 
     public String getName() {
         return name;
@@ -94,5 +105,8 @@ public class User implements Serializable, Parcelable {
     public String getHashedPassword() { return hashedPassword; }
     public byte getUserType() {
         return userType;
+    }
+    public String getToken() {
+        return token;
     }
 }

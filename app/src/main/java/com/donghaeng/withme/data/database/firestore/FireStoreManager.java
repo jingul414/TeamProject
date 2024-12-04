@@ -101,6 +101,7 @@ public class FireStoreManager {
         userData.put("uid", user.getId());
         long userType = user.getUserType();
         userData.put("userType", userType);
+        userData.put("token", user.getToken());
 
         if(userType == UserType.CONTROLLER){
             List<Map<String, Object>> targetsData = new ArrayList<>();

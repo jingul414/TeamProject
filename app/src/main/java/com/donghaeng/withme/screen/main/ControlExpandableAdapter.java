@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.AlarmClock;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,13 +21,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.database.firestore.SendDataMessage;
 import com.donghaeng.withme.screen.guide.ListItem;
 import com.donghaeng.withme.service.AlarmService;
 import com.donghaeng.withme.service.BrightnessControlService;
@@ -43,6 +41,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
     private Context context;
 
     private List<ControlListItem> originalItems;
+    private SendDataMessage sendDataMessage;
 
     public void updateItems(List<ControlListItem> newItems) {
         this.originalItems = new ArrayList<>(newItems);
@@ -54,6 +53,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         this.context = context;
         this.originalItems = new ArrayList<>(items);
         this.displayedItems = new ArrayList<>(items);
+        this.sendDataMessage = new SendDataMessage();
     }
 
     public class HeaderViewHolder extends RecyclerView.ViewHolder {
@@ -284,6 +284,9 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
 
                     // 10초 후 밝기 조절 서비스 실행
                     startBrightnessControlService(false, brightness, 10);
+                    String token = "er5bQJlITUaa6vJ5v7AiVR:APA91bF2wWEIFXC9cYJf47TKucSu7_18qotpiEDmyCEt6W9bxG__5e1eI0hLkMyEXLJRXjjc5MZtvELME6djk_pnFRgJPUlzaZ10DFP2oAoEMaffBVHIXZQ";
+                    sendDataMessage.sendDataMessage(token, "Brightness", String.valueOf((brightness * 100) / 255));
+                    currentLightPercent.setText(String.valueOf((brightness * 100)/255)  + "%");
                 }
             });
         }
@@ -353,7 +356,8 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                             selectedStreamType = AudioManager.STREAM_NOTIFICATION;
                             break;
                         case (SOUND_MEDIA):
-                            media_volume = Integer.parseInt(currentSoundPercent.getText().toString());                            selectedStreamType = AudioManager.STREAM_RING;
+                            media_volume = Integer.parseInt(currentSoundPercent.getText().toString());
+                            selectedStreamType = AudioManager.STREAM_RING;
                             selectedStreamType = AudioManager.STREAM_MUSIC;
                             break;
                     }

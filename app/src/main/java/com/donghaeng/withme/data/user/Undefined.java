@@ -9,6 +9,11 @@ public class Undefined extends User{
         super(name, phone, id, hashedPassword, UserType.UNDEFINED);
     }
 
+    //TODO : TEST 용 생성자
+    public Undefined(String name, String phone, String id, String hashedPassword, String token) {
+        super(name, phone, id, hashedPassword, UserType.UNDEFINED, token);
+    }
+
     protected Undefined(Parcel in) {
         super(in); // 상위 클래스 필드 복원
     }
