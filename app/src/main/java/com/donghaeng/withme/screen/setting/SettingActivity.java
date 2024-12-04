@@ -14,14 +14,13 @@ import com.donghaeng.withme.R;
 import com.donghaeng.withme.data.user.User;
 
 public class SettingActivity extends AppCompatActivity {
-    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_setting);
-        user = getIntent().getParcelableExtra("user");
+        User user = getIntent().getParcelableExtra("user");
 
         getSupportFragmentManager()
                 .beginTransaction()

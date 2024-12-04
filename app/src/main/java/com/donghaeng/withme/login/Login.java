@@ -4,8 +4,10 @@ import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 
+import com.donghaeng.withme.data.app.AutomaticLoginChecker;
 import com.donghaeng.withme.data.database.room.user.UserRepository;
 import com.donghaeng.withme.screen.start.StartActivity;
+import com.donghaeng.withme.screen.start.login.LoginFragment;
 import com.donghaeng.withme.security.EncrpytPhoneNumber;
 import com.donghaeng.withme.data.user.Controller;
 import com.donghaeng.withme.data.user.Target;
@@ -22,7 +24,6 @@ import java.util.Objects;
 
 // 로그인
 public class Login {
-    private FirebaseFirestore db;       //firestore
     private String phoneNum;            //사용자의 전화번호
     private User user;
     private Fragment fragment;
@@ -43,7 +44,8 @@ public class Login {
 
     public void verifyUser(String passwd, Callback callback) {
         String hashedPhoneNum = EncrpytPhoneNumber.hashPhoneNumber(this.phoneNum);
-        db = FirebaseFirestore.getInstance();
+        //firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         Log.e("Login", "phoneNum: " + this.phoneNum);
 
         DocumentReference ref = db.collection("user").document(hashedPhoneNum);
@@ -98,12 +100,18 @@ public class Login {
                                 }
                                 ((StartActivity)fragment.requireActivity()).setUser(user);
                                 ((StartActivity)fragment.requireActivity()).changeFragment("controller");
-
                             } else {
 //                                repository.insert(((Target) user).getController());
                                 repository.insertOrUpdate(((Target) user).getController());  // REPLACE 전략 사용
                                 ((StartActivity)fragment.requireActivity()).setUser(user);
                                 ((StartActivity)fragment.requireActivity()).changeFragment("target");
+                            }
+                            if (((LoginFragment) fragment).getCheckBox().isChecked()) {
+                                Log.e("Login", "체크 박스 눌림 확인됨");
+                                AutomaticLoginChecker.setEnable(fragment.requireContext(), user); // User 객체와 함께 호출
+                            } else {
+                                Log.e("Login", "체크 박스 눌리지 않음");
+                                AutomaticLoginChecker.setDisable(fragment.requireContext());
                             }
                         }
                     }

@@ -128,26 +128,14 @@ public class StartActivity extends AppCompatActivity {
                     break;
                 case "controller_QR":
                     intent = new Intent(this, ControllerActivity.class);
-                    //
-                    User user1 = new Undefined("a", "123", "c", "$2a$10$vDA55gUIBGqlamAYLJBXXuqOoeeuQPvdoy5AQMzLmpQPis.xTG8Vm");
-                    User opponent1 = new Target("z", "456", "q", "$2a$10$vDA55gUIBGqlamAYLJBXXuqOoeeuQPvdoy5AQMzLmpQPis.xTG8Vm");
-                    intent.putExtra("user", (Parcelable) user1);
-                    intent.putExtra("opponent", (Parcelable) opponent1);
-                    //
-//                    intent.putExtra("user", (Parcelable) user);
+                    intent.putExtra("user", (Parcelable) user);
                     intent.putExtra("fragmentName", "controller_QR");
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     break;
                 case "target_QR":
                     intent = new Intent(this, TargetActivity.class);
-                    //
-                    User user2 = new Undefined("z", "456", "q", "$2a$10$vDA55gUIBGqlamAYLJBXXuqOoeeuQPvdoy5AQMzLmpQPis.xTG8Vm");
-                    User opponent2 = new Controller("a", "123", "c", "$2a$10$vDA55gUIBGqlamAYLJBXXuqOoeeuQPvdoy5AQMzLmpQPis.xTG8Vm");
-                    intent.putExtra("user", (Parcelable) user2);
-                    intent.putExtra("opponent", (Parcelable) opponent2);
-                    //
-//                    intent.putExtra("user", (Parcelable) user);
+                    intent.putExtra("user", (Parcelable) user);
                     intent.putExtra("fragmentName", "target_QR");
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

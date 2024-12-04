@@ -4,7 +4,14 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.donghaeng.withme.data.guide.GuideBook;
+import com.donghaeng.withme.data.guide.GuideBookType;
 import com.donghaeng.withme.data.database.room.guide.GuideBookRepository;
+import com.donghaeng.withme.data.user.Target;
+import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.data.user.UserType;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,12 +20,13 @@ import java.util.Map;
 
 public class DataRepository {
     private static DataRepository instance;
-    private Map<String, List<String>> cache;  // 데이터 캐싱을 위한 맵
-
+    private Map<String, List<String>> cache;
     private GuideActivity guideActivity;
+    private FirebaseFirestore firestore;
 
     private DataRepository() {
         cache = new HashMap<>();
+        firestore = FirebaseFirestore.getInstance();
     }
 
     public static DataRepository getInstance() {
@@ -28,79 +36,108 @@ public class DataRepository {
         return instance;
     }
 
-    public void loadSubItems(String headerId, GuideActivity guideActivity,final DataCallback callback) {
+    public void loadSubItems(String headerId, GuideActivity guideActivity, final DataCallback callback) {
         this.guideActivity = guideActivity;
-        // 캐시된 데이터가 있는지 확인
         if (cache.containsKey(headerId)) {
             callback.onDataLoaded(cache.get(headerId));
             return;
         }
 
-        new LoadDataTask(headerId, callback, cache).execute();
+        new LoadDataTask(headerId, callback, cache, guideActivity.getUser()).execute();
     }
 
     public GuideActivity getGuideActivity() {
         return guideActivity;
     }
 
-    // Static 내부 클래스로 분리
     private static class LoadDataTask extends AsyncTask<Void, Void, List<String>> {
         private final String headerId;
         private final DataCallback callback;
         private final Map<String, List<String>> cache;
         private String error = null;
-
         private GuideActivity guideActivity;
         private GuideBookRepository guideBookRepository;
+        private FirebaseFirestore firestore;
+        private User user;
 
-        LoadDataTask(String headerId, DataCallback callback, Map<String, List<String>> cache) {
+        LoadDataTask(String headerId, DataCallback callback, Map<String, List<String>> cache, User user) {
             this.headerId = headerId;
             this.callback = callback;
             this.cache = cache;
+            this.firestore = FirebaseFirestore.getInstance();
+            this.user = user;
         }
 
         @Override
         protected List<String> doInBackground(Void... voids) {
             List<String> subItems = new ArrayList<>();
             try {
-                // 실제 데이터 로딩 로직 - 현재는 임시적으로 아이템 지정함
-                // ToDo 여기서 제어자가 설정한 가이드 부분 서버에서 불러오는 코드 만들면 됨.
                 guideActivity = getInstance().getGuideActivity();
                 guideBookRepository = new GuideBookRepository(guideActivity);
-                List<String> titles = new ArrayList<>();
 
+                String collectionName;
                 switch (headerId) {
                     case "guide":
-                        for (GuideBook guideBook : guideBookRepository.getAppGuides()) {
-                            titles.add(guideBook.getTitle());
-                            Log.w("DataRepository", guideBook.getTitle());
-                        }
-                        subItems.addAll(titles);
+                        collectionName = "app_guide_book";
                         break;
                     case "smartphone":
-                        for (GuideBook guideBook : guideBookRepository.getSmartphoneGuides()) {
-                            titles.add(guideBook.getTitle());
-                            Log.w("DataRepository", guideBook.getTitle());
-                        }
-                        subItems.addAll(titles);
+                        collectionName = "smartphone_guide_book";
                         break;
                     case "guardian":
-                        for (GuideBook guideBook : guideBookRepository.getControllerInstructions()) {
-                            titles.add(guideBook.getTitle());
-                            Log.w("DataRepository", guideBook.getTitle());
-                        }
-                        subItems.addAll(titles);
+                        collectionName = "controller_instruction";
                         break;
                     default:
                         error = "Unknown header ID: " + headerId;
                         return null;
                 }
 
-                // 네트워크 지연 시뮬레이션
-                Thread.sleep(1000);
+                try {
+                    if (headerId.equals("guardian")) {
+                        String targetUid;
+                        if (user.getUserType() == UserType.TARGET) {
+                            // Target인 경우 Controller의 가이드를 불러옴
+                            targetUid = ((Target)user).getController().getId();
+                        } else {
+                            // Controller인 경우 자신의 가이드를 불러옴
+                            targetUid = user.getId();
+                        }
 
-            } catch (InterruptedException e) {
-                error = "데이터 로딩 중 오류가 발생했습니다";
+                        com.google.firebase.firestore.QuerySnapshot querySnapshot =
+                                Tasks.await(firestore.collection(collectionName)
+                                        .whereEqualTo("controllerUid", targetUid)
+                                        .get());
+
+                        for (QueryDocumentSnapshot document : querySnapshot) {
+                            GuideBook guideBook = document.toObject(GuideBook.class);
+                            if (guideBook != null) {
+                                guideBookRepository.insert(guideBook);
+                                subItems.add(guideBook.getTitle());
+                                Log.d("DataRepository", "Added guide: " + guideBook.getTitle());
+                            }
+                        }
+                    } else {
+                        com.google.firebase.firestore.QuerySnapshot querySnapshot =
+                                Tasks.await(firestore.collection(collectionName).get());
+
+                        for (QueryDocumentSnapshot document : querySnapshot) {
+                            GuideBook guideBook = document.toObject(GuideBook.class);
+                            if (guideBook != null) {
+                                guideBookRepository.insert(guideBook);
+                                subItems.add(guideBook.getTitle());
+                                Log.d("DataRepository", "Added guide: " + guideBook.getTitle());
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.e("DataRepository", "Firebase error: " + e.getMessage());
+                    return new ArrayList<>();
+                }
+
+                Thread.sleep(1000); // 로딩 표시를 위한 지연
+
+            } catch (Exception e) {
+                error = "데이터 로딩 중 오류가 발생했습니다: " + e.getMessage();
+                Log.e("DataRepository", "Error loading data", e);
                 return null;
             }
 
@@ -112,14 +149,12 @@ public class DataRepository {
             if (error != null) {
                 callback.onError(error);
             } else {
-                // 결과를 캐시에 저장
                 cache.put(headerId, result);
                 callback.onDataLoaded(result);
             }
         }
     }
 
-    // 캐시 초기화 메서드
     public void clearCache() {
         cache.clear();
     }

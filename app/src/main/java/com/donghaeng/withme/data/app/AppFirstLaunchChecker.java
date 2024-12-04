@@ -1,9 +1,9 @@
-package com.donghaeng.withme.screen;
+package com.donghaeng.withme.data.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class AppLaunchChecker {
+public class AppFirstLaunchChecker {
     private static final String PREFS_NAME = "AppPrefs";
     private static final String KEY_FIRST_RUN = "isFirstRun";
 

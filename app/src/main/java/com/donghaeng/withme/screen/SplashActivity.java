@@ -10,6 +10,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.app.AppFirstLaunchChecker;
 import com.donghaeng.withme.data.guide.GuideBook;
 import com.donghaeng.withme.data.database.room.guide.GuideBookDatabase;
 import com.donghaeng.withme.data.database.room.guide.GuideBookRepository;
@@ -37,7 +38,7 @@ public class SplashActivity extends AppCompatActivity {
         firebaseAppCheck.installAppCheckProviderFactory(DebugAppCheckProviderFactory.getInstance());
 
         // 최초 실행 여부 확인
-        checkFirstRun();
+//        checkFirstRun(); 가이드 화면에서 불러오게 수정
 
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(SplashActivity.this, StartActivity.class);
@@ -48,7 +49,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void checkFirstRun() {
         guideBookDatabase = GuideBookDatabase.getInstance(this);
-        if (AppLaunchChecker.isFirstRun(this)) {
+        if (AppFirstLaunchChecker.isFirstRun(this)) {
             Toast.makeText(this, "앱 최초 실행", Toast.LENGTH_SHORT).show();
             // 필요한 초기 설정 작업 수행
             downloadGuideBooks();

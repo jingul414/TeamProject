@@ -15,7 +15,7 @@ import java.util.List;
 public interface UserDao {
 
     // 새로운 User 삽입
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(User user);
 
     // 기존 User 업데이트
