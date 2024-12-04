@@ -36,8 +36,6 @@ public class StartActivity extends AppCompatActivity {
     private Login login;
     private User user;
 
-    // 화면 이동용 임시 버튼
-    Button guide_btn, control_btn, target_btn;
 
     @SuppressLint("MissingInflatedId")
     @Override

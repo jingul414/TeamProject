@@ -3,6 +3,8 @@ package com.donghaeng.withme.screen.main;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.data.processor.PhoneFormatUtil;
@@ -52,6 +55,7 @@ public class TargetMainFragment extends Fragment {
 
     private static final String ARG_USER = "user";
     private User user;
+    private long backPressedTime = 0;
 
     public TargetMainFragment() {
         // Required empty public constructor
@@ -69,6 +73,20 @@ public class TargetMainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 뒤로가기 처리
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (System.currentTimeMillis() - backPressedTime < 2000) {
+                    requireActivity().finishAffinity();
+                    return;
+                }
+                Toast.makeText(requireContext(), "뒤로가기를 한번 더 누르면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show();
+                backPressedTime = System.currentTimeMillis();
+            }
+        });
+
         if (getArguments() != null) {
             user = getArguments().getParcelable("user");
         }
