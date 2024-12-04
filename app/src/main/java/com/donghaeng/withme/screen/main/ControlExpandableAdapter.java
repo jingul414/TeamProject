@@ -397,12 +397,26 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
             });
 
             // 소리 제어 모드 변경
-            // TODO 소리 모드 변경 시 현재 음량 받아와서 SeekBar 설정 및 textView 수정 해야 함
             callButton.setOnClickListener(v -> {
                 callButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FE7363")));
                 notificationButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5EFD897F")));
                 soundButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5EFD897F")));
                 SOUND_MODE = SOUND_CALL;
+
+                // 현재 통화 볼륨 가져오기
+                AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+                int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+
+                // 볼륨을 퍼센트로 변환 (0-100)
+                int volumePercent = (currentVolume * 100) / maxVolume;
+
+                // UI 업데이트
+                soundSeekbar.setProgress(volumePercent);
+                currentSoundPercent.setText(String.valueOf(volumePercent));
+
+                // muteButton 이미지 업데이트
+                muteButton.setImageResource(currentVolume == 0 ? R.drawable.ic_volume_mute : R.drawable.ic_volume);
             });
 
             notificationButton.setOnClickListener(v -> {
@@ -410,6 +424,21 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                 notificationButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FE7363")));
                 soundButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5EFD897F")));
                 SOUND_MODE = SOUND_NOTIFICATION;
+
+                // 현재 알림 볼륨 가져오기
+                AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
+                int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
+
+                // 볼륨을 퍼센트로 변환 (0-100)
+                int volumePercent = (currentVolume * 100) / maxVolume;
+
+                // UI 업데이트
+                soundSeekbar.setProgress(volumePercent);
+                currentSoundPercent.setText(String.valueOf(volumePercent));
+
+                // muteButton 이미지 업데이트
+                muteButton.setImageResource(currentVolume == 0 ? R.drawable.ic_volume_mute : R.drawable.ic_volume);
             });
 
             soundButton.setOnClickListener(v -> {
@@ -417,6 +446,21 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                 notificationButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5EFD897F")));
                 soundButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FE7363")));
                 SOUND_MODE = SOUND_MEDIA;
+
+                // 현재 미디어 볼륨 가져오기
+                AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+                // 볼륨을 퍼센트로 변환 (0-100)
+                int volumePercent = (currentVolume * 100) / maxVolume;
+
+                // UI 업데이트
+                soundSeekbar.setProgress(volumePercent);
+                currentSoundPercent.setText(String.valueOf(volumePercent));
+
+                // muteButton 이미지 업데이트
+                muteButton.setImageResource(currentVolume == 0 ? R.drawable.ic_volume_mute : R.drawable.ic_volume);
             });
         }
 
