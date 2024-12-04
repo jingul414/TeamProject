@@ -14,6 +14,11 @@ public class Controller extends User{
         super(name, phone, id, hashedPassword, UserType.CONTROLLER);
     }
 
+    //TODO : test용 생성자
+    public Controller(String name, String phone, String id, String hashedPassword, String token) {
+        super(name, phone, id, hashedPassword, UserType.CONTROLLER, token);
+    }
+
     protected Controller(Parcel in) {
         super(in); // 상위 클래스 필드 복원
         targets = in.createTypedArrayList(Target.CREATOR);

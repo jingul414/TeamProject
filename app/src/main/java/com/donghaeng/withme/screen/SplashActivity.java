@@ -1,13 +1,19 @@
 package com.donghaeng.withme.screen;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.data.app.AppFirstLaunchChecker;
@@ -20,9 +26,11 @@ import com.google.firebase.appcheck.FirebaseAppCheck;
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
+    private static final int NOTIFICATION_PERMISSION_CODE = 1;
     private GuideBookDatabase guideBookDatabase;
     private GuideBookRepository guideBookRepository;
     private FirebaseAppCheck firebaseAppCheck;
@@ -39,6 +47,18 @@ public class SplashActivity extends AppCompatActivity {
 
         // 최초 실행 여부 확인
 //        checkFirstRun(); 가이드 화면에서 불러오게 수정
+
+        //firebase 토큰 가져오기, 확인
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("FCM", "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
+                    String token = task.getResult();
+                    Log.e("FCM Token", "token: " + token);
+                    // Firestore나 서버에 토큰 저장 로직 추가
+                });
 
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(SplashActivity.this, StartActivity.class);
