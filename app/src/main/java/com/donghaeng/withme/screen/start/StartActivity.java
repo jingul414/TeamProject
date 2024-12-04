@@ -46,15 +46,6 @@ public class StartActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_start);
 
-        // 화면 이동용 임시 버튼 초기화
-        guide_btn = findViewById(R.id.guide_button);
-        control_btn = findViewById(R.id.control_button);
-        target_btn = findViewById(R.id.target_button);
-        // 화면 이동용 임시 버튼 클릭 리스너 설정
-        guide_btn.setOnClickListener(v -> startActivity(new Intent(this, GuideActivity.class)));
-        control_btn.setOnClickListener(v -> changeFragment("controller_QR"));
-        target_btn.setOnClickListener(v -> changeFragment("target_QR"));
-
         // Fragment 초기화 로직을 분리
         if (savedInstanceState == null) {
             getSupportFragmentManager()
