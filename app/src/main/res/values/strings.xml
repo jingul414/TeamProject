@@ -73,6 +73,8 @@
     <!-- Connect-->
     <string name="control_scan_text">동행인의 QR을 스캔하세요</string>
     <string name="target_qr_text">보호자에게 QR을 보여주세요</string>
+    <string name="connect_info_text">보호자의 정보를 확인하세요</string>
+
 
     <!-- Control -->
     <string name="control_call">통화 버튼</string>

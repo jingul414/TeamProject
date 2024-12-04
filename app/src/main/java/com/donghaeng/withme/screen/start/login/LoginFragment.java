@@ -41,18 +41,27 @@ public class LoginFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         AutomaticLoginChecker.performLoginIfEnabled(
                 this.requireContext(),
                 () -> {
                     User user = AutomaticLoginChecker.getUser();
-                    if (user != null) { // User 객체 null 체크 추가
+                    if (user != null) {
                         ((StartActivity) requireActivity()).setUser(user);
-                        if (user.getUserType() == UserType.CONTROLLER) {
-                            ((StartActivity) requireActivity()).changeFragment("controller");
-                        } else if (user.getUserType() == UserType.TARGET) {
-                            ((StartActivity) requireActivity()).changeFragment("target");
+                        switch (user.getUserType()) {
+                            case UserType.CONTROLLER:
+                                ((StartActivity) requireActivity()).changeFragment("controller");
+                                break;
+                            case UserType.TARGET:
+                                ((StartActivity) requireActivity()).changeFragment("target");
+                                break;
+                            case UserType.UNDEFINED:
+                                ((StartActivity) requireActivity()).changeFragment("SelectFragment");
+                                break;
+                            default:
+                                Log.e("LoginFragment", "알 수 없는 유저 타입");
+                                break;
                         }
-                        requireActivity().finish();
                     } else {
                         Log.e("LoginFragment", "자동 로그인 User 객체가 null입니다.");
                     }

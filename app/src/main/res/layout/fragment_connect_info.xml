@@ -2,7 +2,7 @@
 <FrameLayout android:id="@+id/child_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/rounded_frame_background"
+    android:background="#FBF8D1"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"

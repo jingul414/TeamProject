@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.data.app.AutomaticLoginChecker;
 import com.donghaeng.withme.data.database.room.user.UserRepository;
+import com.donghaeng.withme.data.user.Undefined;
 import com.donghaeng.withme.screen.start.StartActivity;
 import com.donghaeng.withme.screen.start.login.LoginFragment;
 import com.donghaeng.withme.security.EncrpytPhoneNumber;
@@ -85,6 +86,9 @@ public class Login {
                                 Controller controller = new Controller(controllerName, controllerPhone, controllerUid, "");
                                 ((Target) user).addController(controller);
                                 break;
+                            case UserType.UNDEFINED:
+                                user = new Undefined(name, phone, uid, hashedPassword);
+                                break;
                             default:
                                 user = null;
                                 break;
@@ -94,17 +98,17 @@ public class Login {
                             repository.deleteAllUsers();  // 기존 데이터 모두 삭제
                             if (user.getUserType() == UserType.CONTROLLER) {
                                 for (Target target : ((Controller) user).getTargets()) {
-//                                    repository.insert(target);
                                     repository.insertOrUpdate(target);  // REPLACE 전략 사용
-
                                 }
                                 ((StartActivity)fragment.requireActivity()).setUser(user);
                                 ((StartActivity)fragment.requireActivity()).changeFragment("controller");
-                            } else {
-//                                repository.insert(((Target) user).getController());
+                            }  else if (user.getUserType() == UserType.TARGET) {
                                 repository.insertOrUpdate(((Target) user).getController());  // REPLACE 전략 사용
                                 ((StartActivity)fragment.requireActivity()).setUser(user);
                                 ((StartActivity)fragment.requireActivity()).changeFragment("target");
+                            } else if (user.getUserType() == UserType.UNDEFINED) {
+                                ((StartActivity)fragment.requireActivity()).setUser(user);
+                                ((StartActivity)fragment.requireActivity()).changeFragment("SelectFragment");
                             }
                             if (((LoginFragment) fragment).getCheckBox().isChecked()) {
                                 Log.e("Login", "체크 박스 눌림 확인됨");

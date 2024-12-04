@@ -40,7 +40,12 @@ public class DiscoveryHandler extends NearbyHandler {
                     String.format(
                             "onEndpointFound(endpointId=%s, serviceId=%s, endpointName=%s)",
                             endpointId, info.getServiceId(), info.getEndpointName()));
-            Toast.makeText(mContext, "기기 발견: " + info.getEndpointName(), Toast.LENGTH_SHORT).show();
+
+            if (mFragment.getActivity() != null) {
+                mFragment.getActivity().runOnUiThread(() -> {
+                    Toast.makeText(mContext, "기기 발견: " + info.getEndpointName(), Toast.LENGTH_SHORT).show();
+                });
+            }
 
             if (SERVICE_ID.equals(info.getServiceId())) {
                 Endpoint endpoint = new Endpoint(endpointId, info.getEndpointName());
@@ -53,7 +58,14 @@ public class DiscoveryHandler extends NearbyHandler {
         public void onEndpointLost(@NonNull String endpointId) {
             // 검색된 기기를 더 이상 찾을 수 없을 때 처리
             logD(String.format("onEndpointLost(endpointId=%s)", endpointId));
-            Toast.makeText(mContext, "기기 연결 해제: " + endpointId, Toast.LENGTH_SHORT).show();
+            if (mFragment.getActivity() != null) {
+                mFragment.getActivity().runOnUiThread(() -> {
+                    Toast.makeText(mContext, "기기 연결 해제: " + endpointId, Toast.LENGTH_SHORT).show();
+                    if (mFragment instanceof ControllerQrFragment) {
+                        ((ControllerQrFragment) mFragment).onConnectionFailed();
+                    }
+                });
+            }
         }
     };
     private String mData;
@@ -81,7 +93,9 @@ public class DiscoveryHandler extends NearbyHandler {
     public void startDiscovering(String data) {
         mData = data;
         if (isDiscovering) {
-            Toast.makeText(mContext, "이미 기기를 검색 중입니다.", Toast.LENGTH_SHORT).show();
+            mFragment.getActivity().runOnUiThread(() -> {
+                Toast.makeText(mContext, "이미 기기를 검색 중입니다.", Toast.LENGTH_SHORT).show();
+            });
             return;
         }
         isDiscovering = true;
@@ -96,14 +110,21 @@ public class DiscoveryHandler extends NearbyHandler {
                 .addOnSuccessListener(
                         unused -> {
                             logD("Now discovering");
-                            Toast.makeText(mContext, "기기 검색을 시작합니다.", Toast.LENGTH_SHORT).show();
+                            mFragment.getActivity().runOnUiThread(() -> {
+                                Toast.makeText(mContext, "기기 검색을 시작합니다.", Toast.LENGTH_SHORT).show();
+                            });
                             onDiscoveryStarted();
                         })
                 .addOnFailureListener(
                         e -> {
                             isDiscovering = false;
                             logW("startDiscovering() failed.", e);
-                            Toast.makeText(mContext, "기기 검색 실패", Toast.LENGTH_SHORT).show();
+                            mFragment.getActivity().runOnUiThread(() -> {
+                                Toast.makeText(mContext, "기기 검색 실패", Toast.LENGTH_SHORT).show();
+                                if (mFragment instanceof ControllerQrFragment) {
+                                    ((ControllerQrFragment) mFragment).onConnectionFailed();
+                                }
+                            });
                             onDiscoveryFailed();
                         });
     }
@@ -116,7 +137,11 @@ public class DiscoveryHandler extends NearbyHandler {
             isDiscovering = false;
             mConnectionsClient.stopDiscovery();
             logD("기기 검색 중지됨");
-            Toast.makeText(mContext, "기기 검색을 중지합니다.", Toast.LENGTH_SHORT).show();
+            if (mFragment.getActivity() != null) {
+                mFragment.getActivity().runOnUiThread(() -> {
+                    Toast.makeText(mContext, "기기 검색을 중지합니다.", Toast.LENGTH_SHORT).show();
+                });
+            }
         }
     }
 
@@ -137,12 +162,19 @@ public class DiscoveryHandler extends NearbyHandler {
                 .requestConnection(getUserName(), endpointId, mConnectionLifecycleCallback)
                 .addOnSuccessListener(unused -> {
                     Log.d("DiscoveryHandler", "연결 요청 성공: " + endpointId);
-                    Toast.makeText(mContext, "연결 요청 성공", Toast.LENGTH_SHORT).show();
+                    mFragment.getActivity().runOnUiThread(() -> {
+                        Toast.makeText(mContext, "연결 요청 성공", Toast.LENGTH_SHORT).show();
+                    });
                     stopDiscovering();
                 })
                 .addOnFailureListener(e -> {
                     Log.e("DiscoveryHandler", "연결 요청 실패: " + endpointId, e);
-                    Toast.makeText(mContext, "연결 요청 실패", Toast.LENGTH_SHORT).show();
+                    mFragment.getActivity().runOnUiThread(() -> {
+                        Toast.makeText(mContext, "연결 요청 실패", Toast.LENGTH_SHORT).show();
+                        if (mFragment instanceof ControllerQrFragment) {
+                            ((ControllerQrFragment) mFragment).onConnectionFailed();
+                        }
+                    });
                 });
     }
 
@@ -152,6 +184,16 @@ public class DiscoveryHandler extends NearbyHandler {
     protected void onEndpointDiscovered(Endpoint endpoint) {
         // 연결 요청을 보낼 수 있음
         requestConnection(endpoint.getId());
+    }
+
+    @Override
+    protected void onConnectionFailed(Endpoint endpoint) {
+        super.onConnectionFailed(endpoint);
+        if (mFragment instanceof ControllerQrFragment) {
+            mFragment.getActivity().runOnUiThread(() -> {
+                ((ControllerQrFragment) mFragment).onConnectionFailed();
+            });
+        }
     }
 
     @OptIn(markerClass = ExperimentalGetImage.class)
@@ -200,6 +242,7 @@ public class DiscoveryHandler extends NearbyHandler {
         String jsonMessage = new Gson().toJson(message);
         send(Payload.fromBytes(jsonMessage.getBytes()), endpointId);
     }
+
     private Target mOpponent;
     private void receiveOpponent(UserPayload data) {
         logD("Performing some action based on received data.");
@@ -209,11 +252,21 @@ public class DiscoveryHandler extends NearbyHandler {
         mOpponent = opponent;
         ControllerConnectFragment nextFragment = (ControllerConnectFragment) mFragment.getParentFragment();
         if (nextFragment != null) {
-            nextFragment.setOpponentUserInfo(opponent);
-            nextFragment.changeFragment("info");
+            mFragment.getActivity().runOnUiThread(() -> {
+                nextFragment.setOpponentUserInfo(opponent);
+                nextFragment.changeFragment("info");
+            });
         }
     }
 
+    @Override
+    protected void onSuccessfulConnection(String endpointId) {
+        super.onSuccessfulConnection(endpointId);
+        // 연결 성공 시에는 로딩 UI를 계속 표시
+        // 최종적으로 checkAndProceed에서 처리됨
+    }
+
+    @OptIn(markerClass = ExperimentalGetImage.class)
     public void clear() {
         stopDiscovering();
         mConnectionsClient.stopAllEndpoints();
@@ -222,6 +275,13 @@ public class DiscoveryHandler extends NearbyHandler {
         disconnectFromAllEndpoints();
         stopAllEndpoints();
         mDiscoveredEndpoints.clear();
+
+        // 로딩 UI 숨김
+        if (mFragment instanceof ControllerQrFragment && mFragment.getActivity() != null) {
+            mFragment.getActivity().runOnUiThread(() ->
+                    ((ControllerQrFragment) mFragment).hideLoading()
+            );
+        }
 
         instance = null;
     }
