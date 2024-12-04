@@ -35,6 +35,7 @@ public class User implements Serializable, Parcelable {
         name = in.readString();
         phone = in.readString();
         id = Objects.requireNonNull(in.readString());
+        hashedPassword = in.readString();
         userType = in.readByte();
     }
 
@@ -48,6 +49,7 @@ public class User implements Serializable, Parcelable {
         dest.writeString(name);
         dest.writeString(phone);
         dest.writeString(id);
+        dest.writeString(hashedPassword);
         dest.writeByte(userType);
     }
 

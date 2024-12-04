@@ -15,6 +15,7 @@ import androidx.camera.view.PreviewView;
 import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.app.AutomaticLoginChecker;
 import com.donghaeng.withme.data.database.firestore.FireStoreManager;
 import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
 import com.donghaeng.withme.login.connect.controller.ControllerConnect;
@@ -148,7 +149,7 @@ public class ControllerQrFragment extends Fragment {
             /* Discovery 종료 */
             DiscoveryHandler handler = DiscoveryHandler.getInstance();
             handler.clear();
-
+            AutomaticLoginChecker.setDisable(requireContext());
             ((ControllerActivity) requireActivity()).onConnectionComplete();
         }
     }
