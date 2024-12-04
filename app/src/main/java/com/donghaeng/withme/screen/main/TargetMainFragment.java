@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.processor.PhoneFormatUtil;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.database.room.user.UserRepository;
 import com.donghaeng.withme.data.user.User;
@@ -121,7 +122,7 @@ public class TargetMainFragment extends Fragment {
 
     private void updateControllerInfo(User controller) {
         controllerNameTextView.setText(controller.getName());
-        controllerPhoneNumberTextView.setText(controller.getPhone());
+        controllerPhoneNumberTextView.setText(PhoneFormatUtil.phone(controller.getPhone()));
     }
 
     private void writeLogData(User controller) {

@@ -10,18 +10,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.app.ControlAllowanceListChecker;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
-
+/* 제어 허용 목록 (제어자) */
 public class FragmentControllerOpt extends Fragment {
-    private SettingActivity activity;
-    private SharedViewModel sharedViewModel;
-
+    private final String[] KEY_LIST = {
+            ControlAllowanceListChecker.KEY_STORING_NOTICE,
+            ControlAllowanceListChecker.KEY_VOLUME_MODE,
+            ControlAllowanceListChecker.KEY_VOLUME_CONTROL,
+            ControlAllowanceListChecker.KEY_BRIGHTNESS_CONTROL,
+            ControlAllowanceListChecker.KEY_SETTING_ALARM
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -30,19 +34,20 @@ public class FragmentControllerOpt extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_controller_opt, container, false);
 
-        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        SharedViewModel sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
-        MaterialSwitch bodyToggle1 = view.findViewById(R.id.body_toggle1);
-        MaterialSwitch bodyToggle2 = view.findViewById(R.id.body_toggle2);
-        MaterialSwitch bodyToggle3 = view.findViewById(R.id.body_toggle3);
-        MaterialSwitch bodyToggle4 = view.findViewById(R.id.body_toggle4);
-        MaterialSwitch bodyToggle5 = view.findViewById(R.id.body_toggle5);
+        MaterialSwitch[] toggles = new MaterialSwitch[]{
+                view.findViewById(R.id.body_toggle1),
+                view.findViewById(R.id.body_toggle2),
+                view.findViewById(R.id.body_toggle3),
+                view.findViewById(R.id.body_toggle4),
+                view.findViewById(R.id.body_toggle5)
+        };
 
-        sharedViewModel.getToggle1().observe(getViewLifecycleOwner(), bodyToggle1::setChecked);
-        sharedViewModel.getToggle2().observe(getViewLifecycleOwner(), bodyToggle2::setChecked);
-        sharedViewModel.getToggle3().observe(getViewLifecycleOwner(), bodyToggle3::setChecked);
-        sharedViewModel.getToggle4().observe(getViewLifecycleOwner(), bodyToggle4::setChecked);
-        sharedViewModel.getToggle5().observe(getViewLifecycleOwner(), bodyToggle5::setChecked);
+        // 각 토글에 대해 LiveData를 관찰하여 변경사항을 반영
+        for (int i = 0; i < toggles.length; i++) {
+            sharedViewModel.getToggle(KEY_LIST[i]).observe(getViewLifecycleOwner(), toggles[i]::setChecked);
+        }
 
         View back = view.findViewById(R.id.back);
         back.setOnClickListener(v -> requireActivity().onBackPressed());
