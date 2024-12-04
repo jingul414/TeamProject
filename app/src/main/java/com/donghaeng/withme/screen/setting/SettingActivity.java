@@ -55,21 +55,6 @@ public class SettingActivity extends AppCompatActivity {
 
             // TODO 프래그먼트 추가 후 수정 예정
             switch (fragmentName) {
-                case "ChangeNumber":
-//                    transaction.replace(R.id.fragment_container, new LoginFragment());
-//                    transaction.addToBackStack(null); // 뒤로가기 지원
-//                    transaction.commit();
-                    break;
-                case "ChangePW":
-//                    transaction.replace(R.id.fragment_container, new SignupNameFragment());
-//                    transaction.addToBackStack(null); // 뒤로가기 지원
-//                    transaction.commit();
-                    break;
-                case "PermitList":
-//                    transaction.replace(R.id.fragment_container, new SignupNameFragment());
-//                    transaction.addToBackStack(null); // 뒤로가기 지원
-//                    transaction.commit();
-                    break;
                 case "PermitListControl":
                     transaction.replace(R.id.fragment_container, new FragmentControllerOpt());
                     transaction.addToBackStack(null); // 뒤로가기 지원

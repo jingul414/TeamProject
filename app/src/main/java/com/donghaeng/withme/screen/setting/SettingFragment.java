@@ -1,5 +1,6 @@
 package com.donghaeng.withme.screen.setting;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -11,13 +12,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.app.AutomaticLoginChecker;
 import com.donghaeng.withme.data.database.room.user.UserRepository;
 import com.donghaeng.withme.data.processor.PhoneFormatUtil;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.user.UserType;
 import com.donghaeng.withme.screen.main.ControlListItem;
+import com.donghaeng.withme.screen.start.StartActivity;
+import com.donghaeng.withme.security.EncrpytPhoneNumber;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentManager;
@@ -30,10 +36,6 @@ public class SettingFragment extends Fragment {
     private SettingActivity activity;
     private TextView userName;
     private TextView userPhoneNumber;
-
-    private int FragmentMode = -1;  // 임시 변수들
-    private final int PERMIT = 0;
-    private final int LEAVE = 1;
     private User user;
 
     public static Fragment newInstance(User user) {
@@ -52,7 +54,6 @@ public class SettingFragment extends Fragment {
         }
     }
 
-    //    TODO 제어자인지 피제어자인지 받아와야 함
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,8 +61,7 @@ public class SettingFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
 
         View back;
-        Button change_number, change_pw, permit_list, leave;
-        Button control, target; // 임시 버튼들 -> 제어 허용 목록 버튼 클릭 시 제어자 피제어자 선택
+        Button change_number, change_pw, permit_list, leave, logout;
 
         activity = (SettingActivity) requireActivity();
         back = view.findViewById(R.id.back);
@@ -78,6 +78,7 @@ public class SettingFragment extends Fragment {
         change_pw = view.findViewById(R.id.change_pw);
         permit_list = view.findViewById(R.id.permit_list);
         leave = view.findViewById(R.id.leave);
+        logout = view.findViewById(R.id.logout);
 
         change_number.setOnClickListener(v -> {
             FragmentManager fragmentManager = getParentFragmentManager();
@@ -110,6 +111,21 @@ public class SettingFragment extends Fragment {
                 showLeaveDialog(false); // false 는 target 용 다이얼로그
             }
         });
+        logout.setOnClickListener(v -> {
+            // 자동 로그인 설정 비활성화
+            AutomaticLoginChecker.setDisable(requireContext());
+
+            // Room DB의 사용자 데이터 삭제
+            UserRepository repository = new UserRepository(requireContext());
+            repository.deleteAllUsers();
+
+            // 시작 화면으로 이동 (현재 액티비티 종료)
+            requireActivity().startActivity(new Intent(requireContext(), StartActivity.class));
+            requireActivity().finish();
+
+            // 토스트 메시지 표시 (선택사항)
+            Toast.makeText(requireContext(), "로그아웃되었습니다.", Toast.LENGTH_SHORT).show();
+        });
 
         return view;
     }
@@ -138,10 +154,39 @@ public class SettingFragment extends Fragment {
         // 예 버튼 클릭 리스너
         Button yesBtn = dialogView.findViewById(R.id.yes_btn);
         yesBtn.setOnClickListener(v -> {
-            // TODO: 회원 탈퇴 처리 로직 구현 -> 현재는 로그인 화면으로 이동 됨
-            dialog.dismiss();
-            requireActivity().finish(); // 또는 로그인 화면으로 이동
+            // Firebase에서 사용자 데이터 삭제
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // 사용자 데이터 삭제
+            String hashedPhoneNum = EncrpytPhoneNumber.hashPhoneNumber(user.getPhone());
+            db.collection("user").document(hashedPhoneNum)
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        // Firebase 삭제 성공 후 로컬 데이터 정리
+
+                        // 자동 로그인 설정 비활성화
+                        AutomaticLoginChecker.setDisable(requireContext());
+
+                        // Room DB의 사용자 데이터 삭제
+                        UserRepository repository = new UserRepository(requireContext());
+                        repository.deleteAllUsers();
+
+                        // 토스트 메시지 표시
+                        Toast.makeText(requireContext(), "회원 탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show();
+
+                        // 시작 화면으로 이동
+                        Intent intent = new Intent(requireContext(), StartActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        requireActivity().finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        // 실패 시 에러 메시지
+                        Toast.makeText(requireContext(), "회원 탈퇴 처리 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    });
         });
+
 
         // 아니오 버튼 클릭 리스너
         Button noBtn = dialogView.findViewById(R.id.no_btn);
