@@ -73,7 +73,9 @@ public class Login {
                                     String targetName = Objects.requireNonNull(targetData.get("name")).toString();
                                     String targetPhone = Objects.requireNonNull(targetData.get("phoneNum")).toString();
                                     String targetUid = Objects.requireNonNull(targetData.get("uid")).toString();
+                                    String targetToken = Objects.requireNonNull(targetData.get("token")).toString();
                                     Target target = new Target(targetName, targetPhone, targetUid, "");
+                                    target.addToken(targetToken);
                                     ((Controller) user).addTarget(target);
                                 }
                                 break;
@@ -83,7 +85,9 @@ public class Login {
                                 String controllerName = Objects.requireNonNull(Objects.requireNonNull(controllerData).get("name")).toString();
                                 String controllerPhone = Objects.requireNonNull(controllerData.get("phoneNum")).toString();
                                 String controllerUid = Objects.requireNonNull(controllerData.get("uid")).toString();
+                                String controllerToken = Objects.requireNonNull(controllerData.get("token")).toString();
                                 Controller controller = new Controller(controllerName, controllerPhone, controllerUid, "");
+                                controller.addToken(controllerToken);
                                 ((Target) user).addController(controller);
                                 break;
                             case UserType.UNDEFINED:

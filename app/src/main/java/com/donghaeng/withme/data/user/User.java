@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.donghaeng.withme.data.database.firestore.TokenManager;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -29,17 +31,18 @@ public class User implements Serializable, Parcelable {
         setId(id);
         setHashedPassword(hashedPassword);
         setUserType(userType);
+        this.token = TokenManager.getInstance().getToken();
     }
 
     //TODO : TEST용 생성자
-    public User(String name, String phone, String id, String hashedPassword, byte userType, String token) {
-        setName(name);
-        setPhone(phone);
-        setId(id);
-        setHashedPassword(hashedPassword);
-        setUserType(userType);
-        setToken(token);
-    }
+//    public User(String name, String phone, String id, String hashedPassword, byte userType, String token) {
+//        setName(name);
+//        setPhone(phone);
+//        setId(id);
+//        setHashedPassword(hashedPassword);
+//        setUserType(userType);
+//        setToken(token);
+//    }
 
     protected User(Parcel in) {
         name = in.readString();
@@ -47,6 +50,7 @@ public class User implements Serializable, Parcelable {
         id = Objects.requireNonNull(in.readString());
         hashedPassword = in.readString();
         userType = in.readByte();
+        token = in.readString();
     }
 
     @Override
@@ -61,6 +65,7 @@ public class User implements Serializable, Parcelable {
         dest.writeString(id);
         dest.writeString(hashedPassword);
         dest.writeByte(userType);
+        dest.writeString(token);
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -74,6 +79,10 @@ public class User implements Serializable, Parcelable {
             return new User[size];
         }
     };
+
+    public void addToken(String token){
+        this.token = token;
+    }
 
     public void setName(String name) {
         this.name = name;

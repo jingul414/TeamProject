@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.data.app.AppFirstLaunchChecker;
+import com.donghaeng.withme.data.database.firestore.TokenManager;
 import com.donghaeng.withme.data.guide.GuideBook;
 import com.donghaeng.withme.data.database.room.guide.GuideBookDatabase;
 import com.donghaeng.withme.data.database.room.guide.GuideBookRepository;
@@ -34,6 +35,7 @@ public class SplashActivity extends AppCompatActivity {
     private GuideBookDatabase guideBookDatabase;
     private GuideBookRepository guideBookRepository;
     private FirebaseAppCheck firebaseAppCheck;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class SplashActivity extends AppCompatActivity {
                         return;
                     }
                     String token = task.getResult();
+                    TokenManager.getInstance().setToken(token);
                     Log.e("FCM Token", "token: " + token);
                     // Firestore나 서버에 토큰 저장 로직 추가
                 });

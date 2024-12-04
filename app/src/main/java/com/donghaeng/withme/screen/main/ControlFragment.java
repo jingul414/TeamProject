@@ -109,7 +109,7 @@ public class ControlFragment extends Fragment {
                 if (target == null) {
                     continue;
                 }
-                items.add(new ControlListItem(target.getId(), target.getName(), "profile1"));
+                items.add(new ControlListItem(target.getToken(), target.getName(), "profile1"));
             }
             // UI 업데이트는 메인 스레드에서
             requireActivity().runOnUiThread(() -> {

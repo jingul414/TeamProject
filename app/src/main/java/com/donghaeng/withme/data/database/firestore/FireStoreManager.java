@@ -24,12 +24,10 @@ public class FireStoreManager {
     private Byte userType;
     private static FireStoreManager instance;
     private final FirebaseFirestore db;
-    private final FirebaseAppCheck firebaseAppCheck;
 
     //싱글톤으로 구현, 생성자
     private FireStoreManager(){
         db = FirebaseFirestore.getInstance();
-        firebaseAppCheck = FirebaseAppCheck.getInstance();
     }
 
     //인스턴스 반환 메소드

@@ -1,15 +1,19 @@
 package com.donghaeng.withme.data.database.firestore;
 
+import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.service.BrightnessControlService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
@@ -35,6 +39,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.e("FCM Data", "commandValue :" + commandValue);
 
         // 필요한 로직 추가 (예: 데이터 처리, UI 업데이트 등)
+
+        //startBrightnessControlService(false, Integer.parseInt(Objects.requireNonNull(commandValue)), 10);
+
     }
 
     @Override
@@ -44,4 +51,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // 새 토큰을 서버에 업데이트 (FireStore 등에 저장하는 로직 추가)
 
     }
+
+//    private void startBrightnessControlService(boolean autoLight, int brightness, int delay) {
+//        Intent serviceIntent = new Intent(context, BrightnessControlService.class);
+//        serviceIntent.putExtra("autoLight", autoLight);
+//        serviceIntent.putExtra("brightness", brightness);
+//        serviceIntent.putExtra("delay", delay);
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            context.startForegroundService(serviceIntent);
+//        } else {
+//            context.startService(serviceIntent);
+//        }
+//    }
 }

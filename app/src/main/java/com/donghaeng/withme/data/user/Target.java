@@ -11,11 +11,6 @@ public class Target extends User{
         super(name, phone, id, hashedPassword, UserType.TARGET);
     }
 
-    //TODO : test용 생성자
-    public Target(String name, String phone, String id, String hashedPassword,String token) {
-        super(name, phone, id, hashedPassword, UserType.TARGET, token);
-    }
-
     protected Target(Parcel in) {
         super(in); // 상위 클래스 필드 복원
         controller = in.readParcelable(Controller.class.getClassLoader());
