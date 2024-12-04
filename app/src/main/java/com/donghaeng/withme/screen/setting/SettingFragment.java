@@ -10,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.data.database.room.user.UserRepository;
+import com.donghaeng.withme.data.processor.PhoneFormatUtil;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.user.UserType;
 import com.donghaeng.withme.screen.main.ControlListItem;
@@ -26,6 +28,8 @@ import java.util.List;
 
 public class SettingFragment extends Fragment {
     private SettingActivity activity;
+    private TextView userName;
+    private TextView userPhoneNumber;
 
     private int FragmentMode = -1;  // 임시 변수들
     private final int PERMIT = 0;
@@ -64,6 +68,11 @@ public class SettingFragment extends Fragment {
         back.setOnClickListener(v -> {
             activity.onBackPressed();
         });
+
+        userName = view.findViewById(R.id.user_name);
+        userPhoneNumber = view.findViewById(R.id.user_phone_number);
+        userName.setText(user.getName());
+        userPhoneNumber.setText(PhoneFormatUtil.phone(user.getPhone()));
 
         change_number = view.findViewById(R.id.change_number);
         change_pw = view.findViewById(R.id.change_pw);
