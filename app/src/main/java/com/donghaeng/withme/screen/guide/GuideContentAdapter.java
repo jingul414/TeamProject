@@ -103,7 +103,7 @@ public class GuideContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             // Picasso로 이미지 로드
             Picasso.get()
                     .load(uri)
-                    .placeholder(R.drawable.placeholder_image) // 로딩 중 표시할 이미지
+                    .placeholder(R.drawable.placeholder) // 로딩 중 표시할 이미지
                     .error(R.drawable.error_image) // 에러 시 표시할 이미지
                     .into(imageView);
         }).addOnFailureListener(exception -> {
