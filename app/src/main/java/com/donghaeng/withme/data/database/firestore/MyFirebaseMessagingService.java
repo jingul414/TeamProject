@@ -1,13 +1,18 @@
 package com.donghaeng.withme.data.database.firestore;
 
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.donghaeng.withme.data.command.SoundMode;
 import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.service.AlarmService;
 import com.donghaeng.withme.service.BrightnessControlService;
+import com.donghaeng.withme.service.VolumeControlService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -16,16 +21,14 @@ import java.util.Map;
 import java.util.Objects;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+    private int streamType;
+
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        // 데이터 메시지인지 확인
         if (!remoteMessage.getData().isEmpty()) {
-            // 데이터 메시지 처리 로직
             Log.e("FCM Data", "Data: " + remoteMessage.getData());
-
-            // 예: 앱 내부 로직 호출
             handleCustomData(remoteMessage.getData());
         }
     }
@@ -34,55 +37,131 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String commandType = data.get("commandType");
         String commandValue = data.get("commandValue");
 
-        Log.e("FCM Data", "commandType :" + commandType);
-        Log.e("FCM Data", "commandValue :" + commandValue);
+        Log.e("FCM Data", "commandType: " + commandType);
+        Log.e("FCM Data", "commandValue: " + commandValue);
 
-        // 밝기 조절 명령인 경우
-        if ("Brightness".equals(commandType) && commandValue != null) {
-            try {
-                // 퍼센트 값(0-100)을 실제 밝기 값(0-255)으로 변환
-                int brightnessPercent = Integer.parseInt(commandValue);
-                //int actualBrightness = (brightnessPercent * 255) / 100;
+        if (commandType == null || commandValue == null) return;
 
-                startBrightnessControlService(false, brightnessPercent, 0);
-            } catch (NumberFormatException e) {
-                Log.e("FCM Data", "Invalid brightness value", e);
+        try {
+            switch (commandType) {
+                case "Brightness":
+                    handleBrightnessCommand(commandValue);
+                    break;
+                case "AutoBrightness":
+                    handleAutoBrightnessCommand(commandValue);
+                    break;
+                case "Volume":
+                    handleVolumeCommand(commandValue);
+                    break;
+                case "SoundMode":
+                    handleSoundModeCommand(commandValue);
+                    break;
+                case "Alarm":
+                    handleAlarmCommand(commandValue);
+                    break;
             }
+        } catch (Exception e) {
+            Log.e("FCM Data", "Error handling command", e);
         }
     }
 
-    private void startBrightnessControlService(boolean autoLight, int brightness, int delay) {
+    private void handleBrightnessCommand(String value) {
+        try {
+            int brightnessPercent = Integer.parseInt(value);
+            Intent serviceIntent = new Intent(this, BrightnessControlService.class);
+            serviceIntent.putExtra("autoLight", false);
+            serviceIntent.putExtra("brightness", brightnessPercent);
+            serviceIntent.putExtra("delay", 0);
+
+            startForegroundServiceCompat(serviceIntent);
+        } catch (NumberFormatException e) {
+            Log.e("FCM Data", "Invalid brightness value", e);
+        }
+    }
+
+    private void handleAutoBrightnessCommand(String value) {
+        boolean isAuto = Boolean.parseBoolean(value);
         Intent serviceIntent = new Intent(this, BrightnessControlService.class);
-        serviceIntent.putExtra("autoLight", autoLight);
-        serviceIntent.putExtra("brightness", brightness);
-        serviceIntent.putExtra("delay", delay);
+        serviceIntent.putExtra("autoLight", isAuto);
+        serviceIntent.putExtra("brightness", -1);
+        serviceIntent.putExtra("delay", 0);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        } else {
-            startService(serviceIntent);
+        startForegroundServiceCompat(serviceIntent);
+    }
+
+    private void handleVolumeCommand(String value) {
+        try {
+            int volumePercent = Integer.parseInt(value);
+            AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            if (audioManager != null) {
+                Intent serviceIntent = new Intent(this, VolumeControlService.class);
+                // streamType 값에 따라 적절한 streamType 설정
+                switch (streamType) {
+                    case AudioManager.STREAM_NOTIFICATION:
+                        serviceIntent.putExtra("streamType", AudioManager.STREAM_NOTIFICATION);
+                        break;
+                    case AudioManager.STREAM_MUSIC:
+                        serviceIntent.putExtra("streamType", AudioManager.STREAM_MUSIC);
+                        break;
+                    case AudioManager.STREAM_RING:
+                        serviceIntent.putExtra("streamType", AudioManager.STREAM_RING);
+                        break;
+                }
+                serviceIntent.putExtra("volume", volumePercent);
+                serviceIntent.putExtra("delay", 0);
+
+                startForegroundServiceCompat(serviceIntent);
+            }
+        } catch (NumberFormatException e) {
+            Log.e("FCM Data", "Invalid volume value", e);
         }
     }
 
+
+    private void handleSoundModeCommand(String value) {
+        switch (value) {
+            case "CALL":
+                streamType = AudioManager.STREAM_RING;
+                break;
+            case "NOTIFICATION":
+                streamType = AudioManager.STREAM_NOTIFICATION;
+                break;
+            case "MEDIA":
+                streamType = AudioManager.STREAM_MUSIC;
+                break;
+            default:
+                return;
+        }
+    }
+
+    private void handleAlarmCommand(String value) {
+        try {
+            String[] timeParts = value.split(":");
+            if (timeParts.length == 2) {
+                int hour = Integer.parseInt(timeParts[0]);
+                int minute = Integer.parseInt(timeParts[1]);
+
+                Intent serviceIntent = new Intent(this, AlarmService.class);
+                serviceIntent.putExtra("hour", hour);
+                serviceIntent.putExtra("minute", minute);
+
+                startForegroundServiceCompat(serviceIntent);
+            }
+        } catch (Exception e) {
+            Log.e("FCM Data", "Invalid alarm format", e);
+        }
+    }
+
+    private void startForegroundServiceCompat(Intent intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+            startService(intent);
+        }
+    }
 
     @Override
     public void onNewToken(@NonNull String token) {
-        // 새로운 FCM 토큰이 생성될 때 호출되는 메소드
         Log.e("FB MSG", "Refreshed token: " + token);
-        // 새 토큰을 서버에 업데이트 (FireStore 등에 저장하는 로직 추가)
-
     }
-
-//    private void startBrightnessControlService(boolean autoLight, int brightness, int delay) {
-//        Intent serviceIntent = new Intent(context, BrightnessControlService.class);
-//        serviceIntent.putExtra("autoLight", autoLight);
-//        serviceIntent.putExtra("brightness", brightness);
-//        serviceIntent.putExtra("delay", delay);
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            context.startForegroundService(serviceIntent);
-//        } else {
-//            context.startService(serviceIntent);
-//        }
-//    }
 }

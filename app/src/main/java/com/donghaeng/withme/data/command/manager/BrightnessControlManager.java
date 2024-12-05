@@ -61,7 +61,6 @@ public class BrightnessControlManager {
                     sendDataMessage.sendDataMessage(headerId, "Brightness",
                             String.valueOf(brightness));
                 }
-                //startBrightnessControlService(false, brightness, 10);
                 currentLightPercent.setText(String.valueOf((brightness * 100) / 255) + "%");
             }
         });
@@ -73,7 +72,6 @@ public class BrightnessControlManager {
             boolean isCurrentlyAuto = adapter.isAutoBrightnessEnabled(context);
 
             if (isCurrentlyAuto) {
-                adapter.startBrightnessControlService(false, lightSeekbar.getProgress(), 10);
                 LightMode.CURRENT = LightMode.SET;
                 autoLight.setImageResource(R.drawable.ic_light_mode);
                 currentLightPercent.setText(String.valueOf((lightSeekbar.getProgress() * 100) / 255));
@@ -83,7 +81,6 @@ public class BrightnessControlManager {
                     sendDataMessage.sendDataMessage(headerId, "AutoBrightness", "false");
                 }
             } else {
-                adapter.startBrightnessControlService(true, -1, 10);
                 LightMode.CURRENT = LightMode.AUTO;
                 autoLight.setImageResource(R.drawable.ic_light_mode);
                 currentLightPercent.setText("Auto");

@@ -97,23 +97,11 @@ public class SoundControlManager {
                     sendDataMessage.sendDataMessage(headerId, "Volume",
                             String.valueOf(seekBar.getProgress()));
                 }
-                startVolumeControlService(seekBar.getProgress(), selectedStreamType, 10);
             }
         });
         initializeVolume(audioManager);
     }
-    private void startVolumeControlService(int volume, int streamType, int delay) {
-        Intent serviceIntent = new Intent(context, VolumeControlService.class);
-        serviceIntent.putExtra("volume", volume);
-        serviceIntent.putExtra("streamType", streamType);
-        serviceIntent.putExtra("delay", delay);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(serviceIntent);
-        } else {
-            context.startService(serviceIntent);
-        }
-    }
 
     private void initializeVolume(AudioManager audioManager) {
         int maxVolume;
@@ -178,7 +166,6 @@ public class SoundControlManager {
                 if (headerId != null) {
                     sendDataMessage.sendDataMessage(headerId, "Volume", "0");
                 }
-                startVolumeControlService(0, selectedStreamType, 10);
             } else {
                 soundSeekbar.setProgress(lastSoundVolume);
                 currentSoundPercent.setText(String.valueOf(lastSoundVolume));
@@ -202,7 +189,6 @@ public class SoundControlManager {
                     sendDataMessage.sendDataMessage(headerId, "Volume",
                             String.valueOf(lastSoundVolume));
                 }
-                startVolumeControlService(lastSoundVolume, selectedStreamType, 10);
             }
         });
 
@@ -274,7 +260,4 @@ public class SoundControlManager {
 
     }
 
-    public static void changeVolume(byte currentVolume, byte targetVolume){
-
-    };
 }

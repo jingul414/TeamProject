@@ -63,36 +63,7 @@ public class AlarmManager {
                 sendDataMessage.sendDataMessage(headerId, "Alarm",
                         String.format("%02d:%02d", hour, minute));
             }
-            checkPermissionsAndScheduleAlarm();
         });
-    }
-
-    private void checkPermissionsAndScheduleAlarm() {
-        if (Build.VERSION.SDK_INT >= 33) {
-            if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(context,
-                        "알림 권한이 필요합니다. 설정에서 권한을 허용해주세요.",
-                        Toast.LENGTH_LONG
-                ).show();
-                return;
-            }
-        }
-        startAlarmService();
-    }
-
-    private void startAlarmService() {
-        Intent serviceIntent = new Intent(context, AlarmService.class);
-        serviceIntent.putExtra("hour", hourPicker.getValue());
-        serviceIntent.putExtra("minute", minutePicker.getValue());
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(serviceIntent);
-        } else {
-            context.startService(serviceIntent);
-        }
-
-        Toast.makeText(context, "5초 후에 알람 설정 알림이 표시됩니다.", Toast.LENGTH_SHORT).show();
     }
 
 }
