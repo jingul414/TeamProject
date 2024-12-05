@@ -1,4 +1,4 @@
-package com.donghaeng.withme.data.database.firestore;
+package com.donghaeng.withme.data.message.firebasemessage;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -12,7 +12,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.donghaeng.withme.data.message.firebasemessage.FirebaseCloudMessage;
 import com.google.gson.Gson;
 
 import java.io.IOException;

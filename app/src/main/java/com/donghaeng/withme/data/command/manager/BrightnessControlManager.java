@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.data.command.LightMode;
-import com.donghaeng.withme.data.database.firestore.SendDataMessage;
+import com.donghaeng.withme.data.message.firebasemessage.SendDataMessage;
 import com.donghaeng.withme.screen.main.ControlExpandableAdapter;
 
 public class BrightnessControlManager {

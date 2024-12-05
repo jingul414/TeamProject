@@ -1,11 +1,9 @@
 package com.donghaeng.withme.data.command.manager;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.media.AudioManager;
-import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -14,9 +12,8 @@ import android.widget.TextView;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.data.command.SoundMode;
-import com.donghaeng.withme.data.database.firestore.SendDataMessage;
+import com.donghaeng.withme.data.message.firebasemessage.SendDataMessage;
 import com.donghaeng.withme.screen.main.ControlExpandableAdapter;
-import com.donghaeng.withme.service.VolumeControlService;
 
 public class SoundControlManager {
     private final ControlExpandableAdapter.ControlViewHolder holder;

@@ -19,7 +19,7 @@ import com.donghaeng.withme.R;
 import com.donghaeng.withme.data.command.manager.AlarmManager;
 import com.donghaeng.withme.data.command.manager.BrightnessControlManager;
 import com.donghaeng.withme.data.command.manager.SoundControlManager;
-import com.donghaeng.withme.data.database.firestore.SendDataMessage;
+import com.donghaeng.withme.data.message.firebasemessage.SendDataMessage;
 import com.donghaeng.withme.screen.guide.ListItem;
 import com.donghaeng.withme.service.BrightnessControlService;
 
