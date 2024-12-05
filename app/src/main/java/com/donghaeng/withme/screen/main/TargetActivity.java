@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 
 import com.donghaeng.withme.R;
 
-import com.donghaeng.withme.data.user.Controller;
 import com.donghaeng.withme.screen.start.StartActivity;
 import com.donghaeng.withme.screen.start.connect.TargetConnectFragment;
 import com.donghaeng.withme.data.user.User;
