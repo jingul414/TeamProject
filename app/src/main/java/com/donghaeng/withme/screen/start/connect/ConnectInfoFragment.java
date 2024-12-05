@@ -15,9 +15,9 @@ import android.widget.TextView;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.login.connect.controller.NearbyHandler;
-import com.donghaeng.withme.login.connect.message.ConfirmationPayload;
+import com.donghaeng.withme.data.message.nearbymessage.ConfirmationPayload;
 import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
-import com.donghaeng.withme.login.connect.message.NearbyMessage;
+import com.donghaeng.withme.data.message.nearbymessage.NearbyMessage;
 import com.donghaeng.withme.login.connect.target.AdvertisementHandler;
 import com.donghaeng.withme.login.connect.controller.DiscoveryHandler;
 import com.donghaeng.withme.data.user.User;
@@ -60,6 +60,7 @@ public class ConnectInfoFragment extends Fragment {
     private Fragment connectFragment;
     private NearbyHandler handler;
 
+    @OptIn(markerClass = ExperimentalGetImage.class)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -92,20 +93,34 @@ public class ConnectInfoFragment extends Fragment {
         Button yesBtn = view.findViewById(R.id.yes_button);
         yesBtn.setOnClickListener(new YesBtnListener());
         // 아니오 버튼 클릭시 뒤로 이동
-        View back = view.findViewById(R.id.no_button);
-        back.setOnClickListener(v -> {
-            // TODO: 뒤로 가기 할 때 UI 이상함, 둘 중 하나가 뒤로 가기 하면 모두 뒤로 가지도록 하는 과정 추가
-            switch (opponent.getUserType()) {
-                case UserType.CONTROLLER:
-//                    ((TargetConnectFragment) connectFragment).changeFragment("qr");
-                    requireActivity().getSupportFragmentManager()
+        Button noBtn = view.findViewById(R.id.no_button);
+        noBtn.setOnClickListener(v -> {
+            if (opponent.getUserType() == UserType.CONTROLLER) {
+                if (handler != null) {
+                    // Advertisement 종료
+                    AdvertisementHandler advertisementHandler = (AdvertisementHandler) handler;
+                    advertisementHandler.clear();
+                }
+                // 상위 프래그먼트가 TargetConnectFragment인 경우
+                if (connectFragment instanceof TargetConnectFragment) {
+                    ((TargetConnectFragment) connectFragment).getChildFragmentManager()
                             .beginTransaction()
-                            .add(R.id.fragment_container, TargetQrFragment.newInstance(user))
+                            .replace(R.id.child_fragment, TargetQrFragment.newInstance(user))
                             .commit();
-                    break;
-                case UserType.TARGET:
-                    ((ControllerConnectFragment) connectFragment).changeFragment("qr");
-                    break;
+                }
+            } else if (opponent.getUserType() == UserType.TARGET) {
+                if (handler != null) {
+                    // Discovery 종료
+                    DiscoveryHandler discoveryHandler = (DiscoveryHandler) handler;
+                    discoveryHandler.clear();
+                }
+                // 상위 프래그먼트가 ControllerConnectFragment인 경우
+                if (connectFragment instanceof ControllerConnectFragment) {
+                    ((ControllerConnectFragment) connectFragment).getChildFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.child_fragment, ControllerQrFragment.newInstance(user))
+                            .commit();
+                }
             }
         });
         return view;

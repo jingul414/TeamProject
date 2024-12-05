@@ -4,8 +4,11 @@ import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 
+import com.donghaeng.withme.data.app.AutomaticLoginChecker;
 import com.donghaeng.withme.data.database.room.user.UserRepository;
+import com.donghaeng.withme.data.user.Undefined;
 import com.donghaeng.withme.screen.start.StartActivity;
+import com.donghaeng.withme.screen.start.login.LoginFragment;
 import com.donghaeng.withme.security.EncrpytPhoneNumber;
 import com.donghaeng.withme.data.user.Controller;
 import com.donghaeng.withme.data.user.Target;
@@ -22,7 +25,6 @@ import java.util.Objects;
 
 // 로그인
 public class Login {
-    private FirebaseFirestore db;       //firestore
     private String phoneNum;            //사용자의 전화번호
     private User user;
     private Fragment fragment;
@@ -43,7 +45,8 @@ public class Login {
 
     public void verifyUser(String passwd, Callback callback) {
         String hashedPhoneNum = EncrpytPhoneNumber.hashPhoneNumber(this.phoneNum);
-        db = FirebaseFirestore.getInstance();
+        //firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         Log.e("Login", "phoneNum: " + this.phoneNum);
 
         DocumentReference ref = db.collection("user").document(hashedPhoneNum);
@@ -70,7 +73,9 @@ public class Login {
                                     String targetName = Objects.requireNonNull(targetData.get("name")).toString();
                                     String targetPhone = Objects.requireNonNull(targetData.get("phoneNum")).toString();
                                     String targetUid = Objects.requireNonNull(targetData.get("uid")).toString();
+                                    String targetToken = Objects.requireNonNull(targetData.get("token")).toString();
                                     Target target = new Target(targetName, targetPhone, targetUid, "");
+                                    target.addToken(targetToken);
                                     ((Controller) user).addTarget(target);
                                 }
                                 break;
@@ -80,8 +85,13 @@ public class Login {
                                 String controllerName = Objects.requireNonNull(Objects.requireNonNull(controllerData).get("name")).toString();
                                 String controllerPhone = Objects.requireNonNull(controllerData.get("phoneNum")).toString();
                                 String controllerUid = Objects.requireNonNull(controllerData.get("uid")).toString();
+                                String controllerToken = Objects.requireNonNull(controllerData.get("token")).toString();
                                 Controller controller = new Controller(controllerName, controllerPhone, controllerUid, "");
+                                controller.addToken(controllerToken);
                                 ((Target) user).addController(controller);
+                                break;
+                            case UserType.UNDEFINED:
+                                user = new Undefined(name, phone, uid, hashedPassword);
                                 break;
                             default:
                                 user = null;
@@ -92,18 +102,24 @@ public class Login {
                             repository.deleteAllUsers();  // 기존 데이터 모두 삭제
                             if (user.getUserType() == UserType.CONTROLLER) {
                                 for (Target target : ((Controller) user).getTargets()) {
-//                                    repository.insert(target);
                                     repository.insertOrUpdate(target);  // REPLACE 전략 사용
-
                                 }
                                 ((StartActivity)fragment.requireActivity()).setUser(user);
                                 ((StartActivity)fragment.requireActivity()).changeFragment("controller");
-
-                            } else {
-//                                repository.insert(((Target) user).getController());
+                            }  else if (user.getUserType() == UserType.TARGET) {
                                 repository.insertOrUpdate(((Target) user).getController());  // REPLACE 전략 사용
                                 ((StartActivity)fragment.requireActivity()).setUser(user);
                                 ((StartActivity)fragment.requireActivity()).changeFragment("target");
+                            } else if (user.getUserType() == UserType.UNDEFINED) {
+                                ((StartActivity)fragment.requireActivity()).setUser(user);
+                                ((StartActivity)fragment.requireActivity()).changeFragment("SelectFragment");
+                            }
+                            if (((LoginFragment) fragment).getCheckBox().isChecked()) {
+                                Log.e("Login", "체크 박스 눌림 확인됨");
+                                AutomaticLoginChecker.setEnable(fragment.requireContext(), user); // User 객체와 함께 호출
+                            } else {
+                                Log.e("Login", "체크 박스 눌리지 않음");
+                                AutomaticLoginChecker.setDisable(fragment.requireContext());
                             }
                         }
                     }

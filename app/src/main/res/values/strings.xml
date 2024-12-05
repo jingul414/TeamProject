@@ -43,6 +43,7 @@
     <string name="change_pw">비밀번호 바꾸기</string>
     <string name="permit_list">제어 허용 목록</string> <!-- TODO: 동행 허용 목록 > 더 직관적인 단어 필요하다고 생각 -->
     <string name="leave">동행 멈추기(탈퇴)</string>
+    <string name="logout">로그아웃</string>
 
     <!-- Option_controller -->
     <string name="companion_allowed_list">동행 허용 목록</string>
@@ -72,6 +73,8 @@
     <!-- Connect-->
     <string name="control_scan_text">동행인의 QR을 스캔하세요</string>
     <string name="target_qr_text">보호자에게 QR을 보여주세요</string>
+    <string name="connect_info_text">보호자의 정보를 확인하세요</string>
+
 
     <!-- Control -->
     <string name="control_call">통화 버튼</string>

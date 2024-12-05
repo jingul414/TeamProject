@@ -16,6 +16,7 @@ roomCommon = "2.6.1"
 firebaseAppcheck = "18.0.0"
 firebaseAppcheckDebug = "18.0.0"
 firebaseAppcheckPlayintegrity = "18.0.0"
+securityCrypto = "1.0.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -42,6 +43,7 @@ room-common = { group = "androidx.room", name = "room-common", version.ref = "ro
 firebase-appcheck = { group = "com.google.firebase", name = "firebase-appcheck", version.ref = "firebaseAppcheck" }
 firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appcheck-debug", version.ref = "firebaseAppcheckDebug" }
 firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity", version.ref = "firebaseAppcheckPlayintegrity" }
+security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

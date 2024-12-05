@@ -1,36 +1,61 @@
 package com.donghaeng.withme.screen.main;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.util.Log;
 
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.processor.PhoneFormatUtil;
+import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.data.database.room.user.UserRepository;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.screen.guide.GuideActivity;
 import com.donghaeng.withme.screen.setting.SettingActivity;
 import com.donghaeng.withme.screen.start.connect.TargetQrFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import org.checkerframework.checker.units.qual.N;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
 public class TargetMainFragment extends Fragment {
+    private static final String TAG = "TargetMainFragment";
+    private TextView controllerNameTextView;
+    private TextView controllerPhoneNumberTextView;
     private RecyclerView recyclerView;
     private TargetExpandableAdapter adapter;
+    private FirebaseFirestore db;
+    private UserRepository repository;
 
     private static final String ARG_USER = "user";
     private User user;
+    private long backPressedTime = 0;
 
     public TargetMainFragment() {
         // Required empty public constructor
@@ -48,9 +73,25 @@ public class TargetMainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 뒤로가기 처리
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (System.currentTimeMillis() - backPressedTime < 2000) {
+                    requireActivity().finishAffinity();
+                    return;
+                }
+                Toast.makeText(requireContext(), "뒤로가기를 한번 더 누르면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show();
+                backPressedTime = System.currentTimeMillis();
+            }
+        });
+
         if (getArguments() != null) {
             user = getArguments().getParcelable("user");
         }
+        db = FirebaseFirestore.getInstance();
+        repository = new UserRepository(requireContext());
     }
 
     @Override
@@ -58,23 +99,120 @@ public class TargetMainFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_target_main, container, false);
 
+        initializeViews(view);
+        setupRecyclerView();
+        loadControllerData();
+        setupBottomNavigation(view);
+
+        return view;
+    }
+
+    private void initializeViews(View view) {
         recyclerView = view.findViewById(R.id.recyclerView);
+        controllerNameTextView = view.findViewById(R.id.name_textview);
+        controllerPhoneNumberTextView = view.findViewById(R.id.number_textview);
+    }
+
+    private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-
-        // 컨트롤 리스트 초기화
-        // Todo 현재는 테스트용 추가, 서버에서 받아오는 기능 추가 필요
-        List<TargetListItem> items = new ArrayList<>();
-        items.add(new TargetListItem("log1", "통화 소리 증가", "홍길동", "12월 31일 23시 59분 58초"));
-        items.add(new TargetListItem("log2", "화면 밝기 증가", "홍길동", "12월 31일 23시 59분 59초"));
-        items.add(new TargetListItem("log1", "통화 소리 증가", "홍길동", "12월 31일 23시 59분 58초"));
-        items.add(new TargetListItem("log2", "화면 밝기 증가", "홍길동", "12월 31일 23시 59분 59초"));
-        items.add(new TargetListItem("log1", "통화 소리 증가", "홍길동", "12월 31일 23시 59분 58초"));
-        items.add(new TargetListItem("log2", "화면 밝기 증가", "홍길동", "12월 31일 23시 59분 59초"));
-
-        adapter = new TargetExpandableAdapter(items);
+        adapter = new TargetExpandableAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
+    }
 
-        // 네비게이션 바 설정
+    private void loadControllerData() {
+        if (user == null) {
+            Log.e(TAG, "User is null!");
+            return;
+        }
+
+        repository.getAllUsers(controllers -> {
+            for (User controller : controllers) {
+                if (controller == null) {
+                    Log.e(TAG, "Controller is null!");
+                    continue;
+                }
+
+                updateControllerInfo(controller);
+                setupRealtimeUpdates(user.getId(), controller.getId());
+            }
+        });
+    }
+
+    private void updateControllerInfo(User controller) {
+        controllerNameTextView.setText(controller.getName());
+        controllerPhoneNumberTextView.setText(PhoneFormatUtil.phone(controller.getPhone()));
+    }
+
+    private void writeLogData(User controller) {
+        // TODO: 현재로서는 피제어자가 쓸 이유가 없음. 롤백 기능 구현하거나, 제어자에서 코드 사용하면 됨.
+        String time = getCurrentTime();
+
+        Map<String, Object> logData = new HashMap<>();
+        logData.put("control", "테스트");
+        logData.put("name", controller.getName());
+        logData.put("time", time);
+
+        DocumentReference docRef = db.collection("log")
+                .document(user.getId())
+                .collection(controller.getId())
+                .document(String.valueOf(System.currentTimeMillis()));
+
+        docRef.set(logData)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "로그 기록 성공!"))
+                .addOnFailureListener(e -> Log.e(TAG, "로그 기록 실패", e));
+    }
+
+    private String getCurrentTime() {
+        Calendar calendar = Calendar.getInstance();  // 현재 시간 불러오기
+        Date currentDate = calendar.getTime();
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초", Locale.KOREAN);
+        return outputFormat.format(currentDate);
+    }
+
+    private void setupRealtimeUpdates(String userId, String controllerId) {
+        db.collection("log")
+                .document(userId)
+                .collection(controllerId)
+                .orderBy("time", Query.Direction.DESCENDING)
+                .limit(10)
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) {
+                        Log.e(TAG, "Listen failed.", e);
+                        return;
+                    }
+
+                    if (snapshots == null) {
+                        Log.e(TAG, "Snapshot is null");
+                        return;
+                    }
+
+                    List<TargetListItem> items = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : snapshots) {
+                        String control = doc.getString("control");
+                        String name = doc.getString("name");
+                        String time = doc.getString("time");
+
+                        if (control != null && name != null && time != null) {
+                            items.add(new TargetListItem(doc.getId(), control, name, time));
+                        } else {
+                            Log.w(TAG, "Missing fields in document: " + doc.getId());
+                        }
+                    }
+
+                    updateRecyclerView(items);
+                });
+    }
+
+    private void updateRecyclerView(List<TargetListItem> items) {
+        if (isAdded() && getActivity() != null) {
+            getActivity().runOnUiThread(() -> {
+                adapter = new TargetExpandableAdapter(items);
+                recyclerView.setAdapter(adapter);
+            });
+        }
+    }
+
+    private void setupBottomNavigation(View view) {
         BottomNavigationView bottomNav = view.findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(item -> {
             Intent intent;
@@ -94,8 +232,5 @@ public class TargetMainFragment extends Fragment {
             }
             return true;
         });
-
-            return view;
-
     }
 }

@@ -12,19 +12,22 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.user.User;
 
 public class GuideActivity extends AppCompatActivity {
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_guide);
+        user = getIntent().getParcelableExtra("user");
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment_container, new GuideFragment())
+                    .add(R.id.fragment_container, GuideFragment.newInstance(user))
                     .commit();
         }
 
@@ -54,5 +57,9 @@ public class GuideActivity extends AppCompatActivity {
         super.onBackPressed();
         // 뒤로가기 애니메이션 설정
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    public User getUser(){
+        return user;
     }
 }

@@ -6,8 +6,11 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.donghaeng.withme.R;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,17 +29,35 @@ public class ControlFragment extends Fragment {
     private RecyclerView recyclerView;
     private ControlExpandableAdapter adapter;
     private User user;
+    private UserRepository repository;
+    private long backPressedTime = 0;
+
 
     public ControlFragment() {
         // Required empty public constructor
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // 뒤로가기 처리
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (System.currentTimeMillis() - backPressedTime < 2000) {
+                    requireActivity().finishAffinity();
+                    return;
+                }
+                Toast.makeText(requireContext(), "뒤로가기를 한번 더 누르면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show();
+                backPressedTime = System.currentTimeMillis();
+            }
+        });
+
         if (getArguments() != null) {
             user = getArguments().getParcelable("user");
         }
+        repository = new UserRepository(requireContext());
     }
 
     public static ControlFragment newInstance(User user) {
@@ -52,30 +73,21 @@ public class ControlFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_control, container, false);
 
-        recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        initializeViews(view);
+        setupRecyclerView();
+        loadTarget();
+        setupBottomNavigation(view);
 
-
-//        /* 피제어자 모두 불러오기 */
-//        UserRepository repository = new UserRepository(requireContext());
-//        List<User> users = repository.getAllUsers();
-//        List<ControlListItem> items = new ArrayList<>();
-//        for(User user : users) {
-//            // TODO: 프로필 이미지 변경
-//            items.add(new ControlListItem(user.getId(), user.getName(), "profile1"));
-//        }
-
-        adapter = new ControlExpandableAdapter(getActivity(), new ArrayList<>());
-        recyclerView.setAdapter(adapter);
 
         // 백그라운드에서 데이터 로드
         new Thread(() -> {
-            UserRepository repository = new UserRepository(requireContext());
-            List<User> users = repository.getAllUsers();
             List<ControlListItem> items = new ArrayList<>();
-            for(User user : users) {
-                items.add(new ControlListItem(user.getId(), user.getName(), "profile1"));
-            }
+            UserRepository repository = new UserRepository(requireContext());
+            repository.getAllUsers(users -> {
+                for (User user : users) {
+                    items.add(new ControlListItem(user.getId(), user.getName(), "profile1"));
+                }
+            });
 
             // UI 업데이트는 메인 스레드에서
             requireActivity().runOnUiThread(() -> {
@@ -83,7 +95,47 @@ public class ControlFragment extends Fragment {
             });
         }).start();
 
-        // 네비게이션 바 설정
+
+        return view;
+    }
+
+    private void loadTarget() {
+        if (user == null) {
+            return;
+        }
+        List<ControlListItem> items = new ArrayList<>();
+        repository.getAllUsers(targets -> {
+            for (User target : targets) {
+                if (target == null) {
+                    continue;
+                }
+                items.add(new ControlListItem(target.getToken(), target.getName(), "profile1"));
+            }
+            // UI 업데이트는 메인 스레드에서
+            requireActivity().runOnUiThread(() -> {
+                adapter.updateItems(items);  // ControlExpandableAdapter에 updateItems 메서드 추가 필요
+            });
+        });
+    }
+
+    private void setupRecyclerView() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        adapter = new ControlExpandableAdapter(getActivity(), new ArrayList<>());
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void initializeViews(View view) {
+        recyclerView = view.findViewById(R.id.recyclerView);
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        DataRepository.getInstance().clearCache();
+    }
+
+    private void setupBottomNavigation(View view) {
         BottomNavigationView bottomNav = view.findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(item -> {
             Intent intent;
@@ -103,15 +155,5 @@ public class ControlFragment extends Fragment {
             }
             return true;
         });
-
-        return view;
     }
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        DataRepository.getInstance().clearCache();
-    }
-
 }

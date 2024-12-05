@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 import android.util.Size;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -215,6 +216,22 @@ public class QRCodeReader {
                                 if (qrContent != null && !isDialogShowing.get()) {
                                     isScanning.set(false);
                                     try {
+                                        // 카메라 프리뷰 중지
+                                        try {
+                                            ProcessCameraProvider cameraProvider =
+                                                    ProcessCameraProvider.getInstance(mFragment.requireContext()).get();
+                                            cameraProvider.unbindAll();
+                                        } catch (ExecutionException | InterruptedException e) {
+                                            Log.e(TAG, "Error stopping camera", e);
+                                        }
+
+                                        // 로딩 UI 표시
+                                        if (mFragment instanceof ControllerQrFragment) {
+                                            mFragment.getActivity().runOnUiThread(() -> {
+                                                ((ControllerQrFragment) mFragment).showLoading();
+                                                ((ControllerQrFragment) mFragment).getViewFinder().setVisibility(View.GONE);
+                                            });
+                                        }
                                         // 광고 중인 기기 검색 시작
                                         mHandler.startDiscovering(qrContent);
                                         if (!mHandler.isDiscovering) {
@@ -225,19 +242,34 @@ public class QRCodeReader {
                                         break;
                                     } catch (Exception e) {
                                         isScanning.set(true);
+                                        // 오류 발생 시 로딩 UI 숨김 및 카메라 재시작
+                                        if (mFragment instanceof ControllerQrFragment) {
+                                            mFragment.getActivity().runOnUiThread(() -> {
+                                                ((ControllerQrFragment) mFragment).hideLoading();
+                                                ((ControllerQrFragment) mFragment).getViewFinder().setVisibility(View.VISIBLE);
+                                            });
+                                        }
+                                        startCamera();
                                     }
                                 }
                             }
                         }
                     })
-                    .addOnFailureListener(e -> Log.e(TAG, "QR scanning failed: ", e))
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "QR scanning failed: ", e);
+                        if (mFragment instanceof ControllerQrFragment) {
+                            mFragment.getActivity().runOnUiThread(() -> {
+                                ((ControllerQrFragment) mFragment).hideLoading();
+                                ((ControllerQrFragment) mFragment).getViewFinder().setVisibility(View.VISIBLE);
+                            });
+                        }
+                    })
                     .addOnCompleteListener(task -> image.close());
         } catch (Exception e) {
             Log.e(TAG, "Error processing image: ", e);
             image.close();
         }
     }
-
     // 카메라 및 스캐너 정리를 위한 메서드 추가
     public void cleanupCamera() {
         if (cameraExecutor != null) {

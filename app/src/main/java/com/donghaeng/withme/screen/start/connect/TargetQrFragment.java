@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.app.AutomaticLoginChecker;
 import com.donghaeng.withme.data.database.firestore.FireStoreManager;
 import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
 import com.donghaeng.withme.login.connect.target.AdvertisementHandler;
@@ -146,7 +147,7 @@ public class TargetQrFragment extends Fragment {
             /* Advertiser 종료 */
             AdvertisementHandler handler = AdvertisementHandler.getInstance();
             handler.clear();
-
+            AutomaticLoginChecker.setDisable(requireContext());
             ((TargetActivity) requireActivity()).onConnectionComplete();
         }
     }

@@ -7,10 +7,8 @@ import com.donghaeng.withme.data.user.Controller;
 import com.donghaeng.withme.data.user.Target;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.user.UserType;
-import com.google.firebase.appcheck.FirebaseAppCheck;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -24,12 +22,10 @@ public class FireStoreManager {
     private Byte userType;
     private static FireStoreManager instance;
     private final FirebaseFirestore db;
-    private final FirebaseAppCheck firebaseAppCheck;
 
     //싱글톤으로 구현, 생성자
     private FireStoreManager(){
         db = FirebaseFirestore.getInstance();
-        firebaseAppCheck = FirebaseAppCheck.getInstance();
     }
 
     //인스턴스 반환 메소드
@@ -101,6 +97,7 @@ public class FireStoreManager {
         userData.put("uid", user.getId());
         long userType = user.getUserType();
         userData.put("userType", userType);
+        userData.put("token", user.getToken());
 
         if(userType == UserType.CONTROLLER){
             List<Map<String, Object>> targetsData = new ArrayList<>();
@@ -109,6 +106,7 @@ public class FireStoreManager {
                 targetData.put("name", target.getName());
                 targetData.put("phoneNum", target.getPhone());
                 targetData.put("uid", target.getId());
+                targetData.put("token", target.getToken());
                 targetsData.add(targetData);
             }
             userData.put("targets", targetsData);
@@ -118,6 +116,7 @@ public class FireStoreManager {
             controllerData.put("name", controller.getName());
             controllerData.put("phoneNum", controller.getPhone());
             controllerData.put("uid", controller.getId());
+            controllerData.put("token", controller.getToken());
             userData.put("controller", controllerData);
         }
 
@@ -126,13 +125,15 @@ public class FireStoreManager {
 
     //TODO : 아래 3개 메소드 테스트 미실시상태.
     //이름, 비번 공통 변경 메소드? , 전화번호, 바꿀것, 비밀번호냐 이름이냐 결정, 콜백
-    public void changePWorName(String phoneNum, String changed, String changeMode, firestoreCallback callback){
+    public void changeInformation(String phoneNum, String changed, String changeMode, firestoreCallback callback){
         String hashedPhoneNumber = EncrpytPhoneNumber.hashPhoneNumber(phoneNum);    //전화번호 해시
         Map<String, Object> data = new HashMap<>();
         if(changeMode.equals("password")){
             data.put("hashedPW", changed);
         }else if(changeMode.equals("name")){
             data.put("name", changed);
+        }else if(changeMode.equals("token")){
+            data.put("token", changed);
         }
         db.collection("user")
                 .document(hashedPhoneNumber)
@@ -161,6 +162,42 @@ public class FireStoreManager {
                 .addOnSuccessListener(aVoid -> callback.onSuccess("User name changed successfully"))
                 .addOnFailureListener(callback::onFailure);
     }
+
+    // 전화번호 변경 메소드
+    public void changePhoneNumber(String oldPhoneNum, String newPhoneNum, User user, firestoreCallback callback) {
+        String oldHashedPhoneNum = EncrpytPhoneNumber.hashPhoneNumber(oldPhoneNum);
+        String newHashedPhoneNum = EncrpytPhoneNumber.hashPhoneNumber(newPhoneNum);
+
+        // 현재 데이터를 가져와서 새 문서에 저장
+        db.collection("user")
+                .document(oldHashedPhoneNum)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult().exists()) {
+                        // 기존 데이터 모두 가져오기
+                        Map<String, Object> existingData = task.getResult().getData();
+                        // 새 전화번호만 업데이트
+                        existingData.put("phoneNum", newPhoneNum);
+
+                        // 새 문서에 데이터 저장
+                        db.collection("user")
+                                .document(newHashedPhoneNum)
+                                .set(existingData)
+                                .addOnSuccessListener(aVoid -> {
+                                    // 성공적으로 새 문서를 만들었으면 이전 문서 삭제
+                                    db.collection("user")
+                                            .document(oldHashedPhoneNum)
+                                            .delete()
+                                            .addOnSuccessListener(aVoid2 -> callback.onSuccess("Phone number changed successfully"))
+                                            .addOnFailureListener(callback::onFailure);
+                                })
+                                .addOnFailureListener(callback::onFailure);
+                    } else {
+                        callback.onFailure(new Exception("Original document not found"));
+                    }
+                });
+    }
+
 
     public String getHashedPW() {
         return hashedPW;

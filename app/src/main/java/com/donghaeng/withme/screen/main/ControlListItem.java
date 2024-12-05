@@ -9,8 +9,8 @@ public class ControlListItem extends ListItem {
     private boolean alarmEnabled;
     private String alarmTime;
     
-    public ControlListItem(String id, String title, String profileImage) {
-        super(id, TYPE_HEADER, title);
+    public ControlListItem(String token, String title, String profileImage) {
+        super(token, TYPE_HEADER, title);
         this.profileImage = profileImage;
         this.alarmTime = "AM 10:10"; // 기본값
         this.alarmEnabled = false;

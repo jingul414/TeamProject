@@ -15,6 +15,7 @@ import androidx.camera.view.PreviewView;
 import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.app.AutomaticLoginChecker;
 import com.donghaeng.withme.data.database.firestore.FireStoreManager;
 import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
 import com.donghaeng.withme.login.connect.controller.ControllerConnect;
@@ -27,13 +28,11 @@ import com.donghaeng.withme.data.user.UserType;
 
 @ExperimentalGetImage
 public class ControllerQrFragment extends Fragment {
+    private View loadingContainer;
     private PreviewView viewFinder;
     private ControllerConnect connect;
     private ActivityResultLauncher<String[]> requestPermissionsLauncher;
 
-    /**
-     * Fragment 생성자 데이터
-     */
     private static final String ARG_USER = "user";
     private User user;
 
@@ -64,6 +63,8 @@ public class ControllerQrFragment extends Fragment {
 
         viewFinder = view.findViewById(R.id.viewFinder);
         viewFinder.setImplementationMode(PreviewView.ImplementationMode.PERFORMANCE);
+        loadingContainer = view.findViewById(R.id.loadingContainer);
+
     }
 
     @Override
@@ -99,9 +100,30 @@ public class ControllerQrFragment extends Fragment {
         );
     }
 
-    /**
-     * Fragment가 사용자에게 보이게 되었을 때 호출
-     */
+    // 로딩 UI 표시/숨김 메서드 추가
+    public void showLoading() {
+        if (loadingContainer != null) {
+            loadingContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void hideLoading() {
+        if (loadingContainer != null) {
+            loadingContainer.setVisibility(View.GONE);
+        }
+    }
+
+    // 연결 실패 시 호출될 메서드
+    public void onConnectionFailed() {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(() -> {
+                hideLoading();
+                Toast.makeText(requireContext(), "연결에 실패했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                // QR 스캔 다시 시작
+                connect.getReader().setScanner();
+            });
+        }
+    }
     @Override
     public void onStart() {
         super.onStart();
@@ -148,7 +170,7 @@ public class ControllerQrFragment extends Fragment {
             /* Discovery 종료 */
             DiscoveryHandler handler = DiscoveryHandler.getInstance();
             handler.clear();
-
+            AutomaticLoginChecker.setDisable(requireContext());
             ((ControllerActivity) requireActivity()).onConnectionComplete();
         }
     }

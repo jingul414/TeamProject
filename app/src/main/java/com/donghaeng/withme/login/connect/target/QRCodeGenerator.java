@@ -61,6 +61,10 @@ public class QRCodeGenerator {
         int height = bitMatrix.getHeight();
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 
+        // 배경색과 QR 코드 색상 정의
+        int backgroundColor = Color.parseColor("#FBF8D1"); // 앱의 기본 배경색
+
+
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 bitmap.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
