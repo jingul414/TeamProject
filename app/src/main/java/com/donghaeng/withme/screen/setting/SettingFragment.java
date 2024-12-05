@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.data.app.AutomaticLoginChecker;
 import com.donghaeng.withme.data.database.room.user.UserRepository;
-import com.donghaeng.withme.data.processor.PhoneFormatUtil;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.user.UserType;
 import com.donghaeng.withme.screen.start.StartActivity;
@@ -67,7 +66,7 @@ public class SettingFragment extends Fragment {
         TextView userName = view.findViewById(R.id.user_name);
         TextView userPhoneNumber = view.findViewById(R.id.user_phone_number);
         userName.setText(user.getName());
-        userPhoneNumber.setText(PhoneFormatUtil.phone(PhoneNumberUtils.formatNumber(user.getPhone(), Locale.getDefault().getCountry())));
+        userPhoneNumber.setText(PhoneNumberUtils.formatNumber(user.getPhone(), Locale.getDefault().getCountry()));
 
         change_number = view.findViewById(R.id.change_number);
         change_pw = view.findViewById(R.id.change_pw);

@@ -2,6 +2,7 @@ package com.donghaeng.withme.screen.setting;
 
 import android.app.Application;
 import android.content.Context;
+import android.telecom.Call;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -15,7 +16,9 @@ import java.util.Map;
 public class SharedViewModel extends AndroidViewModel {
     private final Context context;
     private final Map<String, MutableLiveData<Boolean>> toggles = new HashMap<>();
-
+    public interface Callback{
+        void onChanged();
+    }
     // 초기화 블록에서 각 토글의 기본 상태를 ControlAllowanceListChecker에서 가져옵니다.
     public SharedViewModel(Application application) {
         super(application);
@@ -41,13 +44,13 @@ public class SharedViewModel extends AndroidViewModel {
     }
 
     // 특정 키에 해당하는 값을 설정하는 메서드
-    public void setToggle(String key, boolean value) {
+    public void setToggle(String key, boolean value, Callback callback) {
         MutableLiveData<Boolean> liveData = toggles.get(key);
         if (liveData != null) {
             liveData.setValue(value);
         }
         // 설정 값을 저장합니다.
         ControlAllowanceListChecker.setValue(context, key, value);
-        // TODO: 피제어자이면, 설정값 변경을 요청하는 코드 작성
+        callback.onChanged();
     }
 }

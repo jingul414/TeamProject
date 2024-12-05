@@ -14,13 +14,14 @@ import com.donghaeng.withme.R;
 import com.donghaeng.withme.data.user.User;
 
 public class SettingActivity extends AppCompatActivity {
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_setting);
-        User user = getIntent().getParcelableExtra("user");
+        user = getIntent().getParcelableExtra("user");
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -61,7 +62,7 @@ public class SettingActivity extends AppCompatActivity {
                     transaction.commit();
                     break;
                 case "PermitListTarget":
-                    transaction.replace(R.id.fragment_container, new FragmentTargetOpt());
+                    transaction.replace(R.id.fragment_container, FragmentTargetOpt.newInstance(user));
                     transaction.addToBackStack(null); // 뒤로가기 지원
                     transaction.commit();
                     break;

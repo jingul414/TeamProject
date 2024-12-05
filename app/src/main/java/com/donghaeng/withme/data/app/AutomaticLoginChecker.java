@@ -8,8 +8,11 @@ import com.donghaeng.withme.data.user.Controller;
 import com.donghaeng.withme.data.user.Target;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.user.UserType;
+import com.google.gson.Gson;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class AutomaticLoginChecker {
     private static final String PREFS_NAME = "AutomaticLoginPrefs";
@@ -19,6 +22,7 @@ public class AutomaticLoginChecker {
     private static final String KEY_USER_PHONE_NUMBER = "userPhoneNumber";
     private static final String KEY_USER_UID = "userUid";
     private static final String KEY_USER_TYPE = "userType";
+    private static final String KEY_USER_OPPONENTS = "opponents";
 
     private static SharedPreferences prefs;
     private static SharedPreferences.Editor editor;
@@ -45,6 +49,23 @@ public class AutomaticLoginChecker {
         editor.putString(KEY_USER_PHONE_NUMBER, user.getPhone());
         editor.putString(KEY_USER_UID, user.getId());
         editor.putString(KEY_USER_TYPE, String.valueOf(user.getUserType()));
+        switch (user.getUserType()) {
+            case UserType.CONTROLLER:
+                Set<String> targetsData = new HashSet<>();
+                for (Target target : ((Controller) user).getTargets()) {
+                    targetsData.add(new Gson().toJson(target));
+                }
+                editor.putStringSet(KEY_USER_OPPONENTS, targetsData);
+                break;
+            case UserType.TARGET:
+                Set<String> controllersData = new HashSet<>();
+                controllersData.add(new Gson().toJson(((Target) user).getController()));
+                editor.putStringSet(KEY_USER_OPPONENTS, controllersData);
+                break;
+            default:
+                editor.putStringSet(KEY_USER_OPPONENTS, null);
+                break;
+        }
         editor.apply();
         Log.e("AutomaticLoginChecker", "자동 로그인 설정 저장됨: " + prefs.getAll());
     }
@@ -58,6 +79,7 @@ public class AutomaticLoginChecker {
         editor.putString(KEY_USER_PHONE_NUMBER, null);
         editor.putString(KEY_USER_UID, null);
         editor.putString(KEY_USER_TYPE, null);
+        editor.putString(KEY_USER_OPPONENTS, null);
         editor.apply();
         Log.e("AutomaticLoginChecker", "자동 로그인 설정 저장됨: " + prefs.getAll());
     }
@@ -78,20 +100,36 @@ public class AutomaticLoginChecker {
         }
     }
 
-    private static boolean isNullUser(){
+    private static boolean isNullUser() {
         return prefs.getString(KEY_USER_NAME, null) == null;
     }
+
     public static User getUser() {
-        if(isNullUser()) return null;
+        if (isNullUser()) return null;
         String name = prefs.getString(KEY_USER_NAME, null);
         String phoneNumber = prefs.getString(KEY_USER_PHONE_NUMBER, null);
         String uid = prefs.getString(KEY_USER_UID, null);
         byte userType = Byte.parseByte(Objects.requireNonNull(prefs.getString(KEY_USER_TYPE, null)));
-        if(userType == UserType.CONTROLLER){
-            return new Controller(name, phoneNumber, uid, "");
-        }else if(userType == UserType.TARGET) {
-            return new Target(name, phoneNumber, uid, "");
-        }else{
+        Set<String> opponentsData = prefs.getStringSet(KEY_USER_OPPONENTS, null);
+        if (userType == UserType.CONTROLLER) {
+            Controller controller = new Controller(name, phoneNumber, uid, "");
+            if (opponentsData != null) {
+                for (String opponentData : opponentsData) {
+                    Target target = new Gson().fromJson(opponentData, Target.class);
+                    controller.addTarget(target);
+                }
+            }
+            return controller;
+        } else if (userType == UserType.TARGET) {
+            Target target = new Target(name, phoneNumber, uid, "");
+            if (opponentsData != null) {
+                for (String opponentData : opponentsData) {
+                    Controller controller = new Gson().fromJson(opponentData, Controller.class);
+                    target.addController(controller);
+                }
+            }
+            return target;
+        } else {
             return null;
         }
     }
