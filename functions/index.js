@@ -41,7 +41,7 @@ admin.initializeApp();
 // });
 
 // 앱 내부 데이터 메시지 보내는 함수
-exports.sendDataMessage = functions.https.onRequest((req, res) => {
+exports.sendDataMessage_object = functions.https.onRequest((req, res) => {
   const token = req.body.token; // 대상 디바이스의 FCM 토큰
   const type = req.body.type;
   const payload = req.body.payload;
@@ -49,7 +49,7 @@ exports.sendDataMessage = functions.https.onRequest((req, res) => {
   // 데이터 메시지 구성
   const message = {
     type: type,
-    payload: payload,
+    payload: payload, 
     token: token,
   };
 
@@ -62,6 +62,28 @@ exports.sendDataMessage = functions.https.onRequest((req, res) => {
       });
 });
 
+exports.sendDataMessage = functions.https.onRequest((req, res) => {
+  const token = req.body.token; // 대상 디바이스의 FCM 토큰
+  const commandType = req.body.data.commandType;
+  const commandValue = req.body.data.commandValue;
+
+  // 데이터 메시지 구성
+  const message = {
+    data: {
+      commandType: commandType,
+      commandValue: commandValue,
+    },
+    token: token,
+  };
+
+  admin.messaging().send(message)
+      .then((response) => {
+        res.status(200).send("Data message sent successfully" + response);
+      })
+      .catch((error) => {
+        res.status(500).send("Error sending data message: " + error);
+      });
+});
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
 
