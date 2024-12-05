@@ -3,6 +3,7 @@ package com.donghaeng.withme.screen.setting;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,6 +86,8 @@ public class SettingPhoneNumFragment extends Fragment {
         verificationCodeEdit.setVisibility(View.INVISIBLE);
         nextButton.setVisibility(View.INVISIBLE);
         notReceiveCodeText.setVisibility(View.INVISIBLE);
+
+        phoneNumberEdit.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
     }
 
     private void initializePhoneAuth() {
@@ -117,6 +120,12 @@ public class SettingPhoneNumFragment extends Fragment {
                 Log.d(TAG, "onCodeSent:" + verificationId);
                 mVerificationId = verificationId;
                 mResendToken = token;
+
+                // UI 요소 표시
+                verificationCodeNotification.setVisibility(View.VISIBLE);
+                verificationCodeEdit.setVisibility(View.VISIBLE);
+                nextButton.setVisibility(View.VISIBLE);
+                startNotReceiveCodeTimer();
             }
         };
     }
@@ -153,12 +162,6 @@ public class SettingPhoneNumFragment extends Fragment {
                         .build();
         PhoneAuthProvider.verifyPhoneNumber(options);
         Log.w(TAG, "전화번호: " + phoneNumber);
-
-        // UI 요소 표시
-        verificationCodeNotification.setVisibility(View.VISIBLE);
-        verificationCodeEdit.setVisibility(View.VISIBLE);
-        nextButton.setVisibility(View.VISIBLE);
-        startNotReceiveCodeTimer();
     }
 
     private void checkVerificationCode() {

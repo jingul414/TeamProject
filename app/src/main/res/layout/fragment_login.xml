@@ -120,7 +120,7 @@
                 android:background="@android:color/transparent"
                 android:gravity="center_vertical"
                 android:hint="@string/login_text_phone_number"
-                android:inputType="number"
+                android:inputType="phone"
                 android:paddingStart="15dp"
                 android:textColor="#000000"
                 android:textColorHint="#A9A9A9"

@@ -1,6 +1,5 @@
 package com.donghaeng.withme.screen.main;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -8,6 +7,8 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 
 import android.os.Parcelable;
@@ -21,20 +22,15 @@ import com.donghaeng.withme.R;
 import com.donghaeng.withme.data.processor.PhoneFormatUtil;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.database.room.user.UserRepository;
-import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.screen.guide.GuideActivity;
 import com.donghaeng.withme.screen.setting.SettingActivity;
-import com.donghaeng.withme.screen.start.connect.TargetQrFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,7 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class TargetMainFragment extends Fragment {
     private static final String TAG = "TargetMainFragment";
@@ -88,7 +83,7 @@ public class TargetMainFragment extends Fragment {
         });
 
         if (getArguments() != null) {
-            user = getArguments().getParcelable("user");
+            user = getArguments().getParcelable(ARG_USER);
         }
         db = FirebaseFirestore.getInstance();
         repository = new UserRepository(requireContext());
@@ -131,7 +126,6 @@ public class TargetMainFragment extends Fragment {
                     Log.e(TAG, "Controller is null!");
                     continue;
                 }
-
                 updateControllerInfo(controller);
                 setupRealtimeUpdates(user.getId(), controller.getId());
             }
@@ -140,7 +134,7 @@ public class TargetMainFragment extends Fragment {
 
     private void updateControllerInfo(User controller) {
         controllerNameTextView.setText(controller.getName());
-        controllerPhoneNumberTextView.setText(PhoneFormatUtil.phone(controller.getPhone()));
+        controllerPhoneNumberTextView.setText(PhoneNumberUtils.formatNumber(controller.getPhone(), Locale.getDefault().getCountry()));
     }
 
     private void writeLogData(User controller) {

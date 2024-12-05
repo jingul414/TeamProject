@@ -36,7 +36,7 @@ public class Login {
     public Login(Fragment fragment, String phoneNum) {
         // 로그인 생성, 확인할 전화번호
         this.fragment = fragment;
-        this.phoneNum = phoneNum;
+        this.phoneNum = phoneNum.replace("-","");
     }
 
     public interface Callback {

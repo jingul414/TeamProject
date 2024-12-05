@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,6 +99,7 @@ public class LoginFragment extends Fragment {
                 }
             });
         });
+        phoneNumEdit.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
         return view;
     }
 

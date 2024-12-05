@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,11 +67,12 @@ public class SignupVerifyingPhoneNumberFragment extends Fragment {
         notReceiveVerificationCodeText.setVisibility(View.INVISIBLE);
 
         startActivity = (StartActivity) requireActivity();
+        phoneNumberEdit.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
         sendingVerificationCodeBtn.setOnClickListener(new SendingVerificationCodeBtnListener());
         nextBtn.setOnClickListener(new NextBtnListener());
         notReceiveVerificationCodeText.setOnClickListener(new NotReceiveVerificationCodeTextListener());
 
-        startActivity.getSignUpInstance().initializePhoneAuth();
+        startActivity.getSignUpInstance().initializePhoneAuth(verificationCodeNotificationText, verificationCodeEdit, nextBtn);
         return view;
     }
 
@@ -80,10 +82,10 @@ public class SignupVerifyingPhoneNumberFragment extends Fragment {
             try{
                 startActivity.getSignUpInstance().sendVerificationCode(phoneNumberEdit);
 
-                // UI 요소 표시
-                verificationCodeNotificationText.setVisibility(View.VISIBLE);
-                verificationCodeEdit.setVisibility(View.VISIBLE);
-                nextBtn.setVisibility(View.VISIBLE);
+//                // UI 요소 표시
+//                verificationCodeNotificationText.setVisibility(View.VISIBLE);
+//                verificationCodeEdit.setVisibility(View.VISIBLE);
+//                nextBtn.setVisibility(View.VISIBLE);
 
                 // "인증번호가 오지 않아요" 메시지를 타이머를 통해 일정 시간 후 표시
                 startNotReceiveCodeTimer();

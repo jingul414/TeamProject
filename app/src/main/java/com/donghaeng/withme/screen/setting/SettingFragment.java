@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.telephony.PhoneNumberUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,6 @@ import com.donghaeng.withme.data.database.room.user.UserRepository;
 import com.donghaeng.withme.data.processor.PhoneFormatUtil;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.user.UserType;
-import com.donghaeng.withme.screen.main.ControlListItem;
 import com.donghaeng.withme.screen.start.StartActivity;
 import com.donghaeng.withme.security.EncrpytPhoneNumber;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,13 +29,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 
 public class SettingFragment extends Fragment {
     private SettingActivity activity;
-    private TextView userName;
-    private TextView userPhoneNumber;
     private User user;
 
     public static Fragment newInstance(User user) {
@@ -65,14 +62,12 @@ public class SettingFragment extends Fragment {
 
         activity = (SettingActivity) requireActivity();
         back = view.findViewById(R.id.back);
-        back.setOnClickListener(v -> {
-            activity.onBackPressed();
-        });
+        back.setOnClickListener(v -> activity.onBackPressed());
 
-        userName = view.findViewById(R.id.user_name);
-        userPhoneNumber = view.findViewById(R.id.user_phone_number);
+        TextView userName = view.findViewById(R.id.user_name);
+        TextView userPhoneNumber = view.findViewById(R.id.user_phone_number);
         userName.setText(user.getName());
-        userPhoneNumber.setText(PhoneFormatUtil.phone(user.getPhone()));
+        userPhoneNumber.setText(PhoneFormatUtil.phone(PhoneNumberUtils.formatNumber(user.getPhone(), Locale.getDefault().getCountry())));
 
         change_number = view.findViewById(R.id.change_number);
         change_pw = view.findViewById(R.id.change_pw);
