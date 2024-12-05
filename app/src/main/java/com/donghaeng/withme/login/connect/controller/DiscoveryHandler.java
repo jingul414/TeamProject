@@ -11,10 +11,10 @@ import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.data.database.firestore.TokenManager;
 import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
-import com.donghaeng.withme.login.connect.message.ConfirmationPayload;
-import com.donghaeng.withme.login.connect.message.NearbyMessage;
-import com.donghaeng.withme.login.connect.message.TextMessagePayload;
-import com.donghaeng.withme.login.connect.message.UserPayload;
+import com.donghaeng.withme.data.message.nearbymessage.ConfirmationPayload;
+import com.donghaeng.withme.data.message.nearbymessage.NearbyMessage;
+import com.donghaeng.withme.data.message.nearbymessage.TextMessagePayload;
+import com.donghaeng.withme.data.message.nearbymessage.UserPayload;
 import com.donghaeng.withme.screen.start.connect.ControllerConnectFragment;
 import com.donghaeng.withme.screen.start.connect.ControllerQrFragment;
 import com.donghaeng.withme.data.user.Target;

@@ -108,6 +108,7 @@ public class FireStoreManager {
                 targetData.put("name", target.getName());
                 targetData.put("phoneNum", target.getPhone());
                 targetData.put("uid", target.getId());
+                targetData.put("token", target.getToken());
                 targetsData.add(targetData);
             }
             userData.put("targets", targetsData);
@@ -117,6 +118,7 @@ public class FireStoreManager {
             controllerData.put("name", controller.getName());
             controllerData.put("phoneNum", controller.getPhone());
             controllerData.put("uid", controller.getId());
+            controllerData.put("token", controller.getToken());
             userData.put("controller", controllerData);
         }
 

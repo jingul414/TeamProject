@@ -15,9 +15,9 @@ import android.widget.TextView;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.login.connect.controller.NearbyHandler;
-import com.donghaeng.withme.login.connect.message.ConfirmationPayload;
+import com.donghaeng.withme.data.message.nearbymessage.ConfirmationPayload;
 import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
-import com.donghaeng.withme.login.connect.message.NearbyMessage;
+import com.donghaeng.withme.data.message.nearbymessage.NearbyMessage;
 import com.donghaeng.withme.login.connect.target.AdvertisementHandler;
 import com.donghaeng.withme.login.connect.controller.DiscoveryHandler;
 import com.donghaeng.withme.data.user.User;
@@ -60,6 +60,7 @@ public class ConnectInfoFragment extends Fragment {
     private Fragment connectFragment;
     private NearbyHandler handler;
 
+    @OptIn(markerClass = ExperimentalGetImage.class)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
