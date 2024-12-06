@@ -21,8 +21,10 @@ public class SendDataMessage {
         OkHttpClient client = new OkHttpClient();
 
         // 데이터 메시지 요청 본문
+        // high priority 추가
         String json = "{"
                 + "\"token\": \"" + token + "\","
+                + "\"priority\": \"high\","
                 + "\"data\": {"
                 + "    \"commandType\": \"" + commandType + "\","
                 + "    \"commandValue\": \"" + commandValue + "\""
@@ -60,6 +62,7 @@ public class SendDataMessage {
         OkHttpClient client = new OkHttpClient();
 
         FirebaseCloudMessage message = new FirebaseCloudMessage(token, type, command);
+        message.setPriority("high");  // priority 설정
         String json = new Gson().toJson(message);
 
         // 요청 만들기

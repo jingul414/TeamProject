@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import com.donghaeng.withme.data.database.firestore.FireStoreManager;
 import com.donghaeng.withme.service.AlarmService;
 import com.donghaeng.withme.service.BrightnessControlService;
+import com.donghaeng.withme.service.SettingsJobIntentService;
 import com.donghaeng.withme.service.VolumeControlService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -27,7 +28,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         if (!remoteMessage.getData().isEmpty()) {
             Log.e("FCM Data", "Data: " + remoteMessage.getData());
-            handleCustomData(remoteMessage.getData());
+            // JobIntentService로 작업 위임
+            Intent intent = new Intent();
+            intent.putExtra("commandType", remoteMessage.getData().get("commandType"));
+            intent.putExtra("commandValue", remoteMessage.getData().get("commandValue"));
+            SettingsJobIntentService.enqueueWork(this, intent);
         }
     }
 
