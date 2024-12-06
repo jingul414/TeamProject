@@ -9,6 +9,7 @@ import androidx.annotation.OptIn;
 import androidx.camera.core.ExperimentalGetImage;
 import androidx.fragment.app.Fragment;
 
+import com.donghaeng.withme.data.database.firestore.TokenManager;
 import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
 import com.donghaeng.withme.data.message.nearbymessage.ConfirmationPayload;
 import com.donghaeng.withme.data.message.nearbymessage.NearbyMessage;
@@ -253,6 +254,7 @@ public class DiscoveryHandler extends NearbyHandler {
         // 데이터 처리
         User tempUser = data.getUser();
         Target opponent = new Target(tempUser.getName(), tempUser.getPhone(), tempUser.getId(), "");
+        opponent.setToken(tempUser.getToken());
         mOpponent = opponent;
         ControllerConnectFragment nextFragment = (ControllerConnectFragment) mFragment.getParentFragment();
         if (nextFragment != null) {

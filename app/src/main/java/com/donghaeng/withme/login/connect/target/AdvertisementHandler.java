@@ -1,6 +1,7 @@
 package com.donghaeng.withme.login.connect.target;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -186,7 +187,6 @@ public class AdvertisementHandler extends NearbyHandler {
         logD("Performing some action based on received data.");
         // JSON
         User user = ((TargetQrFragment) mFragment).getUser();
-        user.setToken(TokenManager.getInstance().getToken());
         UserPayload payload = new UserPayload(user);
         NearbyMessage message = new NearbyMessage("OPPONENT_USER", payload);
         String jsonMessage = new Gson().toJson(message);
