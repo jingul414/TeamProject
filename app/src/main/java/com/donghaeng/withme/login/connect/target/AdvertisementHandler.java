@@ -1,12 +1,9 @@
 package com.donghaeng.withme.login.connect.target;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
-import com.donghaeng.withme.data.database.firestore.TokenManager;
 import com.donghaeng.withme.login.connect.LocalConfirmationStatus;
 import com.donghaeng.withme.login.connect.controller.NearbyHandler;
 import com.donghaeng.withme.data.message.nearbymessage.ConfirmationPayload;
@@ -60,10 +57,7 @@ public class AdvertisementHandler extends NearbyHandler {
      * 광고 모드 시작 (성공 시 onAdvertisingStarted, 실패 시 onAdvertisingFailed 호출)
      */
     public void startAdvertising() {
-        if (isAdvertising) {
-            Toast.makeText(mContext, "이미 광고가 실행 중입니다.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        if (isAdvertising) return;
         isAdvertising = true;
         final String localEndpointName = getUserName();
 
@@ -79,14 +73,12 @@ public class AdvertisementHandler extends NearbyHandler {
                 .addOnSuccessListener(
                         (Void unused) -> {
                             logV("Now advertising endpoint " + localEndpointName);
-                            Toast.makeText(mContext, "광고 시작 성공", Toast.LENGTH_SHORT).show();
                             onAdvertisingStarted();
                         })
                 .addOnFailureListener(
                         (Exception e) -> {
                             isAdvertising = false;
                             logW("startAdvertising() failed.", e);
-                            Toast.makeText(mContext, "광고 시작 실패", Toast.LENGTH_SHORT).show();
                             onAdvertisingFailed();
                         });
     }
@@ -98,7 +90,6 @@ public class AdvertisementHandler extends NearbyHandler {
         if (isAdvertising) {
             isAdvertising = false;
             mConnectionsClient.stopAdvertising();
-            Toast.makeText(mContext, "광고 중지됨", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -141,8 +132,6 @@ public class AdvertisementHandler extends NearbyHandler {
 
         logD("DiscoveryHandler received data from endpoint: " + endpointId + ", data: " + data);
 
-        // 수신된 데이터 처리 로직 추가
-        Toast.makeText(mContext, "Received: " + data, Toast.LENGTH_SHORT).show();
         // 수신된 데이터 처리
         Gson gson = new Gson();
         NearbyMessage message = gson.fromJson(data, NearbyMessage.class);
