@@ -41,6 +41,22 @@ public class Controller extends User{
         if( targets == null ) targets = new ArrayList<>();
         targets.add(target);
     }
+
+    public void updateTarget(Target target){
+        if( targets == null ){
+            targets = new ArrayList<>();
+            targets.add(target);
+            return;
+        }
+        for(Target t : targets){
+            if(t.getId().equals(target.getId())){
+                targets.remove(t);
+                targets.add(target);
+                return;
+            }
+        }
+    }
+
     public List<Target> getTargets() {
         return targets;
     }

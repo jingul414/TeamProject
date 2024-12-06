@@ -208,6 +208,40 @@ public class FireStoreManager {
                 });
     }
 
+    public void changeOpponentToken(User opponent, String token) {
+        String hashedPhoneNumber = EncrpytPhoneNumber.hashPhoneNumber(opponent.getPhone());
+
+        db.collection("user").document(hashedPhoneNumber).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (opponent.getUserType() == UserType.CONTROLLER) {
+                    List<Map<String, Object>> targetList = (List<Map<String, Object>>) document.get("targets");
+                    if (targetList != null) {
+                        for (int i = 0; i < targetList.size(); i++) {
+                            Map<String, Object> item = targetList.get(i);
+                            if (opponent.getId().equals(item.get("uid"))) {
+                                Log.e("Firestore", "Found at index: " + i);
+                                item.put("token", token);
+                                Log.e("Firestore", item.toString());
+//                                .update("targets", targetList.set(i, item));
+                                break;
+                            }
+                        }
+                    }
+                } else if (opponent.getUserType() == UserType.TARGET) {
+//                    Map<String, Object> controller = (Map<String, Object>) task.get("controller");
+//                    if (controller != null) {
+//                        if (opponent.getId().equals(controller.get("uid"))) {
+//                            Log.e("Firestore", "Found");
+//                            controller.put("token", token);
+//                            task.getReference().update("target", controller);
+//                        }
+//                    }
+                }
+
+            }
+        }).addOnFailureListener(e -> Log.e("Firestore", "Error fetching document", e));
+    }
 
     public String getHashedPW() {
         return hashedPW;

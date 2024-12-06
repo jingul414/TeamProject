@@ -9,6 +9,11 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.donghaeng.withme.data.database.firestore.FireStoreManager;
+import com.donghaeng.withme.data.database.room.user.UserRepository;
+import com.donghaeng.withme.data.user.Controller;
+import com.donghaeng.withme.data.user.Target;
+import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.data.user.UserType;
 import com.donghaeng.withme.service.AlarmService;
 import com.donghaeng.withme.service.BrightnessControlService;
 import com.donghaeng.withme.service.SettingsJobIntentService;
@@ -16,6 +21,7 @@ import com.donghaeng.withme.service.VolumeControlService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.List;
 import java.util.Map;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -44,10 +50,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         //토큰 최초 발행시(=앱 최초 실행시)에는 firestoreManager에 정보가 없으므로 올릴 수 없고 올릴 필요도 없음
         try {
             if (fireStoreManager.getPhone() != null) {
+                // 내 토큰 변경
                 fireStoreManager.changeInformation(fireStoreManager.getPhone(), "token", token, new FireStoreManager.firestoreCallback() {
                     @Override
                     public void onSuccess(Object result) {
                         Log.e("FCM NewToken", "New token saved successfully");
+//                        UserRepository repository = new UserRepository(getApplicationContext());
+//                        repository.getAllUsers((opponents)-> {
+//                            for (User opponent : opponents) {
+//                                fireStoreManager.changeOpponentToken(opponent, token);
+//                            }
+//                        });
                     }
 
                     @Override

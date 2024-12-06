@@ -81,8 +81,8 @@ public class FragmentTargetOpt extends Fragment {
 
             // 토글 상태 변경 시 SharedViewModel에 반영
             toggle.setOnCheckedChangeListener((buttonView, isChecked) -> sharedViewModel.setToggle(key, isChecked, () -> {
-                //SettingChangePayload payload = new SettingChangePayload(key, isChecked);
-                //new SendDataMessage().sendDataMessage(((Target)user).getController().getToken(), "SettingChange", payload);
+//                SettingChangePayload payload = new SettingChangePayload(key, isChecked);
+//                new SendDataMessage().sendDataMessage(((Target)user).getController().getToken(), "SettingChange", payload);
             }));
         }
 
