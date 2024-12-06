@@ -43,13 +43,15 @@ admin.initializeApp();
 // 앱 내부 데이터 메시지 보내는 함수
 exports.sendDataMessage_object = functions.https.onRequest((req, res) => {
   const token = req.body.token; // 대상 디바이스의 FCM 토큰
-  const type = req.body.type;
-  const payload = req.body.payload;
+  const type = req.body.data.type;
+  const payload = req.body.data.payload;
 
   // 데이터 메시지 구성
   const message = {
-    type: type,
-    payload: payload, 
+    data:{
+        type: type,
+        payload: payload,
+    }
     token: token,
   };
 
