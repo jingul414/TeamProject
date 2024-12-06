@@ -17,6 +17,7 @@ import android.os.Looper;
 import androidx.core.app.NotificationCompat;
 
 import com.donghaeng.withme.screen.main.ControllerActivity;
+import com.donghaeng.withme.screen.main.TargetActivity;
 
 public class AlarmService extends Service {
     private static final String CHANNEL_ID = "AlarmServiceChannel";
@@ -42,10 +43,10 @@ public class AlarmService extends Service {
         } else {
             startForeground(NOTIFICATION_ID, initialNotification);
         }
-        // 5초 후에 알람 설정 알림 표시
+        // 2초 후에 알람 설정 알림 표시
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             showAlarmNotification(hour, minute);
-        }, 5000);
+        }, 2000);
 
         return START_NOT_STICKY;
     }
@@ -60,7 +61,7 @@ public class AlarmService extends Service {
     }
 
     private void showAlarmNotification(int hour, int minute) {
-        Intent notificationIntent = new Intent(this, ControllerActivity.class)
+        Intent notificationIntent = new Intent(this, TargetActivity.class)
                 .putExtra("SET_ALARM", true)
                 .putExtra("ALARM_HOUR", hour)
                 .putExtra("ALARM_MINUTE", minute);

@@ -8,7 +8,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import android.provider.AlarmClock;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.donghaeng.withme.R;
 
@@ -22,6 +25,7 @@ public class TargetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_target);
+        handleIntent(getIntent());
 
         User user = getIntent().getParcelableExtra("user");
 
@@ -63,4 +67,38 @@ public class TargetActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // 이전 액티비티 종료
         startActivity(intent);
     }
+
+    // 알람 설정 관련 메소드 들
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+    private void handleIntent(Intent intent) {
+        if (intent != null && intent.getBooleanExtra("SET_ALARM", false)) {
+            int hour = intent.getIntExtra("ALARM_HOUR", -1);
+            int minute = intent.getIntExtra("ALARM_MINUTE", -1);
+
+            if (hour != -1 && minute != -1) {
+                setAlarm(hour, minute);
+            }
+        }
+    }
+    private void setAlarm(int hour, int minute) {
+        Intent alarmIntent = new Intent(AlarmClock.ACTION_SET_ALARM)
+                .putExtra(AlarmClock.EXTRA_HOUR, hour)
+                .putExtra(AlarmClock.EXTRA_MINUTES, minute)
+                .putExtra(AlarmClock.EXTRA_MESSAGE, "알람")
+                .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+
+        try {
+            startActivity(alarmIntent);
+        } catch (Exception e) {
+            Toast.makeText(this,
+                    "알람 설정 중 오류가 발생했습니다: " + e.getMessage(),
+                    Toast.LENGTH_LONG
+            ).show();
+        }
+    }
+
 }
