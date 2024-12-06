@@ -19,6 +19,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FCM";
@@ -58,6 +59,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void handleTargetMessage(Map<String, String> data, String targetToken) {
         String commandType = data.get("commandType");
         if ("reject".equals(commandType)) {
+            if(Objects.equals(data.get("commandValue"), "accept")){
+                Log.d(TAG, "제어 허용 됨");
+                RejectionManager.getInstance(this)
+                        .removeRejection(targetToken);
+
+                // UI 갱신을 위한 브로드캐스트 전송
+                Intent intent = new Intent("REJECTION_STATUS_CHANGED");
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+                return;
+            }
             int rejectTime = Integer.parseInt(data.get("commandValue"));
 
             // SharedPreferences에 저장

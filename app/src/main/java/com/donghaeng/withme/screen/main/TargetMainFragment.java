@@ -19,10 +19,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.message.firebasemessage.SendDataMessage;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.database.room.user.UserRepository;
 import com.donghaeng.withme.screen.guide.GuideActivity;
 import com.donghaeng.withme.screen.setting.SettingActivity;
+import com.donghaeng.withme.service.RejectionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -105,22 +107,75 @@ public class TargetMainFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView);
         controllerNameTextView = view.findViewById(R.id.name_textview);
         controllerPhoneNumberTextView = view.findViewById(R.id.number_textview);
+        TextView controlStatusText = view.findViewById(R.id.control_status_text);
 
+        SendDataMessage sendDataMessage = new SendDataMessage();
 
+        View allowButton = view.findViewById(R.id.accept_btn);
         View rejectButton = view.findViewById(R.id.reject_btn);
+
+        // 초기 상태 확인 및 설정
+        repository.getAllUsers(users -> {
+            for (User controller : users) {
+                if (controller != null) {
+                    boolean isRejected = RejectionManager.getInstance(requireContext())
+                            .isRejected(controller.getToken());
+                    updateControlStatus(controlStatusText, isRejected, controller.getToken());
+                    break;
+                }
+            }
+        });
+
         rejectButton.setOnClickListener(v -> {
             repository.getAllUsers(users -> {
                 for (User controller : users) {
                     if (controller != null) {
                         TimeRejectDialog dialog = new TimeRejectDialog(requireContext(), controller.getToken());
+                        dialog.setOnDismissListener(dialogInterface -> {
+                            if (isAdded()) {
+                                requireActivity().runOnUiThread(() -> {
+                                    updateControlStatus(controlStatusText, true, controller.getToken());
+                                });
+                            }
+                        });
                         dialog.show();
-                        break;  // 첫 번째 (그리고 유일한) controller를 찾으면 반복 중단
+                        break;
                     }
                 }
             });
         });
 
+        allowButton.setOnClickListener(v -> {
+            repository.getAllUsers(users -> {
+                for (User controller : users) {
+                    if (controller != null) {
+                        sendDataMessage.sendDataMessage(controller.getToken(), "reject", "accept");
+                        RejectionManager.getInstance(requireContext())
+                                .removeRejection(controller.getToken());
+                        if (isAdded()) {
+                            requireActivity().runOnUiThread(() -> {
+                                updateControlStatus(controlStatusText, false, controller.getToken());
+                            });
+                        }
+                        break;
+                    }
+                }
+            });
+        });
     }
+
+    private void updateControlStatus(TextView statusText, boolean isRejected, String token) {
+        if (isRejected) {
+            int remainingMinutes = RejectionManager.getInstance(requireContext())
+                    .getRemainingMinutes(token);
+            statusText.setText(String.format("제어 거절 상태 (%d분 남음)", remainingMinutes));
+            statusText.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+        } else {
+            statusText.setText("제어 허용 상태");
+            statusText.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+        }
+    }
+
 
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
