@@ -16,7 +16,9 @@ import android.os.Looper;
 
 import androidx.core.app.NotificationCompat;
 
+import com.donghaeng.withme.screen.SplashActivity;
 import com.donghaeng.withme.screen.main.ControllerActivity;
+import com.donghaeng.withme.screen.main.TargetActivity;
 
 public class AlarmService extends Service {
     private static final String CHANNEL_ID = "AlarmServiceChannel";
@@ -60,7 +62,7 @@ public class AlarmService extends Service {
     }
 
     private void showAlarmNotification(int hour, int minute) {
-        Intent notificationIntent = new Intent(this, ControllerActivity.class)
+        Intent notificationIntent = new Intent(this, TargetActivity.class)
                 .putExtra("SET_ALARM", true)
                 .putExtra("ALARM_HOUR", hour)
                 .putExtra("ALARM_MINUTE", minute);

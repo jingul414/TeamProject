@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.data.database.firestore.TokenManager;
 import com.donghaeng.withme.data.app.ScreenChecker;
+import com.donghaeng.withme.data.worker.WorkManagerInitializer;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.appcheck.FirebaseAppCheck;
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
@@ -35,6 +36,10 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_splash);
+
+        // worker 실행
+        WorkManagerInitializer.startTestPeriodicWork(this);  // 테스트용 1분 주기
+
 
         // 권한 체크 시작
         checkPermissions();

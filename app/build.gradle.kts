@@ -131,4 +131,8 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.10.1")
     implementation ("commons-io:commons-io:2.11.0")  // IOUtils 사용을 위해 필요
 
+    // workmaneger
+    implementation ("androidx.work:work-runtime:2.8.1")
+
+
 }

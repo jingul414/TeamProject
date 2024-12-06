@@ -1,7 +1,9 @@
 package com.donghaeng.withme.data.database.firestore;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Build;
 import android.util.Log;
@@ -13,32 +15,43 @@ import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.service.AlarmService;
 import com.donghaeng.withme.service.BrightnessControlService;
 import com.donghaeng.withme.service.VolumeControlService;
+import com.google.common.reflect.TypeToken;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
-    private int streamType;
+    private static final String PREF_NAME = "SettingsPref";
+    private static final String KEY_PENDING_SETTINGS = "pendingSettings";
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
         if (!remoteMessage.getData().isEmpty()) {
-            Log.e("FCM Data", "Data: " + remoteMessage.getData());
-            handleCustomData(remoteMessage.getData());
+            Map<String, String> data = remoteMessage.getData();
+            String commandType = data.get("commandType");
+            String commandValue = data.get("commandValue");
+
+            // 새로운 설정값 저장
+            addPendingSetting(commandType, commandValue);
+
+            // 앱이 포그라운드 상태라면 즉시 적용
+            if (isAppInForeground()) {
+                handleCustomData(data);
+            }
         }
     }
 
     private void handleCustomData(Map<String, String> data) {
         String commandType = data.get("commandType");
         String commandValue = data.get("commandValue");
-
-        Log.e("FCM Data", "commandType: " + commandType);
-        Log.e("FCM Data", "commandValue: " + commandValue);
 
         if (commandType == null || commandValue == null) return;
 
@@ -92,45 +105,29 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void handleVolumeCommand(String value) {
         try {
             int volumePercent = Integer.parseInt(value);
-            AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            if (audioManager != null) {
-                Intent serviceIntent = new Intent(this, VolumeControlService.class);
-                // streamType 값에 따라 적절한 streamType 설정
-                switch (streamType) {
-                    case AudioManager.STREAM_NOTIFICATION:
-                        serviceIntent.putExtra("streamType", AudioManager.STREAM_NOTIFICATION);
-                        break;
-                    case AudioManager.STREAM_MUSIC:
-                        serviceIntent.putExtra("streamType", AudioManager.STREAM_MUSIC);
-                        break;
-                    case AudioManager.STREAM_RING:
-                        serviceIntent.putExtra("streamType", AudioManager.STREAM_RING);
-                        break;
-                }
-                serviceIntent.putExtra("volume", volumePercent);
-                serviceIntent.putExtra("delay", 0);
+            Intent serviceIntent = new Intent(this, VolumeControlService.class);
+            serviceIntent.putExtra("volume", volumePercent);
+            serviceIntent.putExtra("streamType", AudioManager.STREAM_RING);
+            serviceIntent.putExtra("delay", 0);
 
-                startForegroundServiceCompat(serviceIntent);
-            }
+            startForegroundServiceCompat(serviceIntent);
         } catch (NumberFormatException e) {
             Log.e("FCM Data", "Invalid volume value", e);
         }
     }
 
-
     private void handleSoundModeCommand(String value) {
+        // SoundMode 처리
         switch (value) {
             case "CALL":
-                streamType = AudioManager.STREAM_RING;
+                handleVolumeCommand(String.valueOf(AudioManager.STREAM_RING));
                 break;
             case "NOTIFICATION":
-                streamType = AudioManager.STREAM_NOTIFICATION;
+                handleVolumeCommand(String.valueOf(AudioManager.STREAM_NOTIFICATION));
                 break;
             case "MEDIA":
-                streamType = AudioManager.STREAM_MUSIC;
+                handleVolumeCommand(String.valueOf(AudioManager.STREAM_MUSIC));
                 break;
-            default:
-                return;
         }
     }
 
@@ -138,12 +135,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         try {
             String[] timeParts = value.split(":");
             if (timeParts.length == 2) {
-                int hour = Integer.parseInt(timeParts[0]);
-                int minute = Integer.parseInt(timeParts[1]);
-
                 Intent serviceIntent = new Intent(this, AlarmService.class);
-                serviceIntent.putExtra("hour", hour);
-                serviceIntent.putExtra("minute", minute);
+                serviceIntent.putExtra("hour", Integer.parseInt(timeParts[0]));
+                serviceIntent.putExtra("minute", Integer.parseInt(timeParts[1]));
 
                 startForegroundServiceCompat(serviceIntent);
             }
@@ -158,6 +152,48 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         } else {
             startService(intent);
         }
+    }
+
+    private void addPendingSetting(String commandType, String commandValue) {
+        try {
+            SharedPreferences prefs = getApplicationContext()
+                    .getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+
+            Map<String, String> pendingSettings = getPendingSettings();
+            String key = commandType + ":" + commandValue;
+            pendingSettings.put(key, commandValue);  // timestamp 대신 값 자체를 저장
+
+            String settingsJson = new Gson().toJson(pendingSettings);
+            prefs.edit().putString(KEY_PENDING_SETTINGS, settingsJson).apply();
+
+            Log.d("FCM", "Added pending setting: " + key);
+        } catch (Exception e) {
+            Log.e("FCM", "Error adding pending setting", e);
+        }
+    }
+
+
+    private Map<String, String> getPendingSettings() {
+        SharedPreferences prefs = getApplicationContext()
+                .getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        String settingsJson = prefs.getString(KEY_PENDING_SETTINGS, "{}");
+        Type type = new TypeToken<HashMap<String, String>>(){}.getType();
+        return new Gson().fromJson(settingsJson, type);
+    }
+
+    private boolean isAppInForeground() {
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+        if (appProcesses == null) return false;
+
+        String packageName = getPackageName();
+        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+            if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                    && appProcess.processName.equals(packageName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
