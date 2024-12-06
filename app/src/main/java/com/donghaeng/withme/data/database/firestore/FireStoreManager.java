@@ -125,15 +125,19 @@ public class FireStoreManager {
 
     //TODO : 아래 3개 메소드 테스트 미실시상태.
     //이름, 비번 공통 변경 메소드? , 전화번호, 바꿀것, 비밀번호냐 이름이냐 결정, 콜백
-    public void changeInformation(String phoneNum, String changed, String changeMode, firestoreCallback callback){
+    public void changeInformation(String phoneNum, String changeMode, String changed, firestoreCallback callback){
         String hashedPhoneNumber = EncrpytPhoneNumber.hashPhoneNumber(phoneNum);    //전화번호 해시
         Map<String, Object> data = new HashMap<>();
-        if(changeMode.equals("password")){
-            data.put("hashedPW", changed);
-        }else if(changeMode.equals("name")){
-            data.put("name", changed);
-        }else if(changeMode.equals("token")){
-            data.put("token", changed);
+        switch (changeMode) {
+            case "password":
+                data.put("hashedPW", changed);
+                break;
+            case "name":
+                data.put("name", changed);
+                break;
+            case "token":
+                data.put("token", changed);
+                break;
         }
         db.collection("user")
                 .document(hashedPhoneNumber)
