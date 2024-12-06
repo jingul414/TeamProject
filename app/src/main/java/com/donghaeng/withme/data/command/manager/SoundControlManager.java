@@ -257,4 +257,11 @@ public class SoundControlManager {
 
     }
 
+    public void setEnabled(boolean enabled) {
+        callButton.setEnabled(enabled);
+        notificationButton.setEnabled(enabled);
+        soundButton.setEnabled(enabled);
+        muteButton.setEnabled(enabled);
+        soundSeekbar.setEnabled(enabled);
+    }
 }

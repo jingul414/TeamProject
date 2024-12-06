@@ -105,6 +105,21 @@ public class TargetMainFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView);
         controllerNameTextView = view.findViewById(R.id.name_textview);
         controllerPhoneNumberTextView = view.findViewById(R.id.number_textview);
+
+
+        View rejectButton = view.findViewById(R.id.reject_btn);
+        rejectButton.setOnClickListener(v -> {
+            repository.getAllUsers(users -> {
+                for (User controller : users) {
+                    if (controller != null) {
+                        TimeRejectDialog dialog = new TimeRejectDialog(requireContext(), controller.getToken());
+                        dialog.show();
+                        break;  // 첫 번째 (그리고 유일한) controller를 찾으면 반복 중단
+                    }
+                }
+            });
+        });
+
     }
 
     private void setupRecyclerView() {
@@ -136,31 +151,6 @@ public class TargetMainFragment extends Fragment {
         controllerPhoneNumberTextView.setText(PhoneNumberUtils.formatNumber(controller.getPhone(), Locale.getDefault().getCountry()));
     }
 
-    private void writeLogData(User controller) {
-        // TODO: 현재로서는 피제어자가 쓸 이유가 없음. 롤백 기능 구현하거나, 제어자에서 코드 사용하면 됨.
-        String time = getCurrentTime();
-
-        Map<String, Object> logData = new HashMap<>();
-        logData.put("control", "테스트");
-        logData.put("name", controller.getName());
-        logData.put("time", time);
-
-        DocumentReference docRef = db.collection("log")
-                .document(user.getId())
-                .collection(controller.getId())
-                .document(String.valueOf(System.currentTimeMillis()));
-
-        docRef.set(logData)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "로그 기록 성공!"))
-                .addOnFailureListener(e -> Log.e(TAG, "로그 기록 실패", e));
-    }
-
-    private String getCurrentTime() {
-        Calendar calendar = Calendar.getInstance();  // 현재 시간 불러오기
-        Date currentDate = calendar.getTime();
-        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초", Locale.KOREAN);
-        return outputFormat.format(currentDate);
-    }
 
     private void setupRealtimeUpdates(String userId, String controllerId) {
         db.collection("log")

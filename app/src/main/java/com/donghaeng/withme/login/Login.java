@@ -1,8 +1,5 @@
 package com.donghaeng.withme.login;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Handler;
 import android.util.Log;
 
 import androidx.fragment.app.Fragment;
@@ -12,7 +9,6 @@ import com.donghaeng.withme.data.database.firestore.FireStoreManager;
 import com.donghaeng.withme.data.database.firestore.TokenManager;
 import com.donghaeng.withme.data.database.room.user.UserRepository;
 import com.donghaeng.withme.data.user.Undefined;
-import com.donghaeng.withme.screen.ScreenList;
 import com.donghaeng.withme.screen.start.StartActivity;
 import com.donghaeng.withme.screen.start.login.LoginFragment;
 import com.donghaeng.withme.security.EncrpytPhoneNumber;
@@ -63,6 +59,19 @@ public class Login {
                 if (hashedPW != null && BCrypt.checkpw(passwd, hashedPW)) {
                     //비밀번호가 문서에 존재하고, 일치할 경우
                     Log.e("Login", "hashedPW: " + hashedPW);
+
+                    FireStoreManager fireStoreManager = FireStoreManager.getInstance();
+                    fireStoreManager.changeInformation(user.getPhone(), "token", TokenManager.getInstance().getToken(), new FireStoreManager.firestoreCallback() {
+                        @Override
+                        public void onSuccess(Object result) {
+                            Log.e("Login", "Token successfully send to firestore");
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Log.e("Login", "Token send failed");
+                        }
+                    });
 
                     // 유저 정보 다운로드
                     Map<String, Object> userData;
@@ -124,23 +133,10 @@ public class Login {
                             if (((LoginFragment) fragment).getCheckBox().isChecked()) {
                                 Log.e("Login", "체크 박스 눌림 확인됨");
                                 AutomaticLoginChecker.setEnable(fragment.requireContext(), user); // User 객체와 함께 호출
-                            } else {
-                                Log.e("Login", "체크 박스 눌리지 않음");
-                                AutomaticLoginChecker.setDisable(fragment.requireContext());
-                            }
-                            new Handler().postDelayed(() -> {
-                                FireStoreManager fireStoreManager = FireStoreManager.getInstance();
-                                fireStoreManager.changeInformation(this.phoneNum, "token", TokenManager.getInstance().getToken(), new FireStoreManager.firestoreCallback() {
+                                fireStoreManager.changeInformation(user.getPhone(), "token", TokenManager.getInstance().getToken(), new FireStoreManager.firestoreCallback() {
                                     @Override
                                     public void onSuccess(Object result) {
                                         Log.e("Login", "Token successfully send to firestore");
-//                                        UserRepository repository = new UserRepository(fragment.requireContext());
-//                                        repository.getAllUsers((opponents)-> {
-//
-//                                            for (User opponent : opponents) {
-//                                                fireStoreManager.changeOpponentToken(opponent, TokenManager.getInstance().getToken());
-//                                            }
-//                                        });
                                     }
 
                                     @Override
@@ -148,7 +144,10 @@ public class Login {
                                         Log.e("Login", "Token send failed");
                                     }
                                 });
-                            }, 2500);
+                            } else {
+                                Log.e("Login", "체크 박스 눌리지 않음");
+                                AutomaticLoginChecker.setDisable(fragment.requireContext());
+                            }
                         }
                     }
                     callback.onResult(true);

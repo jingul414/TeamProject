@@ -59,4 +59,9 @@ public class AlarmManager {
         });
     }
 
+    public void setEnabled(boolean enabled) {
+        setAlarmButton.setEnabled(enabled);
+        hourPicker.setEnabled(enabled);
+        minutePicker.setEnabled(enabled);
+    }
 }

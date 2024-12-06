@@ -22,6 +22,7 @@ import com.donghaeng.withme.data.command.manager.SoundControlManager;
 import com.donghaeng.withme.data.message.firebasemessage.SendDataMessage;
 import com.donghaeng.withme.screen.guide.ListItem;
 import com.donghaeng.withme.service.BrightnessControlService;
+import com.donghaeng.withme.service.RejectionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,19 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
     private Context context;
     private List<ControlListItem> originalItems;
     private SendDataMessage sendDataMessage;
+    private final RejectionManager rejectionManager;
+
+    private static class ControlPanel {
+        private final ControlListItem parentItem;
+
+        public ControlPanel(ControlListItem parentItem) {
+            this.parentItem = parentItem;
+        }
+
+        public ControlListItem getParentItem() {
+            return parentItem;
+        }
+    }
 
     public void updateItems(List<ControlListItem> newItems) {
         this.originalItems = new ArrayList<>(newItems);
@@ -40,6 +54,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public ControlExpandableAdapter(Context context, List<ControlListItem> items) {
         this.context = context;
+        this.rejectionManager = RejectionManager.getInstance(context);
         this.originalItems = new ArrayList<>(items);
         this.displayedItems = new ArrayList<>(items);
         this.sendDataMessage = new SendDataMessage();
@@ -47,7 +62,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public class HeaderViewHolder extends RecyclerView.ViewHolder {
         ImageView profileImage;
-        TextView nameText;
+        TextView nameText, rejectStatusText;
         ImageView arrowIcon;
 
         public HeaderViewHolder(@NonNull View itemView) {
@@ -55,6 +70,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
             profileImage = itemView.findViewById(R.id.profileImage);
             nameText = itemView.findViewById(R.id.nameText);
             arrowIcon = itemView.findViewById(R.id.arrowIcon);
+            rejectStatusText = itemView.findViewById(R.id.rejectStatusText);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -62,6 +78,11 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                     Object item = displayedItems.get(position);
                     if (item instanceof ControlListItem) {
                         ControlListItem headerItem = (ControlListItem) item;
+                        // 거절 상태일 때는 확장/축소 불가
+                        if (rejectionManager.isRejected(headerItem.getId())) {
+                            return;
+                        }
+
                         if (headerItem.isExpanded()) {
                             collapseItem(position);
                             arrowIcon.setRotation(0);
@@ -111,6 +132,17 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         public ControlExpandableAdapter getAdapter() {
             return adapter;
         }
+
+        public void setControlsEnabled(boolean enabled) {
+            // 소리 제어 위젯들 활성화/비활성화
+            soundControlManager.setEnabled(enabled);
+
+            // 밝기 제어 위젯들 활성화/비활성화
+            brightnessControlManager.setEnabled(enabled);
+
+            // 알람 제어 위젯들 활성화/비활성화
+            alarmManager.setEnabled(enabled);
+        }
     }
 
     @NonNull
@@ -133,10 +165,37 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         if (holder instanceof HeaderViewHolder) {
             HeaderViewHolder headerHolder = (HeaderViewHolder) holder;
             ControlListItem headerItem = (ControlListItem) item;
+
+            // 이름 설정 추가
             headerHolder.nameText.setText(headerItem.getTitle());
+
+            String targetId = headerItem.getId();
+            boolean isRejected = rejectionManager.isRejected(targetId);
+
+            if (isRejected) {
+                int remainingMinutes = rejectionManager.getRemainingMinutes(targetId);
+                headerHolder.rejectStatusText.setVisibility(View.VISIBLE);
+                headerHolder.rejectStatusText.setText(String.format("제어 거절됨 (%d분 남음)", remainingMinutes));
+                headerHolder.itemView.setAlpha(0.5f);
+            } else {
+                headerHolder.rejectStatusText.setVisibility(View.GONE);
+                headerHolder.itemView.setAlpha(1.0f);
+            }
+
+            // 아이템 확장 상태에 따른 화살표 방향 설정
             headerHolder.arrowIcon.setRotation(headerItem.isExpanded() ? 180 : 0);
+        } else if (holder instanceof ControlViewHolder) {
+            ControlViewHolder controlHolder = (ControlViewHolder) holder;
+            String targetId = findItem(position);
+            boolean isRejected = rejectionManager.isRejected(targetId);
+
+            // 전체 View alpha 설정
+            holder.itemView.setAlpha(isRejected ? 0.5f : 1.0f);
+            // 개별 컨트롤 활성화/비활성화
+            controlHolder.setControlsEnabled(!isRejected);
         }
     }
+
 
     @Override
     public int getItemViewType(int position) {
@@ -254,11 +313,8 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    private static class ControlPanel {
-        private ControlListItem parentItem;
-
-        public ControlPanel(ControlListItem parentItem) {
-            this.parentItem = parentItem;
-        }
+    // UI 갱신을 위한 메서드 추가
+    public void refreshUI() {
+        notifyDataSetChanged();
     }
 }

@@ -92,4 +92,9 @@ public class BrightnessControlManager {
             }
         });
     }
+
+    public void setEnabled(boolean enabled) {
+        autoLight.setEnabled(enabled);
+        lightSeekbar.setEnabled(enabled);
+    }
 }
