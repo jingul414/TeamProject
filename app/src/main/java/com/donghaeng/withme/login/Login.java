@@ -5,6 +5,8 @@ import android.util.Log;
 import androidx.fragment.app.Fragment;
 
 import com.donghaeng.withme.data.app.AutomaticLoginChecker;
+import com.donghaeng.withme.data.database.firestore.FireStoreManager;
+import com.donghaeng.withme.data.database.firestore.TokenManager;
 import com.donghaeng.withme.data.database.room.user.UserRepository;
 import com.donghaeng.withme.data.user.Undefined;
 import com.donghaeng.withme.screen.start.StartActivity;
@@ -57,6 +59,20 @@ public class Login {
                 if (hashedPW != null && BCrypt.checkpw(passwd, hashedPW)) {
                     //비밀번호가 문서에 존재하고, 일치할 경우
                     Log.e("Login", "hashedPW: " + hashedPW);
+
+                    FireStoreManager fireStoreManager = FireStoreManager.getInstance();
+                    fireStoreManager.changeInformation(user.getPhone(), "token", TokenManager.getInstance().getToken(), new FireStoreManager.firestoreCallback() {
+                        @Override
+                        public void onSuccess(Object result) {
+                            Log.e("Login", "Token successfully send to firestore");
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Log.e("Login", "Token send failed");
+                        }
+                    });
+
                     // 유저 정보 다운로드
                     Map<String, Object> userData;
                     if ((userData = task.getResult().getData()) != null) {
@@ -117,6 +133,17 @@ public class Login {
                             if (((LoginFragment) fragment).getCheckBox().isChecked()) {
                                 Log.e("Login", "체크 박스 눌림 확인됨");
                                 AutomaticLoginChecker.setEnable(fragment.requireContext(), user); // User 객체와 함께 호출
+                                fireStoreManager.changeInformation(user.getPhone(), "token", TokenManager.getInstance().getToken(), new FireStoreManager.firestoreCallback() {
+                                    @Override
+                                    public void onSuccess(Object result) {
+                                        Log.e("Login", "Token successfully send to firestore");
+                                    }
+
+                                    @Override
+                                    public void onFailure(Exception e) {
+                                        Log.e("Login", "Token send failed");
+                                    }
+                                });
                             } else {
                                 Log.e("Login", "체크 박스 눌리지 않음");
                                 AutomaticLoginChecker.setDisable(fragment.requireContext());
