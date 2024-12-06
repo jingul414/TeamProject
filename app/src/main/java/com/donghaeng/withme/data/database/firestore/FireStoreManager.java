@@ -138,6 +138,12 @@ public class FireStoreManager {
             case "token":
                 data.put("token", changed);
                 break;
+            case "controller.token":
+                data.put("controller.token", changed);
+                break;
+            case "target.token":
+                data.put("target.token", changed);
+                break;
         }
         db.collection("user")
                 .document(hashedPhoneNumber)
