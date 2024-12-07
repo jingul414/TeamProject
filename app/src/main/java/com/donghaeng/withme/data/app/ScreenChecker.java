@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.user.UserType;
 import com.donghaeng.withme.screen.ScreenList;
+import com.donghaeng.withme.screen.SplashActivity;
 import com.donghaeng.withme.screen.main.ControllerActivity;
 import com.donghaeng.withme.screen.main.TargetActivity;
 import com.donghaeng.withme.screen.start.StartActivity;
