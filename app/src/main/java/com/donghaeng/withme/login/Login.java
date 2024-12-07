@@ -60,19 +60,6 @@ public class Login {
                     //비밀번호가 문서에 존재하고, 일치할 경우
                     Log.e("Login", "hashedPW: " + hashedPW);
 
-                    FireStoreManager fireStoreManager = FireStoreManager.getInstance();
-                    fireStoreManager.changeInformation(user.getPhone(), "token", TokenManager.getInstance().getToken(), new FireStoreManager.firestoreCallback() {
-                        @Override
-                        public void onSuccess(Object result) {
-                            Log.e("Login", "Token successfully send to firestore");
-                        }
-
-                        @Override
-                        public void onFailure(Exception e) {
-                            Log.e("Login", "Token send failed");
-                        }
-                    });
-
                     // 유저 정보 다운로드
                     Map<String, Object> userData;
                     if ((userData = task.getResult().getData()) != null) {
@@ -114,6 +101,18 @@ public class Login {
                                 break;
                         }
                         if (user != null) {
+                            FireStoreManager fireStoreManager = FireStoreManager.getInstance();
+                            fireStoreManager.changeInformation(user.getPhone(), "token", TokenManager.getInstance().getToken(), new FireStoreManager.firestoreCallback() {
+                                @Override
+                                public void onSuccess(Object result) {
+                                    Log.e("Login", "Token successfully send to firestore");
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Log.e("Login", "Token send failed");
+                                }
+                            });
                             UserRepository repository = new UserRepository(fragment.requireContext());
                             repository.deleteAllUsers();  // 기존 데이터 모두 삭제
                             if (user.getUserType() == UserType.CONTROLLER) {
