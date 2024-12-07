@@ -1,23 +1,25 @@
 package com.donghaeng.withme.data.message.firebasemessage;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.donghaeng.withme.data.app.ControlAllowanceListChecker;
+import com.donghaeng.withme.data.database.firestore.FireStoreManager;
 import com.donghaeng.withme.data.database.room.user.UserRepository;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.user.UserType;
+import com.donghaeng.withme.screen.setting.SharedViewModelManager;
 import com.donghaeng.withme.service.RejectionManager;
-
-import com.donghaeng.withme.data.database.firestore.FireStoreManager;
-import com.donghaeng.withme.service.AlarmService;
-import com.donghaeng.withme.service.BrightnessControlService;
 import com.donghaeng.withme.service.SettingsJobIntentService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,30 +38,45 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        if (remoteMessage.getData().isEmpty()) return;
+        if (!remoteMessage.getData().isEmpty()) {
+            Log.e("FCM Data", "Data: " + remoteMessage.getData());
 
-        Log.d(TAG, "Data: " + remoteMessage.getData());
+            String type = remoteMessage.getData().get("type");
+            if (type != null && type.equals("SettingChange")) {
+                SettingChangePayload payload = new Gson().fromJson(remoteMessage.getData().get("payload"), SettingChangePayload.class);
+                String key = payload.getKey();
+                boolean value = payload.getValue();
 
-        userRepository.getAllUsers(users -> {
-            if (users != null && !users.isEmpty()) {
-                User otherUser = users.get(0);
+                // 설정 변경 처리
+                ControlAllowanceListChecker.setValue(getApplicationContext(), key, value);
 
-                // otherUser의 타입을 확인하여 메시지 처리
-                if (otherUser.getUserType() == UserType.TARGET) {
-                    // 내가 Controller이고 Target으로부터 메시지를 받은 경우
-                    handleTargetMessage(remoteMessage.getData(), otherUser.getToken());
-                } else if (otherUser.getUserType() == UserType.CONTROLLER) {
-                    // 내가 Target이고 Controller로부터 메시지를 받은 경우
-                    handleControllerMessage(remoteMessage.getData());
-                }
+                // UI 스레드에서 SharedViewModel 업데이트
+                // LiveData를 업데이트하기 위해 UI 스레드에서 실행
+                new Handler(Looper.getMainLooper()).post(() -> SharedViewModelManager.getInstance().updateValue(key, value));
+            } else {
+                userRepository.getAllUsers(users -> {
+                    if (users != null && !users.isEmpty()) {
+                        User otherUser = users.get(0);
+
+                        // otherUser의 타입을 확인하여 메시지 처리
+                        if (otherUser.getUserType() == UserType.TARGET) {
+                            // 내가 Controller이고 Target으로부터 메시지를 받은 경우
+                            handleTargetMessage(remoteMessage.getData(), otherUser.getToken());
+                        } else if (otherUser.getUserType() == UserType.CONTROLLER) {
+                            // 내가 Target이고 Controller로부터 메시지를 받은 경우
+                            handleControllerMessage(remoteMessage.getData());
+                        }
+                    }
+                });
             }
-        });
+        }
+
     }
 
     private void handleTargetMessage(Map<String, String> data, String targetToken) {
         String commandType = data.get("commandType");
         if ("reject".equals(commandType)) {
-            if(Objects.equals(data.get("commandValue"), "accept")){
+            if (Objects.equals(data.get("commandValue"), "accept")) {
                 Log.d(TAG, "제어 허용 됨");
                 RejectionManager.getInstance(this)
                         .removeRejection(targetToken);
@@ -117,12 +134,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         Log.e("FCM NewToken", "New token save failed : " + e.getMessage());
                     }
                 });
-            }else{
+            } else {
                 Log.e("FCM NewToken", "No phoneNumber");
             }
         } catch (Exception e) {
             Log.e("FCM NewToken", "Exception : " + e.getMessage());
         }
     }
-
 }
