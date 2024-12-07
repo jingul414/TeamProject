@@ -206,14 +206,14 @@ public class ControlFragment extends Fragment {
                     adapter.refreshUI();
                 }
                 // 다음 실행 예약
-                handler.postDelayed(this, 10000); // 10초마다 갱신 (더 자주 갱신하도록 수정)
+                handler.postDelayed(this, 1000); // 1초마다 갱신 (더 자주 갱신하도록 수정)
             }
         };
 
         // 즉시 한 번 실행하고
         adapter.refreshUI();
         // 주기적 갱신 시작
-        handler.postDelayed(refreshRunnable, 10000);
+        handler.postDelayed(refreshRunnable, 1000);
     }
 
 

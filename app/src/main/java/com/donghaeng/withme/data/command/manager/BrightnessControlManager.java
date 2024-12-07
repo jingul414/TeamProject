@@ -11,6 +11,8 @@ import com.donghaeng.withme.data.command.LightMode;
 import com.donghaeng.withme.data.message.firebasemessage.SendDataMessage;
 import com.donghaeng.withme.screen.main.ControlExpandableAdapter;
 
+import java.util.List;
+
 public class BrightnessControlManager {
     private final ControlExpandableAdapter.ControlViewHolder holder;
     private final ControlExpandableAdapter adapter;
@@ -96,5 +98,9 @@ public class BrightnessControlManager {
     public void setEnabled(boolean enabled) {
         autoLight.setEnabled(enabled);
         lightSeekbar.setEnabled(enabled);
+    }
+
+    public List<View> getViews() {
+        return List.of(autoLight, lightSeekbar);
     }
 }

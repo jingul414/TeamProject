@@ -1,7 +1,10 @@
 package com.donghaeng.withme.screen.main;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
@@ -9,13 +12,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.app.ControlAllowanceListChecker;
 import com.donghaeng.withme.data.command.manager.AlarmManager;
 import com.donghaeng.withme.data.command.manager.BrightnessControlManager;
 import com.donghaeng.withme.data.command.manager.SoundControlManager;
@@ -34,6 +40,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
     private SendDataMessage sendDataMessage;
     private final RejectionManager rejectionManager;
 
+
     private static class ControlPanel {
         private final ControlListItem parentItem;
 
@@ -46,6 +53,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateItems(List<ControlListItem> newItems) {
         this.originalItems = new ArrayList<>(newItems);
         this.displayedItems = new ArrayList<>(newItems);
@@ -129,6 +137,42 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
             alarmManager.setupTimePicker();
         }
 
+        public void updateControlsBasedOnPermissions() {
+            // 각 제어 기능의 허용 여부 확인
+            boolean volumeControlAllowed = ControlAllowanceListChecker.getValue(context, ControlAllowanceListChecker.KEY_VOLUME_CONTROL);
+            boolean brightnessControlAllowed = ControlAllowanceListChecker.getValue(context, ControlAllowanceListChecker.KEY_BRIGHTNESS_CONTROL);
+            boolean alarmControlAllowed = ControlAllowanceListChecker.getValue(context, ControlAllowanceListChecker.KEY_SETTING_ALARM);
+
+            // 소리 제어 UI 업데이트
+            soundControlManager.setEnabled(volumeControlAllowed);
+            updateViewStyle(soundControlManager.getViews(), volumeControlAllowed);
+
+            // 밝기 제어 UI 업데이트
+            brightnessControlManager.setEnabled(brightnessControlAllowed);
+            updateViewStyle(brightnessControlManager.getViews(), brightnessControlAllowed);
+
+            // 알람 제어 UI 업데이트
+            alarmManager.setEnabled(alarmControlAllowed);
+            updateViewStyle(alarmManager.getViews(), alarmControlAllowed);
+        }
+
+        private void updateViewStyle(List<View> views, boolean enabled) {
+            for (View view : views) {
+                view.setAlpha(enabled ? 1.0f : 0.5f);
+
+                if (view instanceof SeekBar) {
+                    SeekBar seekBar = (SeekBar) view;
+                    if (!enabled) {
+                        seekBar.setProgressTintList(ColorStateList.valueOf(Color.GRAY));
+                        seekBar.setThumbTintList(ColorStateList.valueOf(Color.GRAY));
+                    } else {
+                        seekBar.setProgressTintList(ColorStateList.valueOf(context.getColor(R.color.white)));
+                        seekBar.setThumbTintList(ColorStateList.valueOf(context.getColor(R.color.white)));
+                    }
+                }
+            }
+        }
+
         public ControlExpandableAdapter getAdapter() {
             return adapter;
         }
@@ -173,14 +217,37 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
             boolean isRejected = rejectionManager.isRejected(targetId);
 
             if (isRejected) {
+                // 거절 상태일 때
                 int remainingMinutes = rejectionManager.getRemainingMinutes(targetId);
                 headerHolder.rejectStatusText.setVisibility(View.VISIBLE);
                 headerHolder.rejectStatusText.setText(String.format("제어 거절됨 (%d분 남음)", remainingMinutes));
                 headerHolder.itemView.setAlpha(0.5f);
             } else {
-                headerHolder.rejectStatusText.setVisibility(View.GONE);
+                // 거절 상태가 아닐 때 제어 허용 상태 표시
+                List<String> disabledControls = new ArrayList<>();
+
+                if (!ControlAllowanceListChecker.getValue(context, ControlAllowanceListChecker.KEY_VOLUME_CONTROL)) {
+                    disabledControls.add("소리 제어");
+                }
+                if (!ControlAllowanceListChecker.getValue(context, ControlAllowanceListChecker.KEY_BRIGHTNESS_CONTROL)) {
+                    disabledControls.add("밝기 제어");
+                }
+                if (!ControlAllowanceListChecker.getValue(context, ControlAllowanceListChecker.KEY_SETTING_ALARM)) {
+                    disabledControls.add("알람 설정");
+                }
+
+                if (!disabledControls.isEmpty()) {
+                    headerHolder.rejectStatusText.setVisibility(View.VISIBLE);
+                    String disabledText = String.join(", ", disabledControls) + " 거부됨";
+                    headerHolder.rejectStatusText.setText(disabledText);
+                    headerHolder.rejectStatusText.setTextColor(Color.RED);
+                } else {
+                    headerHolder.rejectStatusText.setVisibility(View.GONE);
+                }
                 headerHolder.itemView.setAlpha(1.0f);
+
             }
+
 
             // 아이템 확장 상태에 따른 화살표 방향 설정
             headerHolder.arrowIcon.setRotation(headerItem.isExpanded() ? 180 : 0);
@@ -191,8 +258,13 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
 
             // 전체 View alpha 설정
             holder.itemView.setAlpha(isRejected ? 0.5f : 1.0f);
-            // 개별 컨트롤 활성화/비활성화
-            controlHolder.setControlsEnabled(!isRejected);
+
+            // 거절 상태가 아닐 때만 권한 기반으로 컨트롤 업데이트
+            if (!isRejected) {
+                controlHolder.updateControlsBasedOnPermissions();
+            } else {
+                controlHolder.setControlsEnabled(false);
+            }
         }
     }
 

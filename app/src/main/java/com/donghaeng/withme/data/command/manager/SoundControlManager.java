@@ -15,6 +15,8 @@ import com.donghaeng.withme.data.command.SoundMode;
 import com.donghaeng.withme.data.message.firebasemessage.SendDataMessage;
 import com.donghaeng.withme.screen.main.ControlExpandableAdapter;
 
+import java.util.List;
+
 public class SoundControlManager {
     private final ControlExpandableAdapter.ControlViewHolder holder;
     private final ControlExpandableAdapter adapter;
@@ -263,5 +265,9 @@ public class SoundControlManager {
         soundButton.setEnabled(enabled);
         muteButton.setEnabled(enabled);
         soundSeekbar.setEnabled(enabled);
+    }
+
+    public List<View> getViews() {
+        return List.of(callButton, notificationButton, soundButton, muteButton, soundSeekbar);
     }
 }
