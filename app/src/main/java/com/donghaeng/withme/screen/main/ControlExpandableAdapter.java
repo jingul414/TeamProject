@@ -159,17 +159,6 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         private void updateViewStyle(List<View> views, boolean enabled) {
             for (View view : views) {
                 view.setAlpha(enabled ? 1.0f : 0.5f);
-
-                if (view instanceof SeekBar) {
-                    SeekBar seekBar = (SeekBar) view;
-                    if (!enabled) {
-                        seekBar.setProgressTintList(ColorStateList.valueOf(Color.GRAY));
-                        seekBar.setThumbTintList(ColorStateList.valueOf(Color.GRAY));
-                    } else {
-                        seekBar.setProgressTintList(ColorStateList.valueOf(context.getColor(R.color.white)));
-                        seekBar.setThumbTintList(ColorStateList.valueOf(context.getColor(R.color.white)));
-                    }
-                }
             }
         }
 
