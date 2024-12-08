@@ -41,7 +41,7 @@
     <string name="user_phone_number">010-0000-0000</string>
     <string name="change_number">전화번호 바꾸기</string>
     <string name="change_pw">비밀번호 바꾸기</string>
-    <string name="permit_list">제어 허용 목록</string> <!-- TODO: 동행 허용 목록 > 더 직관적인 단어 필요하다고 생각 -->
+    <string name="permit_list">동행 허용 목록</string> <!-- TODO: 동행 허용 목록 > 더 직관적인 단어 필요하다고 생각 -->
     <string name="leave">동행 멈추기(탈퇴)</string>
     <string name="logout">로그아웃</string>
 
