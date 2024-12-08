@@ -8,11 +8,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import android.provider.AlarmClock;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.donghaeng.withme.R;
 
-import com.donghaeng.withme.data.user.Controller;
 import com.donghaeng.withme.screen.start.StartActivity;
 import com.donghaeng.withme.screen.start.connect.TargetConnectFragment;
 import com.donghaeng.withme.data.user.User;
@@ -64,4 +66,6 @@ public class TargetActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // 이전 액티비티 종료
         startActivity(intent);
     }
+
+
 }

@@ -1,7 +1,12 @@
 package com.donghaeng.withme.screen.main;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +17,7 @@ import com.donghaeng.withme.R;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +37,9 @@ public class ControlFragment extends Fragment {
     private User user;
     private UserRepository repository;
     private long backPressedTime = 0;
+
+    private Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable refreshRunnable;
 
 
     public ControlFragment() {
@@ -99,6 +108,33 @@ public class ControlFragment extends Fragment {
         return view;
     }
 
+    private BroadcastReceiver rejectionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if ("REJECTION_STATUS_CHANGED".equals(intent.getAction())) {
+                if (adapter != null) {
+                    adapter.refreshUI();
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        startPeriodicRefresh();
+        LocalBroadcastManager.getInstance(requireContext())
+                .registerReceiver(rejectionReceiver, new IntentFilter("REJECTION_STATUS_CHANGED"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopPeriodicRefresh();
+        LocalBroadcastManager.getInstance(requireContext())
+                .unregisterReceiver(rejectionReceiver);
+    }
+
     private void loadTarget() {
         if (user == null) {
             return;
@@ -155,5 +191,36 @@ public class ControlFragment extends Fragment {
             }
             return true;
         });
+    }
+
+    private void startPeriodicRefresh() {
+        // 이전 runnable이 있다면 제거
+        if (refreshRunnable != null) {
+            handler.removeCallbacks(refreshRunnable);
+        }
+
+        refreshRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (adapter != null) {
+                    adapter.refreshUI();
+                }
+                // 다음 실행 예약
+                handler.postDelayed(this, 1000); // 1초마다 갱신 (더 자주 갱신하도록 수정)
+            }
+        };
+
+        // 즉시 한 번 실행하고
+        adapter.refreshUI();
+        // 주기적 갱신 시작
+        handler.postDelayed(refreshRunnable, 1000);
+    }
+
+
+
+    private void stopPeriodicRefresh() {
+        if (refreshRunnable != null) {
+            handler.removeCallbacks(refreshRunnable);
+        }
     }
 }

@@ -1,7 +1,10 @@
 package com.donghaeng.withme.screen.main;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
@@ -9,19 +12,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.app.ControlAllowanceListChecker;
 import com.donghaeng.withme.data.command.manager.AlarmManager;
 import com.donghaeng.withme.data.command.manager.BrightnessControlManager;
 import com.donghaeng.withme.data.command.manager.SoundControlManager;
 import com.donghaeng.withme.data.message.firebasemessage.SendDataMessage;
 import com.donghaeng.withme.screen.guide.ListItem;
 import com.donghaeng.withme.service.BrightnessControlService;
+import com.donghaeng.withme.service.RejectionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +38,22 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
     private Context context;
     private List<ControlListItem> originalItems;
     private SendDataMessage sendDataMessage;
+    private final RejectionManager rejectionManager;
 
+
+    private static class ControlPanel {
+        private final ControlListItem parentItem;
+
+        public ControlPanel(ControlListItem parentItem) {
+            this.parentItem = parentItem;
+        }
+
+        public ControlListItem getParentItem() {
+            return parentItem;
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
     public void updateItems(List<ControlListItem> newItems) {
         this.originalItems = new ArrayList<>(newItems);
         this.displayedItems = new ArrayList<>(newItems);
@@ -40,6 +62,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public ControlExpandableAdapter(Context context, List<ControlListItem> items) {
         this.context = context;
+        this.rejectionManager = RejectionManager.getInstance(context);
         this.originalItems = new ArrayList<>(items);
         this.displayedItems = new ArrayList<>(items);
         this.sendDataMessage = new SendDataMessage();
@@ -47,7 +70,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public class HeaderViewHolder extends RecyclerView.ViewHolder {
         ImageView profileImage;
-        TextView nameText;
+        TextView nameText, rejectStatusText;
         ImageView arrowIcon;
 
         public HeaderViewHolder(@NonNull View itemView) {
@@ -55,6 +78,7 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
             profileImage = itemView.findViewById(R.id.profileImage);
             nameText = itemView.findViewById(R.id.nameText);
             arrowIcon = itemView.findViewById(R.id.arrowIcon);
+            rejectStatusText = itemView.findViewById(R.id.rejectStatusText);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -62,6 +86,11 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
                     Object item = displayedItems.get(position);
                     if (item instanceof ControlListItem) {
                         ControlListItem headerItem = (ControlListItem) item;
+                        // 거절 상태일 때는 확장/축소 불가
+                        if (rejectionManager.isRejected(headerItem.getId())) {
+                            return;
+                        }
+
                         if (headerItem.isExpanded()) {
                             collapseItem(position);
                             arrowIcon.setRotation(0);
@@ -108,8 +137,44 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
             alarmManager.setupTimePicker();
         }
 
+        public void updateControlsBasedOnPermissions() {
+            // 각 제어 기능의 허용 여부 확인
+            boolean volumeControlAllowed = ControlAllowanceListChecker.getValue(context, ControlAllowanceListChecker.KEY_VOLUME_CONTROL);
+            boolean brightnessControlAllowed = ControlAllowanceListChecker.getValue(context, ControlAllowanceListChecker.KEY_BRIGHTNESS_CONTROL);
+            boolean alarmControlAllowed = ControlAllowanceListChecker.getValue(context, ControlAllowanceListChecker.KEY_SETTING_ALARM);
+
+            // 소리 제어 UI 업데이트
+            soundControlManager.setEnabled(volumeControlAllowed);
+            updateViewStyle(soundControlManager.getViews(), volumeControlAllowed);
+
+            // 밝기 제어 UI 업데이트
+            brightnessControlManager.setEnabled(brightnessControlAllowed);
+            updateViewStyle(brightnessControlManager.getViews(), brightnessControlAllowed);
+
+            // 알람 제어 UI 업데이트
+            alarmManager.setEnabled(alarmControlAllowed);
+            updateViewStyle(alarmManager.getViews(), alarmControlAllowed);
+        }
+
+        private void updateViewStyle(List<View> views, boolean enabled) {
+            for (View view : views) {
+                view.setAlpha(enabled ? 1.0f : 0.5f);
+            }
+        }
+
         public ControlExpandableAdapter getAdapter() {
             return adapter;
+        }
+
+        public void setControlsEnabled(boolean enabled) {
+            // 소리 제어 위젯들 활성화/비활성화
+            soundControlManager.setEnabled(enabled);
+
+            // 밝기 제어 위젯들 활성화/비활성화
+            brightnessControlManager.setEnabled(enabled);
+
+            // 알람 제어 위젯들 활성화/비활성화
+            alarmManager.setEnabled(enabled);
         }
     }
 
@@ -133,10 +198,65 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         if (holder instanceof HeaderViewHolder) {
             HeaderViewHolder headerHolder = (HeaderViewHolder) holder;
             ControlListItem headerItem = (ControlListItem) item;
+
+            // 이름 설정 추가
             headerHolder.nameText.setText(headerItem.getTitle());
+
+            String targetId = headerItem.getId();
+            boolean isRejected = rejectionManager.isRejected(targetId);
+
+            if (isRejected) {
+                // 거절 상태일 때
+                int remainingMinutes = rejectionManager.getRemainingMinutes(targetId);
+                headerHolder.rejectStatusText.setVisibility(View.VISIBLE);
+                headerHolder.rejectStatusText.setText(String.format("제어 거절됨 (%d분 남음)", remainingMinutes));
+                headerHolder.itemView.setAlpha(0.5f);
+            } else {
+                // 거절 상태가 아닐 때 제어 허용 상태 표시
+                List<String> disabledControls = new ArrayList<>();
+
+                if (!ControlAllowanceListChecker.getValue(context, ControlAllowanceListChecker.KEY_VOLUME_CONTROL)) {
+                    disabledControls.add("소리 제어");
+                }
+                if (!ControlAllowanceListChecker.getValue(context, ControlAllowanceListChecker.KEY_BRIGHTNESS_CONTROL)) {
+                    disabledControls.add("밝기 제어");
+                }
+                if (!ControlAllowanceListChecker.getValue(context, ControlAllowanceListChecker.KEY_SETTING_ALARM)) {
+                    disabledControls.add("알람 설정");
+                }
+
+                if (!disabledControls.isEmpty()) {
+                    headerHolder.rejectStatusText.setVisibility(View.VISIBLE);
+                    String disabledText = String.join(", ", disabledControls) + " 거부됨";
+                    headerHolder.rejectStatusText.setText(disabledText);
+                    headerHolder.rejectStatusText.setTextColor(Color.RED);
+                } else {
+                    headerHolder.rejectStatusText.setVisibility(View.GONE);
+                }
+                headerHolder.itemView.setAlpha(1.0f);
+
+            }
+
+
+            // 아이템 확장 상태에 따른 화살표 방향 설정
             headerHolder.arrowIcon.setRotation(headerItem.isExpanded() ? 180 : 0);
+        } else if (holder instanceof ControlViewHolder) {
+            ControlViewHolder controlHolder = (ControlViewHolder) holder;
+            String targetId = findItem(position);
+            boolean isRejected = rejectionManager.isRejected(targetId);
+
+            // 전체 View alpha 설정
+            holder.itemView.setAlpha(isRejected ? 0.5f : 1.0f);
+
+            // 거절 상태가 아닐 때만 권한 기반으로 컨트롤 업데이트
+            if (!isRejected) {
+                controlHolder.updateControlsBasedOnPermissions();
+            } else {
+                controlHolder.setControlsEnabled(false);
+            }
         }
     }
+
 
     @Override
     public int getItemViewType(int position) {
@@ -254,11 +374,8 @@ public class ControlExpandableAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    private static class ControlPanel {
-        private ControlListItem parentItem;
-
-        public ControlPanel(ControlListItem parentItem) {
-            this.parentItem = parentItem;
-        }
+    // UI 갱신을 위한 메서드 추가
+    public void refreshUI() {
+        notifyDataSetChanged();
     }
 }

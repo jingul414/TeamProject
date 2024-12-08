@@ -16,7 +16,9 @@ import android.os.Looper;
 
 import androidx.core.app.NotificationCompat;
 
+import com.donghaeng.withme.screen.SplashActivity;
 import com.donghaeng.withme.screen.main.ControllerActivity;
+import com.donghaeng.withme.screen.main.TargetActivity;
 
 public class AlarmService extends Service {
     private static final String CHANNEL_ID = "AlarmServiceChannel";
@@ -30,22 +32,19 @@ public class AlarmService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // 서비스 시작 시 즉시 Foreground 상태로 전환
+        Notification notification = createInitialNotification();
+        startForeground(NOTIFICATION_ID, notification);
+
         int hour = intent.getIntExtra("hour", 0);
         int minute = intent.getIntExtra("minute", 0);
 
-        // Foreground 서비스 시작을 위한 알림
-        Notification initialNotification = createInitialNotification();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            startForeground(NOTIFICATION_ID, initialNotification,
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE);
-        } else {
-            startForeground(NOTIFICATION_ID, initialNotification);
-        }
-        // 5초 후에 알람 설정 알림 표시
+        // 2초 후에 알람 설정 알림 표시
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             showAlarmNotification(hour, minute);
-        }, 5000);
+            // 작업 완료 후 서비스 종료
+            stopSelf();
+        }, 2000);
 
         return START_NOT_STICKY;
     }
@@ -60,7 +59,7 @@ public class AlarmService extends Service {
     }
 
     private void showAlarmNotification(int hour, int minute) {
-        Intent notificationIntent = new Intent(this, ControllerActivity.class)
+        Intent notificationIntent = new Intent(this, SplashActivity.class)
                 .putExtra("SET_ALARM", true)
                 .putExtra("ALARM_HOUR", hour)
                 .putExtra("ALARM_MINUTE", minute);

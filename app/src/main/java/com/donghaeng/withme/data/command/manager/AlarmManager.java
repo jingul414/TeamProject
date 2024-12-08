@@ -10,6 +10,7 @@ import com.donghaeng.withme.data.message.firebasemessage.SendDataMessage;
 import com.donghaeng.withme.screen.main.ControlExpandableAdapter;
 
 import java.util.Calendar;
+import java.util.List;
 
 public class AlarmManager {
     private final ControlExpandableAdapter.ControlViewHolder holder;
@@ -59,4 +60,13 @@ public class AlarmManager {
         });
     }
 
+    public void setEnabled(boolean enabled) {
+        setAlarmButton.setEnabled(enabled);
+        hourPicker.setEnabled(enabled);
+        minutePicker.setEnabled(enabled);
+    }
+
+    public List<View> getViews() {
+        return List.of(setAlarmButton, hourPicker, minutePicker);
+    }
 }

@@ -1,7 +1,5 @@
 package com.donghaeng.withme.screen.guide;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -145,6 +143,26 @@ public class GuideInputFragment extends Fragment {
         String title = binding.editTextTitle.getText().toString();
         if (title.isEmpty()) {
             Toast.makeText(getContext(), "제목을 입력해주세요", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 컨텐츠 유효성 검사 추가
+        if (contentList.isEmpty()) {
+            Toast.makeText(getContext(), "최소 하나 이상의 컨텐츠를 추가해주세요", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 이미지만 있는 경우 체크
+        boolean hasText = false;
+        for (GuideContent content : contentList) {
+            if (content.type.equals("text")) {
+                hasText = true;
+                break;
+            }
+        }
+
+        if (!hasText) {
+            Toast.makeText(getContext(), "설명 텍스트를 최소 하나 이상 추가해주세요", Toast.LENGTH_SHORT).show();
             return;
         }
 

@@ -3,6 +3,7 @@ package com.donghaeng.withme.login;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,7 +73,7 @@ public class SignUp {
     }
 
     // 전화번호 인증 과정
-    public void initializePhoneAuth() {
+    public void initializePhoneAuth(TextView verificationCodeNotificationText, EditText verificationCodeEdit, Button nextBtn) {
         mAuth = FirebaseAuth.getInstance();
         mAuth.useAppLanguage();
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -119,6 +120,11 @@ public class SignUp {
                 // 나중에 사용할 수 있도록 인증 ID를 저장하고 토큰을 다시 보내기
                 mVerificationId = verificationId;
                 mResendToken = token;
+
+                // UI 업데이트
+                verificationCodeNotificationText.setVisibility(View.VISIBLE);
+                verificationCodeEdit.setVisibility(View.VISIBLE);
+                nextBtn.setVisibility(View.VISIBLE);
             }
 
             @Override

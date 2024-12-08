@@ -11,17 +11,36 @@ import android.view.ViewGroup;
 
 import com.donghaeng.withme.R;
 import com.donghaeng.withme.data.app.ControlAllowanceListChecker;
+import com.donghaeng.withme.data.message.firebasemessage.SendDataMessage;
+import com.donghaeng.withme.data.message.firebasemessage.SettingChangePayload;
+import com.donghaeng.withme.data.user.Target;
+import com.donghaeng.withme.data.user.User;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 /* 제어 허용 목록 (피제어자) */
 public class FragmentTargetOpt extends Fragment {
     private SharedViewModel sharedViewModel;
+    private User user;
+
+    public FragmentTargetOpt() {
+        // Required empty public constructor
+    }
+
+    public static Fragment newInstance(User user) {
+        FragmentTargetOpt fragment = new FragmentTargetOpt();
+        Bundle args = new Bundle();
+        args.putParcelable("user", user);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (getArguments() != null) {
+            user = getArguments().getParcelable("user");
+        }
     }
 
     @Override
@@ -61,7 +80,10 @@ public class FragmentTargetOpt extends Fragment {
             }
 
             // 토글 상태 변경 시 SharedViewModel에 반영
-            toggle.setOnCheckedChangeListener((buttonView, isChecked) -> sharedViewModel.setToggle(key, isChecked));
+            toggle.setOnCheckedChangeListener((buttonView, isChecked) -> sharedViewModel.setToggle(key, isChecked, () -> {
+                SettingChangePayload payload = new SettingChangePayload(key, isChecked);
+                new SendDataMessage().sendCommand(((Target)user).getController().getToken(), "SettingChange", payload);
+            }));
         }
 
         View back = view.findViewById(R.id.back);

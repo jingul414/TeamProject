@@ -40,6 +40,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/control_time"
+            style="@style/app_one_line_text"
+            android:autoSizeMaxTextSize="18sp"
             android:textSize="18sp" />}
 
 

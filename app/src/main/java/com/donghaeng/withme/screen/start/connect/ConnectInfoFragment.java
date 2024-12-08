@@ -6,6 +6,7 @@ import androidx.annotation.OptIn;
 import androidx.camera.core.ExperimentalGetImage;
 import androidx.fragment.app.Fragment;
 
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,8 @@ import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.user.UserType;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.gson.Gson;
+
+import java.util.Locale;
 
 
 public class ConnectInfoFragment extends Fragment {
@@ -88,7 +91,7 @@ public class ConnectInfoFragment extends Fragment {
             }
             nameTextView.setText(opponent.getName());
             // 하이픈 넣고 싶으면 넣기
-            phoneTextView.setText(opponent.getPhone());
+            phoneTextView.setText(PhoneNumberUtils.formatNumber(opponent.getPhone(), Locale.getDefault().getCountry()));
         }
         Button yesBtn = view.findViewById(R.id.yes_button);
         yesBtn.setOnClickListener(new YesBtnListener());
@@ -103,7 +106,7 @@ public class ConnectInfoFragment extends Fragment {
                 }
                 // 상위 프래그먼트가 TargetConnectFragment인 경우
                 if (connectFragment instanceof TargetConnectFragment) {
-                    ((TargetConnectFragment) connectFragment).getChildFragmentManager()
+                    connectFragment.getChildFragmentManager()
                             .beginTransaction()
                             .replace(R.id.child_fragment, TargetQrFragment.newInstance(user))
                             .commit();
@@ -116,7 +119,7 @@ public class ConnectInfoFragment extends Fragment {
                 }
                 // 상위 프래그먼트가 ControllerConnectFragment인 경우
                 if (connectFragment instanceof ControllerConnectFragment) {
-                    ((ControllerConnectFragment) connectFragment).getChildFragmentManager()
+                    connectFragment.getChildFragmentManager()
                             .beginTransaction()
                             .replace(R.id.child_fragment, ControllerQrFragment.newInstance(user))
                             .commit();

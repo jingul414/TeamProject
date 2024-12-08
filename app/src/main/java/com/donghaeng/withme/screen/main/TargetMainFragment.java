@@ -1,6 +1,5 @@
 package com.donghaeng.withme.screen.main;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -8,6 +7,8 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 
 import android.os.Parcelable;
@@ -18,23 +19,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.data.processor.PhoneFormatUtil;
+import com.donghaeng.withme.data.message.firebasemessage.SendDataMessage;
 import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.data.database.room.user.UserRepository;
-import com.donghaeng.withme.data.user.User;
 import com.donghaeng.withme.screen.guide.GuideActivity;
 import com.donghaeng.withme.screen.setting.SettingActivity;
-import com.donghaeng.withme.screen.start.connect.TargetQrFragment;
+import com.donghaeng.withme.service.RejectionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class TargetMainFragment extends Fragment {
     private static final String TAG = "TargetMainFragment";
@@ -88,7 +84,7 @@ public class TargetMainFragment extends Fragment {
         });
 
         if (getArguments() != null) {
-            user = getArguments().getParcelable("user");
+            user = getArguments().getParcelable(ARG_USER);
         }
         db = FirebaseFirestore.getInstance();
         repository = new UserRepository(requireContext());
@@ -111,7 +107,75 @@ public class TargetMainFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView);
         controllerNameTextView = view.findViewById(R.id.name_textview);
         controllerPhoneNumberTextView = view.findViewById(R.id.number_textview);
+        TextView controlStatusText = view.findViewById(R.id.control_status_text);
+
+        SendDataMessage sendDataMessage = new SendDataMessage();
+
+        View allowButton = view.findViewById(R.id.accept_btn);
+        View rejectButton = view.findViewById(R.id.reject_btn);
+
+        // 초기 상태 확인 및 설정
+        repository.getAllUsers(users -> {
+            for (User controller : users) {
+                if (controller != null) {
+                    boolean isRejected = RejectionManager.getInstance(requireContext())
+                            .isRejected(controller.getToken());
+                    updateControlStatus(controlStatusText, isRejected, controller.getToken());
+                    break;
+                }
+            }
+        });
+
+        rejectButton.setOnClickListener(v -> {
+            repository.getAllUsers(users -> {
+                for (User controller : users) {
+                    if (controller != null) {
+                        TimeRejectDialog dialog = new TimeRejectDialog(requireContext(), controller.getToken());
+                        dialog.setOnDismissListener(dialogInterface -> {
+                            if (isAdded()) {
+                                requireActivity().runOnUiThread(() -> {
+                                    updateControlStatus(controlStatusText, true, controller.getToken());
+                                });
+                            }
+                        });
+                        dialog.show();
+                        break;
+                    }
+                }
+            });
+        });
+
+        allowButton.setOnClickListener(v -> {
+            repository.getAllUsers(users -> {
+                for (User controller : users) {
+                    if (controller != null) {
+                        sendDataMessage.sendDataMessage(controller.getToken(), "reject", "accept");
+                        RejectionManager.getInstance(requireContext())
+                                .removeRejection(controller.getToken());
+                        if (isAdded()) {
+                            requireActivity().runOnUiThread(() -> {
+                                updateControlStatus(controlStatusText, false, controller.getToken());
+                            });
+                        }
+                        break;
+                    }
+                }
+            });
+        });
     }
+
+    private void updateControlStatus(TextView statusText, boolean isRejected, String token) {
+        if (isRejected) {
+            int remainingMinutes = RejectionManager.getInstance(requireContext())
+                    .getRemainingMinutes(token);
+            statusText.setText(String.format("제어 거절 상태 (%d분 남음)", remainingMinutes));
+            statusText.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+        } else {
+            statusText.setText("제어 허용 상태");
+            statusText.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+        }
+    }
+
 
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -131,7 +195,6 @@ public class TargetMainFragment extends Fragment {
                     Log.e(TAG, "Controller is null!");
                     continue;
                 }
-
                 updateControllerInfo(controller);
                 setupRealtimeUpdates(user.getId(), controller.getId());
             }
@@ -140,34 +203,9 @@ public class TargetMainFragment extends Fragment {
 
     private void updateControllerInfo(User controller) {
         controllerNameTextView.setText(controller.getName());
-        controllerPhoneNumberTextView.setText(PhoneFormatUtil.phone(controller.getPhone()));
+        controllerPhoneNumberTextView.setText(PhoneNumberUtils.formatNumber(controller.getPhone(), Locale.getDefault().getCountry()));
     }
 
-    private void writeLogData(User controller) {
-        // TODO: 현재로서는 피제어자가 쓸 이유가 없음. 롤백 기능 구현하거나, 제어자에서 코드 사용하면 됨.
-        String time = getCurrentTime();
-
-        Map<String, Object> logData = new HashMap<>();
-        logData.put("control", "테스트");
-        logData.put("name", controller.getName());
-        logData.put("time", time);
-
-        DocumentReference docRef = db.collection("log")
-                .document(user.getId())
-                .collection(controller.getId())
-                .document(String.valueOf(System.currentTimeMillis()));
-
-        docRef.set(logData)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "로그 기록 성공!"))
-                .addOnFailureListener(e -> Log.e(TAG, "로그 기록 실패", e));
-    }
-
-    private String getCurrentTime() {
-        Calendar calendar = Calendar.getInstance();  // 현재 시간 불러오기
-        Date currentDate = calendar.getTime();
-        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초", Locale.KOREAN);
-        return outputFormat.format(currentDate);
-    }
 
     private void setupRealtimeUpdates(String userId, String controllerId) {
         db.collection("log")
