@@ -1,6 +1,7 @@
 package com.donghaeng.withme.screen.guide;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.R;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -27,24 +30,33 @@ public class GuideContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private List<GuideItem> items;
     private Context context;
+    private FirebaseStorage storage;
+
 
     public GuideContentAdapter(Context context, String jsonContent) {
         this.context = context;
         this.items = parseJson(jsonContent);
+        this.storage = FirebaseStorage.getInstance();
     }
 
     private List<GuideItem> parseJson(String jsonContent) {
         List<GuideItem> guideItems = new ArrayList<>();
         try {
-            JSONArray jsonArray = new JSONArray(jsonContent);
+            JSONObject jsonObject = new JSONObject(jsonContent);
+            Log.d("GuideContentAdapter", "Parsing JSON: " + jsonContent);  // 로그 추가
+            JSONArray jsonArray = jsonObject.getJSONArray("content");  // "content" 키의 배열을 가져옴
+
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject item = jsonArray.getJSONObject(i);
-                guideItems.add(new GuideItem(
+                GuideItem guideItem = new GuideItem(
                         item.getString("type"),
                         item.getString("value")
-                ));
+                );
+                guideItems.add(guideItem);
+                Log.d("GuideContentAdapter", "Added item: " + guideItem);  // 로그 추가
             }
         } catch (JSONException e) {
+            Log.e("GuideContentAdapter", "Error parsing JSON", e);  // 에러 로그 추가
             e.printStackTrace();
         }
         return guideItems;
@@ -78,11 +90,26 @@ public class GuideContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (holder instanceof ImageViewHolder) {
             ImageViewHolder imageHolder = (ImageViewHolder) holder;
             // 로컬 파일에서 이미지 로드
-            // TODO 이미지 어떻게 저장 되있는거? 안불러와짐
-            Picasso.get()
-                    .load(new File(item.getValue().replace("file://", "")))
-                    .into(imageHolder.imageView);
+            loadFirebaseImage(item.getValue(), imageHolder.imageView);
         }
+    }
+
+    private void loadFirebaseImage(String gsUrl, ImageView imageView) {
+        // gs:// URL을 StorageReference로 변환
+        StorageReference gsReference = storage.getReferenceFromUrl(gsUrl);
+
+        // 다운로드 URL 가져오기
+        gsReference.getDownloadUrl().addOnSuccessListener(uri -> {
+            // Picasso로 이미지 로드
+            Picasso.get()
+                    .load(uri)
+                    .placeholder(R.drawable.placeholder) // 로딩 중 표시할 이미지
+                    .error(R.drawable.error_image) // 에러 시 표시할 이미지
+                    .into(imageView);
+        }).addOnFailureListener(exception -> {
+            // 에러 처리
+            exception.printStackTrace();
+        });
     }
 
     @Override

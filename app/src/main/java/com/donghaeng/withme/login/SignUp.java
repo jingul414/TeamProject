@@ -3,6 +3,7 @@ package com.donghaeng.withme.login;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,10 +12,10 @@ import androidx.annotation.NonNull;
 
 import com.donghaeng.withme.exception.phonenumber.EmptyPhoneNumberException;
 import com.donghaeng.withme.exception.phonenumber.InvalidPhoneNumberException;
-import com.donghaeng.withme.firebasestore.FireStoreManager;
+import com.donghaeng.withme.data.database.firestore.FireStoreManager;
 import com.donghaeng.withme.screen.start.StartActivity;
-import com.donghaeng.withme.user.Undefined;
-import com.donghaeng.withme.user.User;
+import com.donghaeng.withme.data.user.Undefined;
+import com.donghaeng.withme.data.user.User;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,7 +46,7 @@ public class SignUp {
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
-    private FireStoreManager db;
+    private FireStoreManager firestoreManager;
 
     // 비밀번호 경고문
     private Handler handler;
@@ -72,7 +73,7 @@ public class SignUp {
     }
 
     // 전화번호 인증 과정
-    public void initializePhoneAuth() {
+    public void initializePhoneAuth(TextView verificationCodeNotificationText, EditText verificationCodeEdit, Button nextBtn) {
         mAuth = FirebaseAuth.getInstance();
         mAuth.useAppLanguage();
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -119,6 +120,11 @@ public class SignUp {
                 // 나중에 사용할 수 있도록 인증 ID를 저장하고 토큰을 다시 보내기
                 mVerificationId = verificationId;
                 mResendToken = token;
+
+                // UI 업데이트
+                verificationCodeNotificationText.setVisibility(View.VISIBLE);
+                verificationCodeEdit.setVisibility(View.VISIBLE);
+                nextBtn.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -254,8 +260,8 @@ public class SignUp {
     }
 
     public void setUserData(){
-        db = FireStoreManager.getInstance();
-        db.setUserData(user,new FireStoreManager.FirestoreCallback() {
+        firestoreManager = FireStoreManager.getInstance();
+        firestoreManager.setUserData(user,new FireStoreManager.firestoreCallback() {
             @Override
             public void onSuccess(Object result) {
                 Log.e("Firestore", result.toString());

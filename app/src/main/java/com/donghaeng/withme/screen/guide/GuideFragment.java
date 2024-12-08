@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.data.user.UserType;
+import com.donghaeng.withme.screen.main.TargetMainFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +25,19 @@ public class GuideFragment extends Fragment {
     private ExpandableAdapter adapter;
     private GuideActivity activity;
     private View back;
+    private Button controlInputButton, controlDeleteButton;
+    private User user;
 
     public GuideFragment() {
         // Required empty public constructor
+    }
+
+    public static GuideFragment newInstance(User user) {
+        GuideFragment fragment = new GuideFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("user", user);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     public static GuideFragment newInstance() {
@@ -34,6 +47,9 @@ public class GuideFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments() != null){
+            user = getArguments().getParcelable("user");
+        }
     }
 
     @Override
@@ -50,6 +66,21 @@ public class GuideFragment extends Fragment {
             activity.onBackPressed();
         });
 
+        controlInputButton = view.findViewById(R.id.control_input_button);
+        controlDeleteButton = view.findViewById(R.id.control_delete_button);
+        if(user.getUserType() == UserType.TARGET){
+            controlInputButton.setVisibility(View.INVISIBLE);
+            controlInputButton.setClickable(false);
+            controlDeleteButton.setVisibility(View.INVISIBLE);
+            controlDeleteButton.setClickable(false);
+        }
+        controlInputButton.setOnClickListener(v -> {
+            activity.changeFragment(GuideInputFragment.newInstance(user));
+        });
+        controlDeleteButton.setOnClickListener(v -> {
+            GuideDeleteDialog dialog = new GuideDeleteDialog(requireContext(), user.getId());
+            dialog.show();
+        });
 
         // 처음 리스트 헤더들 설정
         List<ListItem> items = new ArrayList<>();
@@ -71,9 +102,10 @@ public class GuideFragment extends Fragment {
         DataRepository.getInstance().clearCache();
     }
 
-    public void changeFragment(Fragment fragment) {
+    public void changeFragment(Fragment fragment){
         activity.changeFragment(fragment);
     }
+
 
     public GuideActivity getGuideActivity() {
         return activity;

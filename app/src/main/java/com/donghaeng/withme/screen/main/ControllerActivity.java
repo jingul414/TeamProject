@@ -1,7 +1,10 @@
 package com.donghaeng.withme.screen.main;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.AlarmClock;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,28 +13,31 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.screen.start.StartActivity;
 import com.donghaeng.withme.screen.start.connect.ControllerConnectFragment;
+import com.donghaeng.withme.data.user.User;
 
 public class ControllerActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_controller);
 
+        User user = getIntent().getParcelableExtra("user");
+
         // Fragment 초기화 로직을 분리
         if (savedInstanceState == null && getIntent().getStringExtra("fragmentName") != null) {
             if(getIntent().getStringExtra("fragmentName").equals("controller_QR")){
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .add(R.id.fragment_container, new ControllerConnectFragment())
+                        .add(R.id.fragment_container, ControllerConnectFragment.newInstance(user))
                         .commit();
             }
         } else{
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment_container, new ControlFragment())
+                    .add(R.id.fragment_container, ControlFragment.newInstance(user))
                     .commit();
         }
 
@@ -43,10 +49,19 @@ public class ControllerActivity extends AppCompatActivity {
         });
     }
 
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         // 뒤로가기 애니메이션 설정
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    // ConnectInfoActivity에서 yes 버튼을 눌렀을 때 호출
+    public void onConnectionComplete() {
+        Intent intent = new Intent(this, StartActivity.class);
+        intent.putExtra("fragmentName", "LoginFragment");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // 이전 액티비티 종료
+        startActivity(intent);
     }
 }

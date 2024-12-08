@@ -3,6 +3,7 @@ package com.donghaeng.withme.screen.start;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
@@ -14,8 +15,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.app.ScreenChecker;
 import com.donghaeng.withme.login.Login;
 import com.donghaeng.withme.login.SignUp;
+import com.donghaeng.withme.screen.ScreenList;
 import com.donghaeng.withme.screen.guide.GuideActivity;
 import com.donghaeng.withme.screen.start.connect.SelectFragment;
 import com.donghaeng.withme.screen.start.login.LoginFragment;
@@ -24,7 +27,10 @@ import com.donghaeng.withme.screen.main.TargetActivity;
 import com.donghaeng.withme.screen.start.signup.SignupNameFragment;
 import com.donghaeng.withme.screen.start.signup.SignupVerifyingPhoneNumberFragment;
 import com.donghaeng.withme.screen.start.signup.SignupPassWordFragment;
-import com.donghaeng.withme.user.User;
+import com.donghaeng.withme.data.user.Controller;
+import com.donghaeng.withme.data.user.Target;
+import com.donghaeng.withme.data.user.Undefined;
+import com.donghaeng.withme.data.user.User;
 
 public class StartActivity extends AppCompatActivity {
     // 회원가입, 로그인 객체
@@ -32,8 +38,6 @@ public class StartActivity extends AppCompatActivity {
     private Login login;
     private User user;
 
-    // 화면 이동용 임시 버튼
-    Button guide_btn, control_btn, target_btn;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -42,21 +46,15 @@ public class StartActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_start);
 
-        // 화면 이동용 임시 버튼 초기화
-        guide_btn = findViewById(R.id.guide_button);
-        control_btn = findViewById(R.id.control_button);
-        target_btn = findViewById(R.id.target_button);
-        // 화면 이동용 임시 버튼 클릭 리스너 설정
-        guide_btn.setOnClickListener(v -> startActivity(new Intent(this, GuideActivity.class)));
-        control_btn.setOnClickListener(v -> startActivity(new Intent(this, ControllerActivity.class)));
-        target_btn.setOnClickListener(v -> startActivity(new Intent(this, TargetActivity.class)));
-
         // Fragment 초기화 로직을 분리
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.fragment_container, new StartFragment())
                     .commit();
+            if (getIntent().getStringExtra("fragmentName") != null) {
+                changeFragment(getIntent().getStringExtra("fragmentName"));
+            }
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -66,7 +64,7 @@ public class StartActivity extends AppCompatActivity {
         });
     }
 
-    public void changeFragment(String fragmentName){
+    public void changeFragment(String fragmentName) {
         // 액티비티가 유효한 상태인지 확인
         if (!isFinishing() && !isDestroyed()) {
             Intent intent = null;
@@ -82,45 +80,56 @@ public class StartActivity extends AppCompatActivity {
             switch (fragmentName) {
                 case "controller":
                     intent = new Intent(this, ControllerActivity.class);
+                    intent.putExtra("user", (Parcelable) user);
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     // 선택적: 현재 액티비티 종료
                     // finish();
                     break;
-                case "LoginFragment":
+                case "target":
+                    intent = new Intent(this, TargetActivity.class);
+                    intent.putExtra("user", (Parcelable) user);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    break;
+                case ScreenList.FRAGMENT.LOGIN:
+                    ScreenChecker.setInitialScreen(this, ScreenList.FRAGMENT.LOGIN);
                     transaction.replace(R.id.fragment_container, new LoginFragment());
                     transaction.addToBackStack(null); // 뒤로가기 지원
                     transaction.commit();
                     break;
-                case "SignupNameFragment":  // StartFragment.java에서 "signUp"으로 호출했으므로 케이스도 "signUp"으로 수정
+                case ScreenList.FRAGMENT.SIGNUP_NAME:  // StartFragment.java에서 "signUp"으로 호출했으므로 케이스도 "signUp"으로 수정
+                    ScreenChecker.setInitialScreen(this, ScreenList.FRAGMENT.SIGNUP_NAME);
                     transaction.replace(R.id.fragment_container, new SignupNameFragment());
                     transaction.addToBackStack(null); // 뒤로가기 지원
                     transaction.commit();
                     break;
-                case "SignupVerifyingPhoneNumberFragment":
+                case ScreenList.FRAGMENT.SIGNUP_PHONE:
                     transaction.replace(R.id.fragment_container, new SignupVerifyingPhoneNumberFragment());
                     transaction.addToBackStack(null); // 뒤로가기 지원
                     transaction.commit();
                     break;
-                case "SignupPassWordFragment":
+                case ScreenList.FRAGMENT.SIGNUP_PASSWORD:
                     transaction.replace(R.id.fragment_container, new SignupPassWordFragment());
                     transaction.addToBackStack(null); // 뒤로가기 지원
                     transaction.commit();
                     break;
-                case "SelectFragment":
+                case ScreenList.FRAGMENT.SELECT:
                     transaction.replace(R.id.fragment_container, new SelectFragment());
                     transaction.addToBackStack(null); // 뒤로가기 지원
                     transaction.commit();
                     break;
-                case "controller_QR":
+                case ScreenList.FRAGMENT.CONTROLLER_QR:
                     intent = new Intent(this, ControllerActivity.class);
-                    intent.putExtra("fragmentName", "controller_QR");
+                    intent.putExtra("user", (Parcelable) user);
+                    intent.putExtra("fragmentName", ScreenList.FRAGMENT.CONTROLLER_QR);
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     break;
-                case "target_QR":
+                case ScreenList.FRAGMENT.TARGET_QR:
                     intent = new Intent(this, TargetActivity.class);
-                    intent.putExtra("fragmentName", "target_QR");
+                    intent.putExtra("user", (Parcelable) user);
+                    intent.putExtra("fragmentName", ScreenList.FRAGMENT.TARGET_QR);
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     break;
@@ -131,21 +140,18 @@ public class StartActivity extends AppCompatActivity {
 
     }
 
-    public void setSignUpInstance(SignUp signUp){
+    public void setSignUpInstance(SignUp signUp) {
         this.signUp = signUp;
     }
-    public void setLoginInstance(Login login){
-        this.login = login;
-    }
-    public SignUp getSignUpInstance(){
+
+    public SignUp getSignUpInstance() {
         return this.signUp;
     }
-    public Login getLoginInstance(){
-        return this.login;
-    }
-    public void setUser(User user){
+
+    public void setUser(User user) {
         this.user = user;
     }
+
     public User getUser() {
         return this.user;
     }

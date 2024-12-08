@@ -30,26 +30,70 @@ public class VolumeControlService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // 전달된 데이터를 가져오기
         int volume = intent.getIntExtra("volume", 50);
-        int streamType = intent.getIntExtra("streamType", AudioManager.STREAM_RING);
-        int delay = intent.getIntExtra("delay", 10) * 1000; // 초 단위 지연 시간
+        String mode = intent.getStringExtra("mode"); // CALL, NOTIFICATION, MEDIA
+        int delay = intent.getIntExtra("delay", 10) * 1000;
 
-        // 딜레이 후 볼륨 조정 작업 수행
-        new Handler().postDelayed(() -> adjustVolume(volume, streamType), delay);
+        // 로그 추가
+        Log.d("VolumeControlService", "Received - Mode: " + mode + ", Volume: " + volume);
 
-        return START_NOT_STICKY; // 작업 완료 후 서비스가 자동 종료됨
+        if (mode == null) {
+            Log.e("VolumeControlService", "Mode is null");
+            stopSelf();
+            return START_NOT_STICKY;
+        }
+
+        new Handler().postDelayed(() -> adjustVolumeByMode(volume, mode), delay);
+
+        return START_NOT_STICKY;
     }
 
-    private void adjustVolume(int volume, int streamType) {
+    private void adjustVolumeByMode(int volume, String mode) {
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         if (audioManager != null) {
+            Log.d("VolumeControlService", "Adjusting volume - Mode: " + mode + ", Volume: " + volume);
+
+            switch (mode) {
+                case "CALL":
+                    Log.d("VolumeControlService", "Setting CALL volumes");
+                    adjustStreamVolume(audioManager, AudioManager.STREAM_RING, volume);
+                    adjustStreamVolume(audioManager, AudioManager.STREAM_ALARM, volume);
+                    break;
+                case "NOTIFICATION":
+                    Log.d("VolumeControlService", "Setting NOTIFICATION volumes");
+                    adjustStreamVolume(audioManager, AudioManager.STREAM_NOTIFICATION, volume);
+                    adjustStreamVolume(audioManager, AudioManager.STREAM_SYSTEM, volume);
+                    break;
+                case "MEDIA":
+                    Log.d("VolumeControlService", "Setting MEDIA volume");
+                    adjustStreamVolume(audioManager, AudioManager.STREAM_MUSIC, volume);
+                    break;
+                default:
+                    Log.e("VolumeControlService", "Unknown mode: " + mode);
+                    break;
+            }
+        } else {
+            Log.e("VolumeControlService", "AudioManager is null");
+        }
+        stopSelf();
+    }
+
+    private void adjustStreamVolume(AudioManager audioManager, int streamType, int volume) {
+        try {
             int maxVolume = audioManager.getStreamMaxVolume(streamType);
             int actualVolume = (volume * maxVolume) / 100;
+
+            // 볼륨 범위 확인
+            actualVolume = Math.max(0, Math.min(actualVolume, maxVolume));
+
             audioManager.setStreamVolume(streamType, actualVolume, 0);
-            Log.d("VolumeControlService", "StreamType: " + streamType + "Volume set to: " + volume);
+            Log.d("VolumeControlService", "StreamType: " + streamType +
+                    " MaxVolume: " + maxVolume +
+                    " Requested: " + volume +
+                    " Actual: " + actualVolume);
+        } catch (Exception e) {
+            Log.e("VolumeControlService", "Error adjusting volume for stream " + streamType, e);
         }
-        stopSelf(); // 작업 완료 후 서비스 종료
     }
 
     private Notification createNotification(String contentText) {

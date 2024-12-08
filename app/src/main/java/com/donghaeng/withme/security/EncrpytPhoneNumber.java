@@ -19,4 +19,5 @@ public class EncrpytPhoneNumber {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-    }}
+    }
+}

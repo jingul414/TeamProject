@@ -46,7 +46,12 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.room.runtime)
+    implementation(libs.play.services.nearby)
     implementation(libs.room.common)
+    implementation(libs.firebase.appcheck)
+    implementation(libs.firebase.appcheck.debug)
+    implementation(libs.firebase.appcheck.playintegrity)
+    implementation(libs.security.crypto)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -71,6 +76,8 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")    // analytics
     implementation("com.google.firebase:firebase-auth")         // authentication
     implementation("com.google.firebase:firebase-firestore")    // database
+    implementation("com.google.firebase:firebase-messaging")    // firebase messaging
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // CameraX
     implementation(libs.camera.core)
@@ -117,5 +124,11 @@ dependencies {
 
     // 이미지 로드 관련
     implementation ("com.squareup.picasso:picasso:2.8")
+    implementation ("com.google.firebase:firebase-storage")
+
+    // 보호자 가이드 입력
+    implementation ("com.google.android.material:material:1.11.0")
+    implementation ("com.google.code.gson:gson:2.10.1")
+    implementation ("commons-io:commons-io:2.11.0")  // IOUtils 사용을 위해 필요
 
 }

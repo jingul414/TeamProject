@@ -12,12 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.donghaeng.withme.R;
-import com.donghaeng.withme.roomdatabase.guide.GuideBook;
-import com.donghaeng.withme.roomdatabase.guide.GuideBookRepository;
+import com.donghaeng.withme.data.guide.GuideBook;
+import com.donghaeng.withme.data.database.room.guide.GuideBookRepository;
+import com.donghaeng.withme.data.guide.GuideBookType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -183,7 +185,6 @@ public class ExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
-    // 나머지 메서드들은 그대로 유지...
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -238,20 +239,44 @@ public class ExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             itemView.setOnClickListener(v -> {
                 // 가이드 목록 아이템 클릭 시 설명으로 이동하는 부분
-                // Todo 여기서 누른 목록에 대한 설명을 서버에서 불러와서 그 정보도 같이 넘겨줘야 함...
-                // 현재는 누른 아이템의 텍스트를 보내줌..
-                Log.d("ExpandableAdapter", "Item clicked: " + contentText.getText().toString());
-                if(!contentText.getText().toString().equals("추가 된 가이드가 없습니다.")){
-                    guideBookRepository.getAppGuidesAsync(guides -> { // 가이드 정보 불러오기
-                        if (!guides.isEmpty()) {
-                            guideFragment.changeFragment(
-                                    new GuideInfoFragment(
-                                            contentText.getText().toString(),
-                                            guides.get(0).getContentJson()
-                                    )
-                            );
-                        }
-                    });
+                int position = getAdapterPosition();
+
+                if (position != RecyclerView.NO_POSITION) {
+                    // 현재 위치에서 위로 올라가면서 가장 가까운 헤더 찾기
+                    String headerTitle = findHeaderTitle(position);
+                    Log.d("ExpandableAdapter", "Header Title: " + headerTitle);
+                    String GuideType = "";
+                    switch (Objects.requireNonNull(headerTitle)){
+                        case ("동행 설명서"):
+                            GuideType = GuideBookType.APP_GUIDE_BOOK;
+                            break;
+                        case ("스마트폰 설명서"):
+                            GuideType = GuideBookType.SMARTPHONE_GUIDE_BOOK;
+                            break;
+                        case ("보호자의 설명"):
+                            // TODO 제어자가 추가한 가이드는 해당하는 피제어자만 불러오도록 바꿔야함...
+                            GuideType = GuideBookType.CONTROLLER_INSTRUCTION;
+                            break;
+                    }
+
+                    if(!contentText.getText().toString().equals("추가 된 가이드가 없습니다.")) {
+                        String title = contentText.getText().toString();
+                        guideBookRepository.getAppGuidesAsync(GuideType, guides -> {
+                            if (!guides.isEmpty()) {
+                                for (GuideBook guide : guides) {
+                                    if (guide.getTitle().equals(title)) {
+                                        guideFragment.changeFragment(
+                                                new GuideInfoFragment(
+                                                        title,
+                                                        guide.getContentJson()
+                                                )
+                                        );
+                                        break;
+                                    }
+                                }
+                            }
+                        });
+                    }
                 }
             });
         }
@@ -264,5 +289,15 @@ public class ExpandableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             super(itemView);
             progressBar = itemView.findViewById(R.id.progressBar);
         }
+    }
+
+    private String findHeaderTitle(int currentPosition) {
+        for (int i = currentPosition; i >= 0; i--) {
+            ListItem item = items.get(i);
+            if (item.getType() == ListItem.TYPE_HEADER) {
+                return item.getTitle();
+            }
+        }
+        return null; // 헤더를 찾지 못한 경우
     }
 }

@@ -1,36 +1,55 @@
 package com.donghaeng.withme.screen.setting;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.telephony.PhoneNumberUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.donghaeng.withme.R;
+import com.donghaeng.withme.data.app.AutomaticLoginChecker;
+import com.donghaeng.withme.data.database.room.user.UserRepository;
+import com.donghaeng.withme.data.user.User;
+import com.donghaeng.withme.data.user.UserType;
+import com.donghaeng.withme.screen.start.StartActivity;
+import com.donghaeng.withme.security.EncrpytPhoneNumber;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import java.util.Locale;
+
 public class SettingFragment extends Fragment {
     private SettingActivity activity;
+    private User user;
 
-    private int FragmentMode = -1;  // 임시 변수들
-    private final int PERMIT = 0;
-    private final int LEAVE = 1;
+    public static Fragment newInstance(User user) {
+        Bundle args = new Bundle();
+        args.putParcelable("user", user);
+        Fragment fragment = new SettingFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (getArguments() != null) {
+            user = getArguments().getParcelable("user");
+        }
     }
 
-    //    TODO 제어자인지 피제어자인지 받아와야 함
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -38,24 +57,27 @@ public class SettingFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
 
         View back;
-        Button change_number, change_pw, permit_list, leave;
-        Button control, target; // 임시 버튼들 -> 제어 허용 목록 버튼 클릭 시 제어자 피제어자 선택
+        Button change_number, change_pw, permit_list, leave, logout;
 
         activity = (SettingActivity) requireActivity();
         back = view.findViewById(R.id.back);
-        back.setOnClickListener(v -> {
-            activity.onBackPressed();
-        });
+        back.setOnClickListener(v -> activity.onBackPressed());
+
+        TextView userName = view.findViewById(R.id.user_name);
+        TextView userPhoneNumber = view.findViewById(R.id.user_phone_number);
+        userName.setText(user.getName());
+        userPhoneNumber.setText(PhoneNumberUtils.formatNumber(user.getPhone(), Locale.getDefault().getCountry()));
 
         change_number = view.findViewById(R.id.change_number);
         change_pw = view.findViewById(R.id.change_pw);
         permit_list = view.findViewById(R.id.permit_list);
         leave = view.findViewById(R.id.leave);
+        logout = view.findViewById(R.id.logout);
 
         change_number.setOnClickListener(v -> {
             FragmentManager fragmentManager = getParentFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.fragment_container, new SettingPhoneNumFragment());
+            transaction.replace(R.id.fragment_container, new SettingPhoneNumFragment(user));
             transaction.addToBackStack(null); // 뒤로 가기 버튼으로 돌아가기 가능
             transaction.commit();
         });
@@ -63,38 +85,40 @@ public class SettingFragment extends Fragment {
         change_pw.setOnClickListener(v -> {
             FragmentManager fragmentManager = getParentFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.fragment_container, new SettingPasswordFragment());
+            transaction.replace(R.id.fragment_container, new SettingPasswordFragment(user));
             transaction.addToBackStack(null); // 뒤로 가기 버튼으로 돌아가기 가능
             transaction.commit();
         });
+        byte usetType = user.getUserType();
 
         permit_list.setOnClickListener(v -> {
-            // activity.changeFragment("PermitList"); 임시 버튼 사용
-            view.findViewById(R.id.buttons).setVisibility(View.VISIBLE);
-            FragmentMode = PERMIT;
+            if(usetType == UserType.CONTROLLER){
+                activity.changeFragment("PermitListControl");
+            } else if (usetType == UserType.TARGET) {
+                activity.changeFragment("PermitListTarget");
+            }
         });
         leave.setOnClickListener(v -> {
-//             activity.changeFragment("Leave"); 임시 버튼 사용
-            view.findViewById(R.id.buttons).setVisibility(View.VISIBLE);
-            FragmentMode = LEAVE;
-        });
-
-        // 임시 버튼들 초기화
-        control = view.findViewById(R.id.control);
-        target = view.findViewById(R.id.target);
-        control.setOnClickListener(v -> {
-            if (FragmentMode == PERMIT) {
-                activity.changeFragment("PermitListControl");
-            } else if (FragmentMode == LEAVE) {
+            if(usetType == UserType.CONTROLLER){
                 showLeaveDialog(true); // true 는 controller 용 다이얼로그
-            }
-        });
-        target.setOnClickListener(v -> {
-            if (FragmentMode == PERMIT) {
-                activity.changeFragment("PermitListTarget");
-            } else if (FragmentMode == LEAVE) {
+            } else if (usetType == UserType.TARGET) {
                 showLeaveDialog(false); // false 는 target 용 다이얼로그
             }
+        });
+        logout.setOnClickListener(v -> {
+            // 자동 로그인 설정 비활성화
+            AutomaticLoginChecker.setDisable(requireContext());
+
+            // Room DB의 사용자 데이터 삭제
+            UserRepository repository = new UserRepository(requireContext());
+            repository.deleteAllUsers();
+
+            // 시작 화면으로 이동 (현재 액티비티 종료)
+            requireActivity().startActivity(new Intent(requireContext(), StartActivity.class));
+            requireActivity().finish();
+
+            // 토스트 메시지 표시 (선택사항)
+            Toast.makeText(requireContext(), "로그아웃되었습니다.", Toast.LENGTH_SHORT).show();
         });
 
         return view;
@@ -124,24 +148,49 @@ public class SettingFragment extends Fragment {
         // 예 버튼 클릭 리스너
         Button yesBtn = dialogView.findViewById(R.id.yes_btn);
         yesBtn.setOnClickListener(v -> {
-            // TODO: 회원 탈퇴 처리 로직 구현 -> 현재는 로그인 화면으로 이동 됨
-            dialog.dismiss();
-            requireActivity().finish(); // 또는 로그인 화면으로 이동
+            // Firebase에서 사용자 데이터 삭제
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // 사용자 데이터 삭제
+            String hashedPhoneNum = EncrpytPhoneNumber.hashPhoneNumber(user.getPhone());
+            db.collection("user").document(hashedPhoneNum)
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        // Firebase 삭제 성공 후 로컬 데이터 정리
+
+                        // 자동 로그인 설정 비활성화
+                        AutomaticLoginChecker.setDisable(requireContext());
+
+                        // Room DB의 사용자 데이터 삭제
+                        UserRepository repository = new UserRepository(requireContext());
+                        repository.deleteAllUsers();
+
+                        // 토스트 메시지 표시
+                        Toast.makeText(requireContext(), "회원 탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show();
+
+                        // 시작 화면으로 이동
+                        Intent intent = new Intent(requireContext(), StartActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        requireActivity().finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        // 실패 시 에러 메시지
+                        Toast.makeText(requireContext(), "회원 탈퇴 처리 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    });
         });
+
 
         // 아니오 버튼 클릭 리스너
         Button noBtn = dialogView.findViewById(R.id.no_btn);
         noBtn.setOnClickListener(v -> {
             dialog.dismiss();
             // buttons 레이아웃을 다시 숨김
-            requireView().findViewById(R.id.buttons).setVisibility(View.INVISIBLE);
-            FragmentMode = -1;
         });
 
         // 다이얼로그가 취소되면 버튼들을 숨김
         dialog.setOnCancelListener(dialogInterface -> {
-            requireView().findViewById(R.id.buttons).setVisibility(View.INVISIBLE);
-            FragmentMode = -1;
         });
 
         // 다이얼로그 표시
